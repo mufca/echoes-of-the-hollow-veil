@@ -1,31 +1,36 @@
 package io.github.mufca.libgdx.gui;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.github.tommyettinger.textra.TypingLabel;
-import io.github.mufca.libgdx.gui.core.CoreConstants;
-import io.github.mufca.libgdx.gui.core.CoreTable;
-import io.github.mufca.libgdx.gui.core.CoreTypingLabel;
-import io.github.mufca.libgdx.gui.core.TextureConstants;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
+import io.github.mufca.libgdx.constant.TextureConstants;
 import io.github.mufca.libgdx.temporarytrash.ParagraphParameters;
 import io.github.mufca.libgdx.temporarytrash.TextProcessor;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import static io.github.mufca.libgdx.gui.core.CoreConstants.TRACER_SKIN;
-import static io.github.mufca.libgdx.gui.core.TextureConstants.ORC_FEMALE_PORTRAIT;
+import static io.github.mufca.libgdx.constant.TextureConstants.ORC_FEMALE_PORTRAIT;
 
-public class Paragraph extends CoreTable {
-    private final Label typingLabel;
+public class Paragraph extends Table {
+    private final CoreTypingLabel typingLabel;
     private final Image image;
 
     public Paragraph(ParagraphParameters paragraphParameters) {
         super();
+        NinePatch ninePatch = new NinePatch(TextureConstants.NINE_PATCH_FRAME, 96, 95, 105, 96);
+        NinePatchDrawable drawable = new NinePatchDrawable(ninePatch);
+        this.background(drawable);
         String processedText = TextProcessor.processText(paragraphParameters.text());
-        typingLabel = new Label(processedText, TRACER_SKIN);
-        typingLabel.setText(processedText);
+        typingLabel = new CoreTypingLabel(processedText);
+        typingLabel.setWrap(true);
+        typingLabel.skipToTheEnd();
         image = new Image(ORC_FEMALE_PORTRAIT);
-        this.add(image);
-        this.add(typingLabel).expandX();
+    }
+
+    public void addComponents() {
+        this.add(image).left().top().padRight(10f);
+        this.add(typingLabel).left().top().expandX().fillX();
     }
 
     @Override
@@ -33,5 +38,10 @@ public class Paragraph extends CoreTable {
         typingLabel.remove();
         image.remove();
         return super.remove();
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

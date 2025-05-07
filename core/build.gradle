@@ -7,4 +7,10 @@ dependencies {
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
+
+  tasks.named("build") {
+    dependsOn(":generateLicenseReport")
+  }
+
+  sourceSets.main.resources.srcDirs = ["assets"]
 }
