@@ -117,7 +117,7 @@ public class MenuNavigator implements InputProcessor {
             if (label.equals(current)) {
                 label.underlineWholeText();
             } else {
-                label.removeWholeTextUnderline();
+                label.regenerate();
             }
         }
     }

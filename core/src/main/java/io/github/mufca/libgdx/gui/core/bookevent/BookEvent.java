@@ -45,13 +45,13 @@ public interface BookEvent {
      * Called to inject accumulated data from previous steps.
      * Implementation should not modify the given ObjectNode.
      */
-    default void receiveData(ObjectNode data) {}
+    default void setData(ObjectNode data) {}
 
     /**
      * Returns a new ObjectNode with updates made by this step.
      * Returning null means no changes.
      */
-    default ObjectNode addData() {
+    default ObjectNode getData() {
         return null;
     }
 }

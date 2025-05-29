@@ -39,7 +39,6 @@ public class MainMenu extends CoreScreen {
     private static WindManager wind = new WindManager();
     private Image background;
     private TextureRegion leaf;
-    private TextureRegionDrawable menuCanvas;
     private Group leafLayer = new Group();
     private float elapsedTime = 0f;
     private float nextSpawn = getNextSpawn();
@@ -60,7 +59,7 @@ public class MainMenu extends CoreScreen {
 
     @Override
     public void render(float delta) {
-        defaultStageRender(delta);
+        super.render(delta);
         elapsedTime += delta;
         wind.elapsed(delta);
         if (leafLayer.getChildren().size < 25 & elapsedTime > nextSpawn) {

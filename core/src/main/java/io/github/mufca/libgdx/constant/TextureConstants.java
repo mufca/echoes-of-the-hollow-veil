@@ -16,6 +16,7 @@ public class TextureConstants {
     public static Texture BACKGROUND_MENU_CANVAS;
     public static Texture LEAF;
 
+
     public static void init() {
         ORC_FEMALE_PORTRAIT = new Texture(Gdx.files.internal(ORC_PNG));
         NINE_PATCH_FRAME = new Texture(Gdx.files.internal(FRAME_PNG));

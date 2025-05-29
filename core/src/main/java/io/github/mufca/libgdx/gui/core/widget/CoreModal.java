@@ -2,8 +2,11 @@ package io.github.mufca.libgdx.gui.core.widget;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.mufca.libgdx.datastructure.utils.ListHelper;
 import io.github.mufca.libgdx.gui.core.bookevent.BookEvent;
+import io.github.mufca.libgdx.util.JsonHelper;
 
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +26,7 @@ public class CoreModal extends Table {
     private final List<BookEvent> steps;
     private final boolean progressiveMode;
     private BookEvent currentEvent;
+    private ObjectNode collectedData = JsonNodeFactory.instance.objectNode();
 
     /**
      * @param stage The Stage to which the modal will be added.
@@ -76,8 +80,11 @@ public class CoreModal extends Table {
         visibleSteps.forEach(step ->
             stepListTable.add(step.getLabel()).left().row()
         );
-
-        rightContentTable.add(currentEvent.getView()).expand().fill();
+        if (currentEvent != null) {
+            currentEvent.setData(collectedData);
+            currentEvent.onEnter();
+            rightContentTable.add(currentEvent.getView()).expand().fill();
+        }
     }
 
     public void show() {
@@ -90,11 +97,13 @@ public class CoreModal extends Table {
     }
 
     public void next() {
+        saveCurrentStepData();
         currentEvent = find(steps::stream).orElse(currentEvent);
         renderCurrentStep();
     }
 
     public void previous() {
+        saveCurrentStepData();
         currentEvent = find(() -> ListHelper.reverseToStream(steps)).orElse(currentEvent);
         renderCurrentStep();
     }
@@ -108,5 +117,12 @@ public class CoreModal extends Table {
             }
         }
         return THE_END;
+    }
+
+    private void saveCurrentStepData() {
+        if (currentEvent != null) {
+            ObjectNode updates = currentEvent.getData();
+            collectedData = JsonHelper.merge(collectedData, updates);
+        }
     }
 }

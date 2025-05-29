@@ -1,9 +1,7 @@
 package io.github.mufca.libgdx.util;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.github.tommyettinger.textra.Font;
@@ -14,31 +12,19 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static io.github.mufca.libgdx.constant.PathConstants.FONTS_NOTO_SANS_CONDENSED_LIGHT_TTF;
+import static io.github.mufca.libgdx.constant.PathConstants.NOTO_SANS_FNT;
+import static io.github.mufca.libgdx.constant.PathConstants.NOTO_SANS_PNG;
 
 public class UIHelper {
-    public final static Color BLACK_60A = new Color(0,0,0,0.6f);
-
+    public final static Color BLACK_60A = new Color(0, 0, 0, 0.6f);
     private final static Set<FilledColor> colorTextures = new HashSet<>();
-    private final static FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-    private static FreeTypeFontGenerator generator;
     private static Font defaultFont;
-
 
     public static Font getDefaultFont() {
         if (defaultFont == null) {
-            initGeneratorIfNeeded();
-            parameter.size = 25;
-            parameter.color = Color.WHITE;
-            defaultFont = new Font(generator.generateFont(parameter));
+            defaultFont = new Font(NOTO_SANS_FNT, NOTO_SANS_PNG);
         }
         return defaultFont;
-    }
-
-    private static void initGeneratorIfNeeded() {
-        if (generator == null) {
-            generator = new FreeTypeFontGenerator(Gdx.files.internal(FONTS_NOTO_SANS_CONDENSED_LIGHT_TTF));
-        }
     }
 
     public static TextureRegionDrawable getFilledColor(Color color) {

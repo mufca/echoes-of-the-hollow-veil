@@ -5,10 +5,9 @@ import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 
 public class MenuContentHandler {
     public static Actor getContent(CoreTypingLabel selected) {
-        if (selected.getUnformattedText().equals("Licences")) {
-            return LicenseReport.getReport();
-        } else {
-            return new CoreTypingLabel(selected.getUnformattedText() + " content");
-        }
+        return switch (selected.getUnformattedText()) {
+            case "Licences" -> LicenseReport.getReport();
+            default -> new CoreTypingLabel(selected.getUnformattedText() + " content");
+        };
     }
 }

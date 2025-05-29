@@ -1,16 +1,29 @@
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-eclipse.project.name = appName + '-core'
+plugins {
+  id 'java'
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
 
 dependencies {
   api "com.badlogicgames.gdx:gdx:$gdxVersion"
 
-  if(enableGraalNative == 'true') {
+  if (enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
 
-  tasks.named("build") {
-    dependsOn(":generateLicenseReport")
-  }
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+  testImplementation "org.assertj:assertj-core:$assertjVersion"
+}
 
-  sourceSets.main.resources.srcDirs = ["assets"]
+sourceSets.main.resources.srcDirs = ["assets"]
+
+tasks.named("build") {
+  dependsOn(":generateLicenseReport")
+}
+
+test {
+  useJUnitPlatform()
 }
