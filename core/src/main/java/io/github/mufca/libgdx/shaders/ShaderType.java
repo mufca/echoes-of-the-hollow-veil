@@ -1,7 +1,9 @@
 package io.github.mufca.libgdx.shaders;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import lombok.Getter;
 
+import java.util.Map;
 import java.util.function.Function;
 
 import static io.github.mufca.libgdx.constant.PathConstants.SHADERS_HIGHLIGHT_FRAG;
@@ -12,9 +14,19 @@ import static io.github.mufca.libgdx.constant.PathConstants.SHADERS_UI_STROKE_VE
 @Getter
 public enum ShaderType {
     WIDGET_HIGHLIGHT(SHADERS_HIGHLIGHT_VERT, SHADERS_HIGHLIGHT_FRAG,
-        "u_brushPos", t -> Math.min(t / 0.2f, 1f)),
+        "u_brushPos", t -> Math.min(t / 0.2f, 1f)) {
+        @Override
+        public Map<String, Object> generateUniforms(Actor actor) {
+            return ShaderHelper.getHighlightUniforms(actor);
+        }
+    },
     WIDGET_STROKE(SHADERS_UI_STROKE_VERT, SHADERS_UI_STROKE_FRAG,
-        "provideProgress", t -> Math.min(t / 0.3f, 1f));
+        "strokeProgress", t -> Math.min(t / 0.3f, 1f)) {
+        @Override
+        public Map<String, Object> generateUniforms(Actor actor) {
+            return ShaderHelper.getStrokeUniforms(actor);
+        }
+    };
 
     private final String vertex, fragment, defaultElapsedUniform;
     private final Function<Float, Float> defaultElapsedFunction;
@@ -26,4 +38,5 @@ public enum ShaderType {
         this.defaultElapsedFunction = elapsedFunction;
     }
 
+    public abstract Map<String, Object> generateUniforms(Actor currentActor);
 }

@@ -1,53 +1,72 @@
 #version 330 core
 
-in vec4 v_color;
-in vec2 v_texCoords;
-out vec4 FragColor;
+// Input data from vertex shader
+in vec4 v_color;// Color of the vertex
+in vec2 v_texCoords;// Texture coordinates of the vertex
+out vec4 FragColor;// Final color of the pixel
 
-uniform sampler2D u_texture;
-uniform float provideProgress; // 0.0 - 1.0
-uniform vec2 provideStartingPosition;
-uniform float strokeLength;
-uniform float strokeWidth;
+// Uniform values set by the program
+uniform sampler2D u_texture;// Texture to be drawn
+uniform float strokeProgress;// Progress of the brush stroke (0..1)
+uniform vec2 strokeTopStart;// Starting point of the top brush stroke
+uniform vec2 strokeBottomStart;// Starting point of the bottom brush stroke
+uniform float strokeLength;// Length of the brush stroke
+uniform float strokeWidth;// Width of the brush stroke
 
-const vec2 strokeDir = normalize(vec2(1.0, 0.0));
-
+// Random number generator (hash function)
+// Used to generate noise for the brush stroke
 float rand(vec2 co) {
     return fract(sin(dot(co, vec2(12.9898,78.233))) * 43758.5453);
 }
 
-float drawBrushStroke(vec2 currentFragmentPosition, vec2 startingPosition, float length, float width, float progress) {
-    vec2 delta = currentFragmentPosition - startingPosition;
-    float parallel = dot(delta, strokeDir);
-    float perpendicular = dot(delta, vec2(-strokeDir.y, strokeDir.x));
+// Function to draw a single brush stroke
+// pos: position of the pixel
+// start: starting point of the brush stroke (left side of a component)
+float drawBrushStroke(vec2 pos, vec2 start) {
+    // Calculate the distance from the starting point
+    // parallel: distance along the brush stroke
+    // perpendicular: distance from the center of the brush stroke
+    vec2 delta = pos - start;
+    float parallel = delta.x;
+    float perpendicular = delta.y;
 
-    float center = length * 0.5;
-    float maxVisible = center * progress;
-    float timeMask = step(abs(parallel - center), maxVisible);
+    // Calculate the center of the brush stroke
+    float center = strokeLength * 0.5;
+    // Calculate the visible part of the brush stroke
+    float visible = center * strokeProgress;
+    // Mask the brush stroke to only show the visible part
+    float timeMask = step(abs(parallel - center), visible);
 
-    float edgeNoise = rand(currentFragmentPosition * 0.02 + vec2(7.0, 3.0));
-    float localWidth = width * (0.6 + edgeNoise * 0.4);
+    // Calculate the width of the brush stroke
+    float edgeNoise = rand(pos * 0.02 + vec2(7.0, 3.0));
+    float localWidth = strokeWidth * (0.6 + edgeNoise * 0.4);
+    // If the pixel is outside the brush stroke, return 0
     if (abs(perpendicular) > localWidth * 0.5) return 0.0;
 
-    float fade = smoothstep(length, length - 50.0, parallel) *
-    smoothstep(0.0, 5.0, parallel);
+    // Fade the brush stroke at the ends
+    float fade = smoothstep(strokeLength, strokeLength - 50.0, parallel) *
+    smoothstep(0.0, 50.0, parallel);
 
-    float noise = rand(currentFragmentPosition * 0.05 + sin(currentFragmentPosition.yx * 0.01));
-    float variation = 0.8 + noise * 0.4;
-
-    return variation * fade * timeMask;
+    // Add some noise to the brush stroke
+    float noise = rand(pos * 0.05 + sin(pos.yx * 0.01));
+    // Return the final value of the brush stroke
+    return (0.8 + noise * 0.4) * fade * timeMask;
 }
 
 void main() {
-    vec2 currentFragmentPosition = gl_FragCoord.xy;
+    // Get the position of the pixel
+    vec2 pos = gl_FragCoord.xy;
+    // Calculate the ink value for the top and bottom brush strokes
+    float inkTop = drawBrushStroke(pos, strokeTopStart);
+    float inkBottom = drawBrushStroke(pos, strokeBottomStart);
+    // Calculate the final ink value
+    float ink = inkTop + inkBottom;
 
-    float ink = drawBrushStroke(currentFragmentPosition, provideStartingPosition,
-    strokeLength, strokeWidth, provideProgress);
-
-    // użycie u_texture jako tła — bez zmian wizualnych
-    vec3 baseColor = texture(u_texture, v_texCoords).rgb;
-
-    vec3 color = mix(baseColor, vec3(1.0), ink); // pociągnięcie na tle tekstury
-
-    FragColor = vec4(color, 1.0);
+    // Get the color of the texture at the current position
+    vec4 texColor = texture(u_texture, v_texCoords) * v_color;
+    // Calculate the final color of the pixel
+    // by adding the ink value to the texture color
+    vec3 finalColor = texColor.rgb + vec3(ink);
+    // Set the final color of the pixel
+    FragColor = vec4(finalColor, texColor.a);
 }

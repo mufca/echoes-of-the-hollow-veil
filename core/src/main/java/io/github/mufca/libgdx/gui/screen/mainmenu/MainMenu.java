@@ -9,43 +9,44 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import io.github.mufca.libgdx.gui.core.widget.CoreScreen;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 
 import static com.badlogic.gdx.graphics.Texture.TextureFilter.Linear;
 import static com.badlogic.gdx.utils.Scaling.none;
+import static io.github.mufca.libgdx.constant.TextureConstants.BACKGROUND_MAIN_MENU;
+import static io.github.mufca.libgdx.constant.TextureConstants.LEAF;
 import static io.github.mufca.libgdx.util.UIHelper.doNothing;
 import static io.github.mufca.libgdx.util.UIHelper.getFilledColor;
 import static io.github.mufca.libgdx.util.UIHelper.getTopLeftPaddings;
-import static io.github.mufca.libgdx.constant.TextureConstants.BACKGROUND_MAIN_MENU;
-import static io.github.mufca.libgdx.constant.TextureConstants.LEAF;
 
 public class MainMenu extends CoreScreen {
     private static final float outerPad = 30f;
     private static final float innerPad = 15f;
-    private static final Table bottomLayer = new Table();
-    private static final Table menu = new Table();
-    private static final Table paddingContainer = new Table();
-    private static CoreTypingLabel newGame;
-    private static CoreTypingLabel loadGame;
-    private static CoreTypingLabel settings;
-    private static CoreTypingLabel licences;
-    private static CoreTypingLabel exit;
     private static final float topPadding = 0.10f;
     private static final float leftPadding = 0.18f;
     private static final float minimumSpawnCooldownInSeconds = 0.5f;
     private static final float maximumSpawnCooldownInSeconds = 2.5f;
-    private static WindManager wind = new WindManager();
+
+    private final Table bottomLayer = new Table();
+    private final Table menu = new Table();
+    private final Table paddingContainer = new Table();
+    private CoreTypingLabel newGame;
+    private CoreTypingLabel loadGame;
+    private CoreTypingLabel settings;
+    private CoreTypingLabel licences;
+    private CoreTypingLabel exit;
+
+    private final Group leafLayer = new Group();
+    private WindManager wind = new WindManager();
     private Image background;
     private TextureRegion leaf;
-    private Group leafLayer = new Group();
     private float elapsedTime = 0f;
     private float nextSpawn = getNextSpawn();
 
     @Override
     public void show() {
-        initializeStageAndInputs();
+        super.show();
         prepareImages();
         stageBackground();
         stageFallingLeaves();
@@ -70,7 +71,7 @@ public class MainMenu extends CoreScreen {
         if (wind.isTimeToStart()) {
             for (Actor actor : leafLayer.getChildren()) {
                 switch (actor) {
-                    case LeafActor leaf -> leaf.blowWind(wind.getDuration());
+                    case LeafActor currentLeaf -> currentLeaf.blowWind(wind.getDuration());
                     default -> doNothing();
                 }
             }
@@ -82,11 +83,6 @@ public class MainMenu extends CoreScreen {
     public void resize(int width, int height) {
         super.resize(width, height);
         setUpPaddingContainer();
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     private void prepareImages() {

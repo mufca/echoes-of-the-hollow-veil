@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.Vector4;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,20 +49,20 @@ public class ShaderHandler {
     private void applyUniform(String uniform, Object value) {
         switch (value) {
             case Float floatValue -> shader.setUniformf(uniform, floatValue);
-            case Vector2 vector2 -> applyUniformVector(uniform, vector2);
+            case Vector2 vector2 -> shader.setUniformf(uniform, vector2);
             case Vector3 vector3 -> shader.setUniformf(uniform, vector3);
             case Vector4 vector4 -> shader.setUniformf(uniform, vector4);
             case Color color -> shader.setUniformf(uniform, color);
             default -> throw new IllegalStateException("Illegal %s uniform value: %s".formatted(uniform, value));
         }
-    }
-
-    private void applyUniformVector(String uniform, Vector2 vector2) {
-        shader.setUniformf(uniform, vector2);
-        Gdx.app.debug("ShaderHandler","Applying "+uniform+" with: "+vector2);
+        Gdx.app.debug("ShaderHandler", "Applying " + uniform + " with: " + value);
     }
 
     public void resetElapsed() {
         elapsed = 0f;
+    }
+
+    public void baseOnActor(Actor currentActor) {
+        uniforms = type.generateUniforms(currentActor);
     }
 }

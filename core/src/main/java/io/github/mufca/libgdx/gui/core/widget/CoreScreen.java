@@ -1,6 +1,5 @@
 package io.github.mufca.libgdx.gui.core.widget;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -17,13 +16,13 @@ import java.util.List;
 
 import static com.badlogic.gdx.graphics.GL32.GL_COLOR_BUFFER_BIT;
 
-public abstract class CoreScreen extends ApplicationAdapter implements Screen {
+public abstract class CoreScreen implements Screen {
     protected Stage stage;
     protected FrameBuffer frameBufferToDraw, frameBufferToRead;
     private TextureRegion drawRegion;
     private SpriteBatch screenBatch;
     @Setter
-    private List<ShaderHandler> shaders = new ArrayList<>();
+    private List<ShaderHandler> postProcessingShaders = new ArrayList<>();  //use with caution max 3
 
     public void initializeShaders() {
         updateFrameBuffers();
@@ -33,8 +32,10 @@ public abstract class CoreScreen extends ApplicationAdapter implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
-        updateFrameBuffers();
+        if (stage != null) {
+            stage.getViewport().update(width, height, true);
+            updateFrameBuffers();
+        }
     }
 
     @Override
@@ -42,8 +43,10 @@ public abstract class CoreScreen extends ApplicationAdapter implements Screen {
         captureToBufferWhenNeeded();
         Gdx.gl.glClearColor(0, 0, 0, 1); // Black clear color
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
-        stage.act(delta);
-        stage.draw();
+        if (stage != null) {
+            stage.act(delta);
+            stage.draw();
+        }
         finishCapturingAndDoPostProcessing(delta);
     }
 
@@ -67,13 +70,12 @@ public abstract class CoreScreen extends ApplicationAdapter implements Screen {
 
     private void postProcessing(List<ShaderHandler> shaders, float delta) {
         for (ShaderHandler handler : shaders) {
-            drawRegion = new TextureRegion(frameBufferToDraw.getColorBufferTexture());
-            drawRegion.flip(false, true);
+            drawRegion = createFlippedRegion(frameBufferToDraw);
             frameBufferToRead.begin();
             screenBatch.setShader(handler.getShader());
             screenBatch.begin();
             handler.applyUniforms(delta);
-            screenBatch.draw(drawRegion,0,0);
+            screenBatch.draw(drawRegion, 0, 0);
             screenBatch.end();
             frameBufferToRead.end();
 
@@ -86,22 +88,73 @@ public abstract class CoreScreen extends ApplicationAdapter implements Screen {
     }
 
     private void captureToBufferWhenNeeded() {
-        if (!shaders.isEmpty()) {
+        if (postProcessingShaders.size() == 1) {
+            screenBatch.setShader(postProcessingShaders.getFirst().getShader());
+        } else if (postProcessingShaders.size() > 1) {
             frameBufferToDraw.begin();
         }
     }
 
     private void finishCapturingAndDoPostProcessing(float delta) {
-        if (!shaders.isEmpty()) {
+        if (postProcessingShaders.size() > 1) {
             frameBufferToDraw.end();
-            postProcessing(shaders, delta);
+            postProcessing(postProcessingShaders, delta);
             drawAfterPostProcessing();
+        } else if (postProcessingShaders.size() == 1) {
+            screenBatch.setShader(null); // reset shader to avoid leakage
         }
     }
 
     private void drawAfterPostProcessing() {
+        if (drawRegion == null) {
+            throw new IllegalStateException("drawRegion is null. Did you forget to call initializeShaders()?");
+        }
         screenBatch.begin();
-        screenBatch.draw(drawRegion,0,0);
+        screenBatch.draw(drawRegion, 0, 0);
         screenBatch.end();
+    }
+
+    private TextureRegion createFlippedRegion(FrameBuffer buffer) {
+        TextureRegion region = new TextureRegion(buffer.getColorBufferTexture());
+        region.flip(false, true);
+        return region;
+    }
+
+    @Override
+    public void show() {
+        initializeStageAndInputs();
+        initializeShaders();
+    }
+
+    @Override
+    public void hide() {
+        // Called when current screen changes and this one is no longer the current screen
+    }
+
+    @Override
+    public void pause() {
+        // Called when the application is paused
+    }
+
+    @Override
+    public void resume() {
+        // Called when the application is resumed from a paused state
+    }
+
+    @Override
+    public void dispose() {
+        // Clean up resources when the screen is disposed
+        if (stage != null) {
+            stage.dispose();
+        }
+        if (screenBatch != null) {
+            screenBatch.dispose();
+        }
+        if (frameBufferToDraw != null) {
+            frameBufferToDraw.dispose();
+        }
+        if (frameBufferToRead != null) {
+            frameBufferToRead.dispose();
+        }
     }
 }

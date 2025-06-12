@@ -1,6 +1,5 @@
 package io.github.mufca.libgdx.gui.screen;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -20,7 +19,6 @@ import io.github.mufca.libgdx.util.WidgetBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static io.github.mufca.libgdx.datastructure.keyprovider.KeyboardLayout.QWERTY_ENGLISH;
 import static io.github.mufca.libgdx.gui.core.traversal.Direction.HORIZONTAL;
@@ -35,8 +33,7 @@ public class YetAnotherTestScreen extends CoreScreen {
     KeyProvider provider = new KeyProvider(QWERTY_ENGLISH);
     Command emptyCommand = new EmptyCommand();
     ShaderHandler focus = new ShaderHandler(ShaderFactory.create(WIDGET_HIGHLIGHT));
-    ShaderHandler strokeTop = new ShaderHandler(ShaderFactory.create(WIDGET_STROKE));
-    ShaderHandler strokeBottom = new ShaderHandler(ShaderFactory.create(WIDGET_STROKE));
+    ShaderHandler stroke = new ShaderHandler(ShaderFactory.create(WIDGET_STROKE));
 
     List<String> stringLiterals = List.of(
         "Oto jakieś", "proste labelki", "obrazujące", "działanie komponentów", "zgrupowanych",
@@ -44,11 +41,10 @@ public class YetAnotherTestScreen extends CoreScreen {
         "po której można nawigować");
     Actor currentWidget;
     Actor currentTable;
-    float elapsed = 0f;
 
     @Override
     public void show() {
-        initializeStageAndInputs();
+        super.show();
         List<ActorWithShortcut<CoreTypingLabel>> widgets = new ArrayList<>();
         for (String text : stringLiterals) {
             widgets.add(
@@ -73,8 +69,8 @@ public class YetAnotherTestScreen extends CoreScreen {
         Table tHorizontal = WidgetBuilder.buildTable(horizontal);
         stage.addActor(tVertical);
         stage.addActor(tHorizontal);
-        tVertical.setPosition(300,900);
-        tHorizontal.setPosition(300,300);
+        tVertical.setPosition(300, 900);
+        tHorizontal.setPosition(300, 300);
         tVertical.pack();
         tHorizontal.pack();
         stage.setKeyboardFocus(stage.getRoot());
@@ -84,57 +80,27 @@ public class YetAnotherTestScreen extends CoreScreen {
                 return root.handleKeyDown(keyCode);
             }
         });
-        updateCurrentWidgets();
         initializeShaders();
+        setPostProcessingShaders(List.of(stroke, focus));
     }
 
     @Override
     public void render(float delta) {
         updateCurrentWidgets();
-        Vector2 screenPos = currentWidget.localToStageCoordinates(new Vector2(0, 0));
-        float minX = screenPos.x;
-        float minY = screenPos.y;
-        float maxX = minX + currentWidget.getWidth();
-        float maxY = minY + currentWidget.getHeight();
-        Map<String, Object> focusUniforms = Map.of(
-            "u_boundsMin", new Vector2(minX, minY),
-            "u_boundsMax", new Vector2(maxX, maxY));
-        focus.setUniforms(focusUniforms);
-        screenPos = adjustCoordinates(currentTable.localToScreenCoordinates(new Vector2(0, 0)));
-        minX = screenPos.x;
-        minY = screenPos.y + currentTable.getHeight();
-        float strokeLength = currentTable.getWidth();
-        float strokeWidth = 3f;
-        Map<String, Object> strokeTopUniforms = Map.of(
-            "provideStartingPosition", new Vector2(minX, minY),
-            "strokeLength", strokeLength,
-            "strokeWidth", strokeWidth);
-        strokeTop.setUniforms(strokeTopUniforms);
-        minY = screenPos.y;
-        Map<String, Object> strokeBottomUniforms = Map.of(
-            "provideStartingPosition", new Vector2(minX, minY),
-            "strokeLength", strokeLength,
-            "strokeWidth", strokeWidth);
-        strokeBottom.setUniforms(strokeBottomUniforms);
-        setShaders(List.of(strokeTop, focus, strokeBottom));
+        focus.baseOnActor(currentWidget);
+        stroke.baseOnActor(currentTable);
         super.render(delta);
     }
 
     private void updateCurrentWidgets() {
         if (currentWidget != root.currentWidget().orElseThrow().asActor()) {
-            elapsed = 0f;
             currentWidget = root.currentWidget().orElseThrow().asActor();
+            focus.resetElapsed();
             if (currentTable != currentWidget.getParent()) {
                 currentTable = currentWidget.getParent();
-                strokeBottom.resetElapsed();
-                strokeTop.resetElapsed();
+                stroke.resetElapsed();
             }
-            focus.resetElapsed();
         }
-    }
-
-    private Vector2 adjustCoordinates(Vector2 vector2) {
-        return vector2.set(vector2.x, stage.getHeight() - vector2.y);
     }
 
     @Override
