@@ -113,9 +113,7 @@ public enum KeyboardLayout {
         this.theRest = theRest;
     }
 
-    private static List<KeyboardKey> copyWithOverrides(
-        List<KeyboardKey> base, KeyboardKey... overrides
-    ) {
+    private static List<KeyboardKey> copyWithOverrides(List<KeyboardKey> base, KeyboardKey... overrides) {
         Map<Integer, KeyboardKey> map = new LinkedHashMap<>();
         for (KeyboardKey key : base) {
             map.put(key.keycode(), key);

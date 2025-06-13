@@ -12,4 +12,7 @@ public class PathConstants {
     public static final String SHADERS_HIGHLIGHT_VERT = "shaders/vertex.glsl";
     public static final String SHADERS_UI_STROKE_FRAG = "shaders/userInterfaceBrushLine.frag";
     public static final String SHADERS_UI_STROKE_VERT = "shaders/userInterfaceBrushLine.vert";
+
+    public static final String CINEMATIC_RISING_STAR_FRAG = "shaders/cinematicEffects/risingStar.frag";
+    public static final String CINEMATIC_DEFAULT_VERT = "shaders/cinematicEffects/default.vert";
 }

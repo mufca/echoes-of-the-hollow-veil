@@ -1,14 +1,21 @@
 package io.github.mufca.libgdx;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import io.github.mufca.libgdx.constant.TextureConstants;
 import io.github.mufca.libgdx.gui.screen.Story;
-import io.github.mufca.libgdx.gui.screen.mainmenu.MainMenu;
+import io.github.mufca.libgdx.gui.screen.cinematic.CinematicScreen;
+import io.github.mufca.libgdx.gui.screen.cinematic.CinematicStep;
+import io.github.mufca.libgdx.shaders.ShaderFactory;
 
 import java.util.Arrays;
+import java.util.List;
+
+import static io.github.mufca.libgdx.shaders.ShaderType.CINEMATIC_RISING_STAR;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
@@ -20,11 +27,23 @@ public class Main extends Game {
 
     @Override
     public void create() {
+        Gdx.app.setLogLevel(Application.LOG_DEBUG);
         changeToBorderless();
         TextureConstants.init();
         // Set the initial screen
 //        setScreen(new YetAnotherTestScreen());
-        setScreen(new MainMenu());
+//        setScreen(new MainMenu());
+        setScreen(new CinematicScreen(
+            List.of(new CinematicStep(new TextureRegion(TextureConstants.BACKGROUND_MAIN_MENU), "Test", null,
+                    ShaderFactory.create(CINEMATIC_RISING_STAR), false, 0f, null),
+                new CinematicStep(new TextureRegion(TextureConstants.BACKGROUND_MAIN_MENU), "Test 2", null,
+                    ShaderFactory.create(CINEMATIC_RISING_STAR), false, 0f, null)
+            )));
+    }
+
+    @Override
+    public Screen getScreen() {
+        return currentScreen;
     }
 
     @Override
@@ -41,11 +60,6 @@ public class Main extends Game {
             screen.show();
             screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         }
-    }
-
-    @Override
-    public Screen getScreen() {
-        return currentScreen;
     }
 
     @Override

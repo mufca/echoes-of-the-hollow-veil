@@ -34,7 +34,9 @@ public class ShaderHandler {
     }
 
     public void applyUniforms(float delta) {
-        uniforms.forEach(this::applyUniform);
+        if (uniforms != null && !uniforms.isEmpty()) {
+            uniforms.forEach(this::applyUniform);
+        }
         applyElapsedUniform(delta);
     }
 
@@ -48,6 +50,7 @@ public class ShaderHandler {
 
     private void applyUniform(String uniform, Object value) {
         switch (value) {
+            case Integer intValue -> shader.setUniformi(uniform, intValue);
             case Float floatValue -> shader.setUniformf(uniform, floatValue);
             case Vector2 vector2 -> shader.setUniformf(uniform, vector2);
             case Vector3 vector3 -> shader.setUniformf(uniform, vector3);

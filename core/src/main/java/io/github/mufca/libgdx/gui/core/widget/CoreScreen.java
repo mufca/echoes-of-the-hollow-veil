@@ -1,7 +1,7 @@
 package io.github.mufca.libgdx.gui.core.widget;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,7 +16,7 @@ import java.util.List;
 
 import static com.badlogic.gdx.graphics.GL32.GL_COLOR_BUFFER_BIT;
 
-public abstract class CoreScreen implements Screen {
+public abstract class CoreScreen extends ScreenAdapter {
     protected Stage stage;
     protected FrameBuffer frameBufferToDraw, frameBufferToRead;
     private TextureRegion drawRegion;
@@ -82,32 +82,26 @@ public abstract class CoreScreen implements Screen {
             FrameBuffer tmp = frameBufferToDraw;
             frameBufferToDraw = frameBufferToRead;
             frameBufferToRead = tmp;
-
-
         }
     }
 
     private void captureToBufferWhenNeeded() {
-        if (postProcessingShaders.size() == 1) {
-            screenBatch.setShader(postProcessingShaders.getFirst().getShader());
-        } else if (postProcessingShaders.size() > 1) {
+        if (!postProcessingShaders.isEmpty()) {
             frameBufferToDraw.begin();
         }
     }
 
     private void finishCapturingAndDoPostProcessing(float delta) {
-        if (postProcessingShaders.size() > 1) {
+        if (!postProcessingShaders.isEmpty()) {
             frameBufferToDraw.end();
             postProcessing(postProcessingShaders, delta);
             drawAfterPostProcessing();
-        } else if (postProcessingShaders.size() == 1) {
-            screenBatch.setShader(null); // reset shader to avoid leakage
         }
     }
 
     private void drawAfterPostProcessing() {
         if (drawRegion == null) {
-            throw new IllegalStateException("drawRegion is null. Did you forget to call initializeShaders()?");
+            throw new IllegalStateException("drawRegion is null. Did you forget to call super.show()?");
         }
         screenBatch.begin();
         screenBatch.draw(drawRegion, 0, 0);
@@ -124,21 +118,6 @@ public abstract class CoreScreen implements Screen {
     public void show() {
         initializeStageAndInputs();
         initializeShaders();
-    }
-
-    @Override
-    public void hide() {
-        // Called when current screen changes and this one is no longer the current screen
-    }
-
-    @Override
-    public void pause() {
-        // Called when the application is paused
-    }
-
-    @Override
-    public void resume() {
-        // Called when the application is resumed from a paused state
     }
 
     @Override

@@ -24,7 +24,6 @@ import static io.github.mufca.libgdx.datastructure.keyprovider.KeyboardLayout.QW
 import static io.github.mufca.libgdx.gui.core.traversal.Direction.HORIZONTAL;
 import static io.github.mufca.libgdx.gui.core.traversal.Direction.VERTICAL;
 import static io.github.mufca.libgdx.shaders.ShaderType.WIDGET_HIGHLIGHT;
-import static io.github.mufca.libgdx.shaders.ShaderType.WIDGET_STROKE;
 
 public class YetAnotherTestScreen extends CoreScreen {
     TraversalRoot root = new TraversalRoot();
@@ -33,7 +32,7 @@ public class YetAnotherTestScreen extends CoreScreen {
     KeyProvider provider = new KeyProvider(QWERTY_ENGLISH);
     Command emptyCommand = new EmptyCommand();
     ShaderHandler focus = new ShaderHandler(ShaderFactory.create(WIDGET_HIGHLIGHT));
-    ShaderHandler stroke = new ShaderHandler(ShaderFactory.create(WIDGET_STROKE));
+//    ShaderHandler stroke = new ShaderHandler(ShaderFactory.create(WIDGET_STROKE));
 
     List<String> stringLiterals = List.of(
         "Oto jakieś", "proste labelki", "obrazujące", "działanie komponentów", "zgrupowanych",
@@ -81,14 +80,14 @@ public class YetAnotherTestScreen extends CoreScreen {
             }
         });
         initializeShaders();
-        setPostProcessingShaders(List.of(stroke, focus));
+        setPostProcessingShaders(List.of(/*stroke,*/ focus));
     }
 
     @Override
     public void render(float delta) {
         updateCurrentWidgets();
         focus.baseOnActor(currentWidget);
-        stroke.baseOnActor(currentTable);
+//        stroke.baseOnActor(currentTable);
         super.render(delta);
     }
 
@@ -98,7 +97,7 @@ public class YetAnotherTestScreen extends CoreScreen {
             focus.resetElapsed();
             if (currentTable != currentWidget.getParent()) {
                 currentTable = currentWidget.getParent();
-                stroke.resetElapsed();
+//                stroke.resetElapsed();
             }
         }
     }
