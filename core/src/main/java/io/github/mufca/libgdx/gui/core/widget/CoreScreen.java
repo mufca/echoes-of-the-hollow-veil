@@ -2,10 +2,12 @@ package io.github.mufca.libgdx.gui.core.widget;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.mufca.libgdx.shaders.ShaderHandler;
@@ -15,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.badlogic.gdx.graphics.GL32.GL_COLOR_BUFFER_BIT;
+import static com.badlogic.gdx.graphics.Texture.TextureFilter.Linear;
+import static com.badlogic.gdx.graphics.Texture.TextureWrap.ClampToEdge;
 
 public abstract class CoreScreen extends ScreenAdapter {
     protected Stage stage;
@@ -30,11 +34,24 @@ public abstract class CoreScreen extends ScreenAdapter {
         screenBatch = new SpriteBatch();
     }
 
+    private void updateScreenBatchProjection() {
+        if (screenBatch != null) {
+            screenBatch.setProjectionMatrix(
+                new Matrix4().setToOrtho2D(
+                    0, 0,
+                    Gdx.graphics.getBackBufferWidth(),
+                    Gdx.graphics.getBackBufferHeight()
+                )
+            );
+        }
+    }
+
     @Override
     public void resize(int width, int height) {
         if (stage != null) {
             stage.getViewport().update(width, height, true);
             updateFrameBuffers();
+            updateScreenBatchProjection();
         }
     }
 
@@ -56,7 +73,10 @@ public abstract class CoreScreen extends ScreenAdapter {
     }
 
     private FrameBuffer getNewFrameBuffer() {
-        return new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        return new FrameBuffer(Pixmap.Format.RGBA8888,
+            Gdx.graphics.getBackBufferWidth(),
+            Gdx.graphics.getBackBufferHeight(),
+            false);
     }
 
     private TextureRegion getFBRegion(FrameBuffer frameBuffer) {
@@ -64,8 +84,14 @@ public abstract class CoreScreen extends ScreenAdapter {
     }
 
     private void updateFrameBuffers() {
+        if (frameBufferToDraw != null) frameBufferToDraw.dispose();
+        if (frameBufferToRead != null) frameBufferToRead.dispose();
         frameBufferToRead = getNewFrameBuffer();
         frameBufferToDraw = getNewFrameBuffer();
+        frameBufferToRead.getColorBufferTexture().setFilter(Linear, Linear);
+        frameBufferToDraw.getColorBufferTexture().setFilter(Linear, Linear);
+        frameBufferToRead.getColorBufferTexture().setWrap(ClampToEdge, ClampToEdge);
+        frameBufferToDraw.getColorBufferTexture().setWrap(ClampToEdge, ClampToEdge);
     }
 
     private void postProcessing(List<ShaderHandler> shaders, float delta) {
@@ -88,6 +114,7 @@ public abstract class CoreScreen extends ScreenAdapter {
     private void captureToBufferWhenNeeded() {
         if (!postProcessingShaders.isEmpty()) {
             frameBufferToDraw.begin();
+            Gdx.gl.glViewport(0, 0, frameBufferToDraw.getWidth(), frameBufferToDraw.getHeight());
         }
     }
 
@@ -103,8 +130,18 @@ public abstract class CoreScreen extends ScreenAdapter {
         if (drawRegion == null) {
             throw new IllegalStateException("drawRegion is null. Did you forget to call super.show()?");
         }
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
+        Gdx.gl.glDisable(GL32.GL_SCISSOR_TEST);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
+
         screenBatch.begin();
-        screenBatch.draw(drawRegion, 0, 0);
+        screenBatch.draw(
+            drawRegion,
+            0, 0,
+            Gdx.graphics.getBackBufferWidth(),
+            Gdx.graphics.getBackBufferHeight()
+        );
         screenBatch.end();
     }
 
@@ -118,6 +155,12 @@ public abstract class CoreScreen extends ScreenAdapter {
     public void show() {
         initializeStageAndInputs();
         initializeShaders();
+        updateScreenBatchProjection();
+        stage.getViewport().update(
+            Gdx.graphics.getBackBufferWidth(),
+            Gdx.graphics.getBackBufferHeight(),
+            true
+        );
     }
 
     @Override

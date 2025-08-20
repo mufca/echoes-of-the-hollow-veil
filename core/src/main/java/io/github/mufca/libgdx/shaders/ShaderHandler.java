@@ -1,12 +1,12 @@
 package io.github.mufca.libgdx.shaders;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.Vector4;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import io.github.mufca.libgdx.util.LogHelper;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -58,7 +58,7 @@ public class ShaderHandler {
             case Color color -> shader.setUniformf(uniform, color);
             default -> throw new IllegalStateException("Illegal %s uniform value: %s".formatted(uniform, value));
         }
-        Gdx.app.debug("ShaderHandler", "Applying " + uniform + " with: " + value);
+        LogHelper.debug(this, "Applying " + uniform + " with: " + value);
     }
 
     public void resetElapsed() {

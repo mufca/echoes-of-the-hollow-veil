@@ -10,13 +10,16 @@ import io.github.mufca.libgdx.datastructure.lowlevel.CursorList;
 import io.github.mufca.libgdx.gui.core.widget.CoreScreen;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 import io.github.mufca.libgdx.shaders.ShaderHandler;
+import io.github.mufca.libgdx.util.LogHelper;
 
 import java.util.List;
 
 public class CinematicScreen extends CoreScreen {
 
+    private static final String SCENE_IMAGE_AFTER_LAYOUT_SIZE = "Scene image after layout: X:%.0f Y:%.0f %.0fx%.0f";
     private final CursorList<CinematicStep> steps;
-    private final Image backgroundImage = new Image();
+    private final Image sceneMainImage = new Image();
+    private final Table root = new Table();
     private final CoreTypingLabel textLabel = new CoreTypingLabel("");
     private ShaderHandler shaderHandler;
 
@@ -30,9 +33,8 @@ public class CinematicScreen extends CoreScreen {
     @Override
     public void show() {
         super.show();
-        Table root = new Table();
         root.setFillParent(true);
-        root.add(backgroundImage).expand().fill().row();
+        root.add(sceneMainImage).expand().fill().row();
         root.add(textLabel).pad(50f);
 
         stage.addActor(root);
@@ -52,8 +54,7 @@ public class CinematicScreen extends CoreScreen {
                 return true;
             }
         });
-
-        showStep();
+        Gdx.app.postRunnable(this::showStep);
     }
 
     @Override
@@ -75,13 +76,19 @@ public class CinematicScreen extends CoreScreen {
 
         CinematicStep step = steps.current().orElseThrow();
 
-        backgroundImage.setDrawable(new TextureRegionDrawable(step.background()));
+        sceneMainImage.setDrawable(new TextureRegionDrawable(step.background()));
+        LogHelper.debug(this,
+                SCENE_IMAGE_AFTER_LAYOUT_SIZE.formatted(
+                        sceneMainImage.getX(),
+                        sceneMainImage.getY(),
+                        sceneMainImage.getWidth(),
+                        sceneMainImage.getHeight()));
         textLabel.restart(step.text());
         if (step.narration() != null) step.narration().play();
 
         if (step.shader() != null) {
             shaderHandler = new ShaderHandler(step.shader());
-            shaderHandler.baseOnActor(backgroundImage);             // any actor in stage will do
+            shaderHandler.baseOnActor(sceneMainImage);             // any actor in stage will do
             setPostProcessingShaders(List.of(shaderHandler));
         } else {
             setPostProcessingShaders(List.of());

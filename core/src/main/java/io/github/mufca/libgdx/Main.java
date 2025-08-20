@@ -1,6 +1,5 @@
 package io.github.mufca.libgdx;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
@@ -11,6 +10,7 @@ import io.github.mufca.libgdx.gui.screen.Story;
 import io.github.mufca.libgdx.gui.screen.cinematic.CinematicScreen;
 import io.github.mufca.libgdx.gui.screen.cinematic.CinematicStep;
 import io.github.mufca.libgdx.shaders.ShaderFactory;
+import io.github.mufca.libgdx.util.LogHelper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,11 +23,14 @@ import static io.github.mufca.libgdx.shaders.ShaderType.CINEMATIC_RISING_STAR;
  */
 public class Main extends Game {
     public static final Story storyHook = new Story();
+    private static final String AVAILABLE_DISPLAY_MODES = "Available display modes: %s";
+    private static final String CHANGED_TO_DISPLAY_MODE_DIMENSIONS = "Changed to display mode dimensions: %dx%d";
+    private static final String NO_DISPLAY_MODES_AVAILABLE = "No display modes available";
     private Screen currentScreen;
 
     @Override
     public void create() {
-        Gdx.app.setLogLevel(Application.LOG_DEBUG);
+//        Gdx.app.setLogLevel(Application.LOG_DEBUG);
         changeToBorderless();
         TextureConstants.init();
         // Set the initial screen
@@ -58,7 +61,6 @@ public class Main extends Game {
         this.currentScreen = screen;
         if (screen != null) {
             screen.show();
-            screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         }
     }
 
@@ -101,10 +103,14 @@ public class Main extends Game {
     }
 
     private void changeToBorderless() {
+        LogHelper.debug(this, AVAILABLE_DISPLAY_MODES
+            .formatted(Arrays.toString(Gdx.graphics.getDisplayModes())));
         Graphics.DisplayMode displayMode = Arrays.stream(Gdx.graphics.getDisplayModes())
             .reduce((first, second) -> second)
-            .orElseThrow(() -> new IllegalStateException("No display modes available"));
+            .orElseThrow(() -> new IllegalStateException(NO_DISPLAY_MODES_AVAILABLE));
         Gdx.graphics.setUndecorated(true);
         Gdx.graphics.setWindowedMode(displayMode.width, displayMode.height);
+        LogHelper.debug(this, CHANGED_TO_DISPLAY_MODE_DIMENSIONS
+            .formatted(displayMode.width, displayMode.height));
     }
 }
