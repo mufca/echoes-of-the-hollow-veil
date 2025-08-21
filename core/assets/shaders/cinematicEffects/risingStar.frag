@@ -59,8 +59,10 @@ void main() {
         float sharpness = .0015 / u_resolution.y;
         // Time shift of the ray
         float timeShift = u_time + float(currentRayIndex);
+        // Pulsation factor based on ray's growth phase
+        float pulsation = pow(abs(sin(timeShift * 1.5)), 2.);
         // Growth factor for ray length (sinusoidal variation per ray)
-        float growth = .2 + .5 * min(.5 + .5 * sin(timeShift), 1.);
+        float growth = .2 + .25 * (1. + sin(timeShift));
         // Calculate the maximum length of the ray
         float maxRayLength = intensity * .3 * growth;
         // Spacing of the rays dots
@@ -74,25 +76,9 @@ void main() {
         if (abs(rayAlign) <= maxRayLength) {
             // Length fade of the ray dot
             float lengthFade = 1. - smoothstep(.0, maxRayLength, abs(rayAlign));
-            // Local coordinates of the ray in the ray's space
-            vec2 localRaySpace = vec2(rayAlign, dot(offsetFromCenter, vec2(-rayDirection.y, rayDirection.x)));
-            // Grid index of the ray dot
-            vec2 gridIndex = floor(localRaySpace / raySpacing);
-            // Jittered offset for dot center (adds variation to spacing)
-            vec2 jitteredCenter = (gridIndex + .5 + rand(gridIndex)) * raySpacing;
-            // Relative position of the pixel to the ray dot
-            vec2 relativeToDot = localRaySpace - jitteredCenter;
-            // Distance from the ray dot
-            float relativeDotDistance = length(relativeToDot / vec2(1., .4));
-            // Mask of the ray dot
-            float dotMask = smoothstep(rayRadius, 0., relativeDotDistance);
-            // Brightness of the ray dot
-            float brightness = rayFalloff * lengthFade * dotMask;
-            // Outer glow of the ray dot
-            float outerGlow = rayFalloff * lengthFade;
-
-            // Add the color of the ray and the ray dots to the final color
-            rayColor += vec3(1.5) * brightness;
+            // Outer glow of the ray
+            float outerGlow = rayFalloff * lengthFade * (.6 + 1.2 * pulsation);
+            // Ray color based on outer glow
             rayColor += vec3(.1) * outerGlow;
         }
     }
