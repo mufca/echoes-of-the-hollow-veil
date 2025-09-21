@@ -4,8 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import io.github.mufca.libgdx.constant.AssetConstants;
+import io.github.mufca.libgdx.gui.screen.ScreenSelector;
 import io.github.mufca.libgdx.gui.screen.Story;
-import io.github.mufca.libgdx.gui.screen.mainmenu.MainMenu;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
@@ -18,15 +18,7 @@ public class Main extends Game {
     @Override
     public void create() {
         AssetConstants.initialize();
-        // Set the initial screen
-//        setScreen(new YetAnotherTestScreen());
-        setScreen(new MainMenu());
-//        setScreen(new CinematicScreen(
-//            List.of(new CinematicStep(new TextureRegion(AssetConstants.BACKGROUND_MAIN_MENU), "Test", null,
-//                    ShaderFactory.create(CINEMATIC_RISING_STAR), false, 0f, null),
-//                new CinematicStep(new TextureRegion(AssetConstants.BACKGROUND_MAIN_MENU), "Test 2", null,
-//                    ShaderFactory.create(CINEMATIC_RISING_STAR), false, 0f, null)
-//            )));
+        setScreen(new ScreenSelector(this));
     }
 
     @Override

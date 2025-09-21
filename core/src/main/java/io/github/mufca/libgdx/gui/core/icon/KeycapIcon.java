@@ -65,7 +65,7 @@ public class KeycapIcon extends Actor {
     }
 
     private float centerY() {
-        return getY() + layout.getHeight() / 3.6f;
+        return getY() + layout.getHeight() / 4f;
     }
 
     private void generateKeycapTexture(int width, int height) {
