@@ -2,7 +2,6 @@ package io.github.mufca.libgdx.gui.screen.mainmenu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -14,8 +13,9 @@ import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 
 import static com.badlogic.gdx.graphics.Texture.TextureFilter.Linear;
 import static com.badlogic.gdx.utils.Scaling.none;
-import static io.github.mufca.libgdx.constant.TextureConstants.BACKGROUND_MAIN_MENU;
-import static io.github.mufca.libgdx.constant.TextureConstants.LEAF;
+import static io.github.mufca.libgdx.constant.AssetConstants.BACKGROUND_MAIN_MENU;
+import static io.github.mufca.libgdx.constant.AssetConstants.LEAF;
+import static io.github.mufca.libgdx.util.UIHelper.BLACK_70A;
 import static io.github.mufca.libgdx.util.UIHelper.doNothing;
 import static io.github.mufca.libgdx.util.UIHelper.getFilledColor;
 import static io.github.mufca.libgdx.util.UIHelper.getTopLeftPaddings;
@@ -92,7 +92,7 @@ public class MainMenu extends CoreScreen {
         this.leaf = new TextureRegion(LEAF);
 
         this.background.setScaling(none);
-        this.menu.setBackground(getFilledColor(Color.BLACK));
+        this.menu.setBackground(getFilledColor(BLACK_70A));
     }
 
     private void stageBackground() {

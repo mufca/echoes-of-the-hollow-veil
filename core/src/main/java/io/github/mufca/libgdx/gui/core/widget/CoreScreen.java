@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.badlogic.gdx.graphics.GL32.GL_COLOR_BUFFER_BIT;
-import static com.badlogic.gdx.graphics.Texture.TextureFilter.Linear;
+import static com.badlogic.gdx.graphics.Texture.TextureFilter.Nearest;
 import static com.badlogic.gdx.graphics.Texture.TextureWrap.ClampToEdge;
 
 public abstract class CoreScreen extends ScreenAdapter {
@@ -30,7 +31,7 @@ public abstract class CoreScreen extends ScreenAdapter {
 
     public void initializeShaders() {
         updateFrameBuffers();
-        drawRegion = getFBRegion(frameBufferToDraw);
+        drawRegion = createFlippedRegion(frameBufferToDraw);
         screenBatch = new SpriteBatch();
     }
 
@@ -73,14 +74,10 @@ public abstract class CoreScreen extends ScreenAdapter {
     }
 
     private FrameBuffer getNewFrameBuffer() {
-        return new FrameBuffer(Pixmap.Format.RGBA8888,
+        return new FrameBuffer(Pixmap.Format.RGB888,
             Gdx.graphics.getBackBufferWidth(),
             Gdx.graphics.getBackBufferHeight(),
             false);
-    }
-
-    private TextureRegion getFBRegion(FrameBuffer frameBuffer) {
-        return new TextureRegion(frameBuffer.getColorBufferTexture());
     }
 
     private void updateFrameBuffers() {
@@ -88,8 +85,8 @@ public abstract class CoreScreen extends ScreenAdapter {
         if (frameBufferToRead != null) frameBufferToRead.dispose();
         frameBufferToRead = getNewFrameBuffer();
         frameBufferToDraw = getNewFrameBuffer();
-        frameBufferToRead.getColorBufferTexture().setFilter(Linear, Linear);
-        frameBufferToDraw.getColorBufferTexture().setFilter(Linear, Linear);
+        frameBufferToRead.getColorBufferTexture().setFilter(Nearest, Nearest);
+        frameBufferToDraw.getColorBufferTexture().setFilter(Nearest, Nearest);
         frameBufferToRead.getColorBufferTexture().setWrap(ClampToEdge, ClampToEdge);
         frameBufferToDraw.getColorBufferTexture().setWrap(ClampToEdge, ClampToEdge);
     }
@@ -146,7 +143,8 @@ public abstract class CoreScreen extends ScreenAdapter {
     }
 
     private TextureRegion createFlippedRegion(FrameBuffer buffer) {
-        TextureRegion region = new TextureRegion(buffer.getColorBufferTexture());
+        Texture texture = buffer.getColorBufferTexture();
+        TextureRegion region = new TextureRegion(texture, 0, 0, texture.getWidth(), texture.getHeight());
         region.flip(false, true);
         return region;
     }

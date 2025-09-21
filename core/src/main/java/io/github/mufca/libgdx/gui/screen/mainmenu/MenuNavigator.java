@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 
-import static io.github.mufca.libgdx.util.UIHelper.BLACK_60A;
+import static io.github.mufca.libgdx.util.UIHelper.BLACK_70A;
 import static io.github.mufca.libgdx.util.UIHelper.getFilledColor;
 
 /**
@@ -32,7 +32,7 @@ public class MenuNavigator implements InputProcessor {
 
         // Create detail panel (hidden by default)
         detailTable = new Table();
-        detailTable.setBackground(getFilledColor(BLACK_60A));
+        detailTable.setBackground(getFilledColor(BLACK_70A));
         detailTable.setVisible(false);
         detailTable.pad(30f, 30f, 30f, 30f);
         this.paddingContainer.add(new Table()).padLeft(30f);

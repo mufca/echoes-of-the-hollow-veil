@@ -5,12 +5,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
-import io.github.mufca.libgdx.constant.TextureConstants;
+import io.github.mufca.libgdx.constant.AssetConstants;
 import io.github.mufca.libgdx.temporarytrash.ParagraphParameters;
 import io.github.mufca.libgdx.temporarytrash.TextProcessor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import static io.github.mufca.libgdx.constant.TextureConstants.ORC_FEMALE_PORTRAIT;
+import static io.github.mufca.libgdx.constant.AssetConstants.ORC_FEMALE_PORTRAIT;
 
 public class Paragraph extends Table {
     private final CoreTypingLabel typingLabel;
@@ -18,7 +18,7 @@ public class Paragraph extends Table {
 
     public Paragraph(ParagraphParameters paragraphParameters) {
         super();
-        NinePatch ninePatch = new NinePatch(TextureConstants.NINE_PATCH_FRAME, 96, 95, 105, 96);
+        NinePatch ninePatch = new NinePatch(AssetConstants.NINE_PATCH_FRAME, 96, 95, 105, 96);
         NinePatchDrawable drawable = new NinePatchDrawable(ninePatch);
         this.background(drawable);
         String processedText = TextProcessor.processText(paragraphParameters.text());

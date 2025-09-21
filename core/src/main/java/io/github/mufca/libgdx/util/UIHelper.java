@@ -12,17 +12,20 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static io.github.mufca.libgdx.constant.PathConstants.NOTO_SANS_FNT;
-import static io.github.mufca.libgdx.constant.PathConstants.NOTO_SANS_PNG;
+import static com.badlogic.gdx.graphics.Texture.TextureFilter.Nearest;
+import static io.github.mufca.libgdx.constant.AssetConstants.NOTO_FONT_HANDLE;
+import static io.github.mufca.libgdx.constant.FontConstants.getDefaultFontParameters;
 
 public class UIHelper {
-    public final static Color BLACK_60A = new Color(0, 0, 0, 0.6f);
+    public final static Color BLACK_70A = new Color(0, 0, 0, 0.7f);
     private final static Set<FilledColor> colorTextures = new HashSet<>();
     private static Font defaultFont;
 
     public static Font getDefaultFont() {
         if (defaultFont == null) {
-            defaultFont = new Font(NOTO_SANS_FNT, NOTO_SANS_PNG);
+            FreeTypeFontGenerator generator = new FreeTypeFontGenerator(NOTO_FONT_HANDLE);
+            defaultFont = new Font(generator.generateFont(getDefaultFontParameters()));
+            defaultFont.setTextureFilter(Nearest, Nearest);
         }
         return defaultFont;
     }

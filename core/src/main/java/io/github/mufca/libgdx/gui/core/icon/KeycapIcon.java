@@ -38,7 +38,7 @@ public class KeycapIcon extends Actor {
         }
 
         Vector2 pos = localToStageCoordinates(new Vector2(0, 0));
-        batch.setColor(Color.WHITE); // zawsze na biało, shader zrobi swoje
+        batch.setColor(Color.WHITE);
         batch.draw(keycapTexture, pos.x, pos.y, getWidth(), getHeight());
         layout.clear();
         font.markup(sign, this.layout);
@@ -69,7 +69,7 @@ public class KeycapIcon extends Actor {
     }
 
     private void generateKeycapTexture(int width, int height) {
-        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGB888);
         pixmap.setBlending(Pixmap.Blending.None);
 
         // Outer

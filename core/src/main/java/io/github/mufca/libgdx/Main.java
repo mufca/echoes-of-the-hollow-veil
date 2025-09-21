@@ -2,20 +2,10 @@ package io.github.mufca.libgdx;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import io.github.mufca.libgdx.constant.TextureConstants;
+import io.github.mufca.libgdx.constant.AssetConstants;
 import io.github.mufca.libgdx.gui.screen.Story;
-import io.github.mufca.libgdx.gui.screen.cinematic.CinematicScreen;
-import io.github.mufca.libgdx.gui.screen.cinematic.CinematicStep;
-import io.github.mufca.libgdx.shaders.ShaderFactory;
-import io.github.mufca.libgdx.util.LogHelper;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static io.github.mufca.libgdx.shaders.ShaderType.CINEMATIC_RISING_STAR;
+import io.github.mufca.libgdx.gui.screen.mainmenu.MainMenu;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
@@ -23,25 +13,20 @@ import static io.github.mufca.libgdx.shaders.ShaderType.CINEMATIC_RISING_STAR;
  */
 public class Main extends Game {
     public static final Story storyHook = new Story();
-    private static final String AVAILABLE_DISPLAY_MODES = "Available display modes: %s";
-    private static final String CHANGED_TO_DISPLAY_MODE_DIMENSIONS = "Changed to display mode dimensions: %dx%d";
-    private static final String NO_DISPLAY_MODES_AVAILABLE = "No display modes available";
     private Screen currentScreen;
 
     @Override
     public void create() {
-//        Gdx.app.setLogLevel(Application.LOG_DEBUG);
-        changeToBorderless();
-        TextureConstants.init();
+        AssetConstants.initialize();
         // Set the initial screen
 //        setScreen(new YetAnotherTestScreen());
-//        setScreen(new MainMenu());
-        setScreen(new CinematicScreen(
-            List.of(new CinematicStep(new TextureRegion(TextureConstants.BACKGROUND_MAIN_MENU), "Test", null,
-                    ShaderFactory.create(CINEMATIC_RISING_STAR), false, 0f, null),
-                new CinematicStep(new TextureRegion(TextureConstants.BACKGROUND_MAIN_MENU), "Test 2", null,
-                    ShaderFactory.create(CINEMATIC_RISING_STAR), false, 0f, null)
-            )));
+        setScreen(new MainMenu());
+//        setScreen(new CinematicScreen(
+//            List.of(new CinematicStep(new TextureRegion(AssetConstants.BACKGROUND_MAIN_MENU), "Test", null,
+//                    ShaderFactory.create(CINEMATIC_RISING_STAR), false, 0f, null),
+//                new CinematicStep(new TextureRegion(AssetConstants.BACKGROUND_MAIN_MENU), "Test 2", null,
+//                    ShaderFactory.create(CINEMATIC_RISING_STAR), false, 0f, null)
+//            )));
     }
 
     @Override
@@ -100,17 +85,5 @@ public class Main extends Game {
             currentScreen.hide();
             currentScreen.dispose();
         }
-    }
-
-    private void changeToBorderless() {
-        LogHelper.debug(this, AVAILABLE_DISPLAY_MODES
-            .formatted(Arrays.toString(Gdx.graphics.getDisplayModes())));
-        Graphics.DisplayMode displayMode = Arrays.stream(Gdx.graphics.getDisplayModes())
-            .reduce((first, second) -> second)
-            .orElseThrow(() -> new IllegalStateException(NO_DISPLAY_MODES_AVAILABLE));
-        Gdx.graphics.setUndecorated(true);
-        Gdx.graphics.setWindowedMode(displayMode.width, displayMode.height);
-        LogHelper.debug(this, CHANGED_TO_DISPLAY_MODE_DIMENSIONS
-            .formatted(displayMode.width, displayMode.height));
     }
 }
