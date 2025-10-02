@@ -42,28 +42,32 @@ public class LazyLocationLoaderTest {
     public static Stream<Arguments> locationProvider() {
         return Stream.of(
             Arguments.of(FOREST_GLADE_0001, "Shady forest glade",
-                "A quiet glade surrounded by tall oaks. The ground is covered with moss, and you hear the distant sound of running water.",
+                "A quiet glade surrounded by tall oaks. The ground is covered with moss, and you hear the distant sound" +
+                " of running water.",
                 List.of(
                     new Exit("east", FOREST_GLADE_0002),
                     new Exit("south-east", FOREST_GLADE_0004),
                     new Exit("south", FOREST_GLADE_0003)
                 )),
             Arguments.of(FOREST_GLADE_0002, "Glade with a fallen tree",
-                "This glade is marked by a massive fallen oak lying across the clearing. Birds nest among its broken branches.",
+                "This glade is marked by a massive fallen oak lying across the clearing. Birds nest among its broken " +
+                "branches.",
                 List.of(
                     new Exit("west", FOREST_GLADE_0001),
                     new Exit("south-west", FOREST_GLADE_0003),
                     new Exit("south", FOREST_GLADE_0004)
                 )),
             Arguments.of(FOREST_GLADE_0003, "Glade with a stone circle",
-                "Several mossy stones are arranged in a rough circle here. The air feels colder, as if the place held ancient secrets.",
+                "Several mossy stones are arranged in a rough circle here. The air feels colder, as if the place held" +
+                " ancient secrets.",
                 List.of(
                     new Exit("north", FOREST_GLADE_0001),
                     new Exit("north-east", FOREST_GLADE_0002),
                     new Exit("east", FOREST_GLADE_0004)
                 )),
             Arguments.of(FOREST_GLADE_0004, "Sunny forest glade",
-                "Sunlight pierces through the canopy above, illuminating wildflowers in vivid colors. The buzzing of bees fills the clearing.",
+                "Sunlight pierces through the canopy above, illuminating wildflowers in vivid colors. The buzzing of " +
+                "bees fills the clearing.",
                 List.of(
                     new Exit("north-west", FOREST_GLADE_0001),
                     new Exit("north", FOREST_GLADE_0002),
