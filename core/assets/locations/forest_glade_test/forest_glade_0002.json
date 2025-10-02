@@ -1,0 +1,13 @@
+{
+  "id": "forest_glade_0002",
+  "shortDescription": "Glade with a fallen tree",
+  "longDescription": "This glade is marked by a massive fallen oak lying across the clearing. Birds nest among its broken branches.",
+  "exits": [
+    { "name": "west", "targetId": "forest_glade_0001" },
+    { "name": "south-west", "targetId": "forest_glade_0003" },
+    { "name": "south", "targetId": "forest_glade_0004" }
+  ],
+  "characters": [],
+  "objects": [],
+  "features": {}
+}

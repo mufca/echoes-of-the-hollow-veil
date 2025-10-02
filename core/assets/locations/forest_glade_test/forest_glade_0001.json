@@ -1,0 +1,13 @@
+{
+  "id": "forest_glade_0001",
+  "shortDescription": "Shady forest glade",
+  "longDescription": "A quiet glade surrounded by tall oaks. The ground is covered with moss, and you hear the distant sound of running water.",
+  "exits": [
+    { "name": "east", "targetId": "forest_glade_0002" },
+    { "name": "south-east", "targetId": "forest_glade_0004"},
+    { "name": "south", "targetId": "forest_glade_0003" }
+  ],
+  "characters": [],
+  "objects": [],
+  "features": {}
+}

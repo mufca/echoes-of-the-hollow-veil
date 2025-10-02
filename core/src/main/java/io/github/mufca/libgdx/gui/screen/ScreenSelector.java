@@ -12,7 +12,9 @@ import io.github.mufca.libgdx.gui.screen.cinematic.CinematicScreen;
 import io.github.mufca.libgdx.gui.screen.cinematic.CinematicStep;
 import io.github.mufca.libgdx.gui.screen.mainmenu.MainMenu;
 import io.github.mufca.libgdx.shaders.ShaderFactory;
+import lombok.SneakyThrows;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.badlogic.gdx.Input.Keys.DOWN;
@@ -22,14 +24,19 @@ import static io.github.mufca.libgdx.shaders.ShaderType.CINEMATIC_RISING_STAR;
 
 public class ScreenSelector extends CoreScreen {
 
+    private static final String MAIN_MENU = "MainMenu";
+    private static final String YET_ANOTHER_TEST_SCREEN = "YetAnotherTestScreen";
+    private static final String CINEMATIC_SCREEN = "CinematicScreen";
+    private static final String FOREST_GLADE_SCREEN = "ForestGladeScreen";
     private final Game game;
     private final SpriteBatch batch;
     private final BitmapFont font;
 
     private final String[] options = {
-        "MainMenu",
-        "YetAnotherTestScreen",
-        "CinematicScreen"
+        MAIN_MENU,
+        YET_ANOTHER_TEST_SCREEN,
+        CINEMATIC_SCREEN,
+        FOREST_GLADE_SCREEN
     };
 
     private int selected = 0;
@@ -40,6 +47,7 @@ public class ScreenSelector extends CoreScreen {
         this.font = new BitmapFont();
     }
 
+    @SneakyThrows
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0,0,0,1);
@@ -59,7 +67,7 @@ public class ScreenSelector extends CoreScreen {
         handleInput();
     }
 
-    private void handleInput() {
+    private void handleInput() throws IOException {
         if (Gdx.input.isKeyJustPressed(UP)) {
             selected = (selected - 1 + options.length) % options.length;
         }
@@ -68,9 +76,10 @@ public class ScreenSelector extends CoreScreen {
         }
         if (Gdx.input.isKeyJustPressed(ENTER)) {
             switch (options[selected]) {
-                case "MainMenu" -> game.setScreen(new MainMenu());
-                case "YetAnotherTestScreen" -> game.setScreen(new YetAnotherTestScreen());
-                case "CinematicScreen" -> game.setScreen(
+                case MAIN_MENU -> game.setScreen(new MainMenu());
+                case YET_ANOTHER_TEST_SCREEN -> game.setScreen(new YetAnotherTestScreen());
+                case FOREST_GLADE_SCREEN -> game.setScreen(new ForestGladeScreen());
+                case CINEMATIC_SCREEN -> game.setScreen(
                     new CinematicScreen(
                         List.of(
                             new CinematicStep(
