@@ -1,0 +1,15 @@
+{
+  "id": "forest_glade_0004",
+  "shortDescription": "Sunny forest glade",
+  "longDescription": "Sunlight pierces through the canopy above, illuminating wildflowers in vivid colors. The buzzing of bees fills the clearing.",
+  "exits": [
+    { "name": "north-west", "targetId": "forest_glade_0001" },
+    { "name": "north", "targetId": "forest_glade_0002" },
+    { "name": "west", "targetId": "forest_glade_0003" }
+
+  ],
+  "characters": [],
+  "objects": [],
+  "features": {}
+}
+
