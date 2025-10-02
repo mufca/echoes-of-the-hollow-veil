@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -125,9 +125,14 @@ public class LazyLocationLoaderTest {
 
     @Test
     public void shouldThrowExceptionWhenFileIsNotFound() {
+        // WHEN
         LazyLocationLoader loader = new LazyLocationLoader(LOCATIONS_FOREST_GLADE_TEST);
-        assertThatThrownBy(() -> loader.getLocation(INVALID_FILENAME))
-            .isInstanceOf(FileNotFoundException.class).hasMessageContaining(MISSING_FILE);
+        Throwable thrown = catchThrowable(() -> loader.getLocation(INVALID_FILENAME));
+
+        // THEN
+        assertThat(thrown)
+            .isInstanceOf(FileNotFoundException.class)
+            .hasMessageContaining(MISSING_FILE);
     }
 
     private void loadAndAssertProperId(LazyLocationLoader loader, String targetId) throws IOException {
