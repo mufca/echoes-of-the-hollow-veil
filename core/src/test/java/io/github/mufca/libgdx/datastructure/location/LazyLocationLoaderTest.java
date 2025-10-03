@@ -24,6 +24,7 @@ import static org.mockito.Mockito.when;
 public class LazyLocationLoaderTest {
 
     private static final String LOCATIONS_FOREST_GLADE_TEST = "locations/forest_glade_test";
+    private static final String SRC_TEST_RESOURCES = "src/test/resources/";
     private static final String MISSING_FILE = "forest_glade_001.json";
     private static final String INVALID_FILENAME = "forest_glade_001";
     private static final String FOREST_GLADE_0001 = "forest_glade_0001";
@@ -36,14 +37,14 @@ public class LazyLocationLoaderTest {
         // GIVEN
         Gdx.files = Mockito.mock(Files.class);
         when(Gdx.files.internal(anyString()))
-            .thenAnswer(inv -> new FileHandle("src/test/resources/" + inv.getArgument(0)));
+            .thenAnswer(inv -> new FileHandle(SRC_TEST_RESOURCES + inv.getArgument(0)));
     }
 
     public static Stream<Arguments> locationProvider() {
         return Stream.of(
             Arguments.of(FOREST_GLADE_0001, "Shady forest glade",
-                "A quiet glade surrounded by tall oaks. The ground is covered with moss, and you hear the distant sound" +
-                " of running water.",
+                "A quiet glade surrounded by tall oaks. The ground is covered with moss, and you hear the distant " +
+                "sound of running water.",
                 List.of(
                     new Exit("east", FOREST_GLADE_0002),
                     new Exit("south-east", FOREST_GLADE_0004),
@@ -80,13 +81,15 @@ public class LazyLocationLoaderTest {
     public void shouldStartWithClearCache() {
         // WHEN
         LazyLocationLoader loader = new LazyLocationLoader(LOCATIONS_FOREST_GLADE_TEST);
+
         // THEN
         assertThat(loader.getCache()).isEmpty();
     }
 
     @ParameterizedTest
     @MethodSource("locationProvider")
-    public void shouldLoadAndValidateLocations(String locationId, String expectedShort, String expectedLong, List<Exit> exits) throws IOException {
+    public void shouldLoadAndValidateLocations(String locationId, String expectedShort, String expectedLong,
+                                               List<Exit> exits) throws IOException {
         // WHEN
         LazyLocationLoader loader = new LazyLocationLoader(LOCATIONS_FOREST_GLADE_TEST);
         BaseLocation forestGladeLocation = loader.getLocation(locationId);
@@ -102,16 +105,16 @@ public class LazyLocationLoaderTest {
     public void shouldStoreLocationsInCache() throws IOException {
         // WHEN
         LazyLocationLoader loader = new LazyLocationLoader(LOCATIONS_FOREST_GLADE_TEST);
-        loadAndAssertProperId(loader, FOREST_GLADE_0001);
+        loadAndAssertProperId(loader, FOREST_GLADE_0001);   // Loading from file
 
         // THEN
-        assertThat(loader.getCache()).hasSize(1);
+        assertThat(loader.getCache()).hasSize(1); // Cache size is 1
 
         // WHEN
-        loadAndAssertProperId(loader, FOREST_GLADE_0001);
+        loadAndAssertProperId(loader, FOREST_GLADE_0001);  // Loading from cache
 
         // THEN
-        assertThat(loader.getCache()).hasSize(1);  //Still 1.
+        assertThat(loader.getCache()).hasSize(1);  // Cache size should still be 1.
 
         // WHEN
         loadAndAssertProperId(loader, FOREST_GLADE_0002);
