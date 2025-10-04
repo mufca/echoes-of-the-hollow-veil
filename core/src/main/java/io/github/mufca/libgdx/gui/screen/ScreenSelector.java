@@ -28,6 +28,7 @@ public class ScreenSelector extends CoreScreen {
     private static final String YET_ANOTHER_TEST_SCREEN = "YetAnotherTestScreen";
     private static final String CINEMATIC_SCREEN = "CinematicScreen";
     private static final String FOREST_GLADE_SCREEN = "ForestGladeScreen";
+    private static final String MAP_SCREEN = "MapScreen";
     private final Game game;
     private final SpriteBatch batch;
     private final BitmapFont font;
@@ -36,7 +37,8 @@ public class ScreenSelector extends CoreScreen {
         MAIN_MENU,
         YET_ANOTHER_TEST_SCREEN,
         CINEMATIC_SCREEN,
-        FOREST_GLADE_SCREEN
+        FOREST_GLADE_SCREEN,
+        MAP_SCREEN
     };
 
     private int selected = 0;
@@ -79,6 +81,7 @@ public class ScreenSelector extends CoreScreen {
                 case MAIN_MENU -> game.setScreen(new MainMenu());
                 case YET_ANOTHER_TEST_SCREEN -> game.setScreen(new YetAnotherTestScreen());
                 case FOREST_GLADE_SCREEN -> game.setScreen(new ForestGladeScreen());
+                case MAP_SCREEN -> game.setScreen(new MapScreen());
                 case CINEMATIC_SCREEN -> game.setScreen(
                     new CinematicScreen(
                         List.of(
