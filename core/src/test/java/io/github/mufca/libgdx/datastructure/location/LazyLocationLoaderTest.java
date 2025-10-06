@@ -1,9 +1,18 @@
 package io.github.mufca.libgdx.datastructure.location;
 
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,22 +20,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
 public class LazyLocationLoaderTest {
 
-    private static final String LOCATIONS_FOREST_GLADE_TEST = "locations/forest_glade_test";
     private static final String SRC_TEST_RESOURCES = "src/test/resources/";
-    private static final String MISSING_FILE = "forest_glade_001.json";
-    private static final String INVALID_FILENAME = "forest_glade_001";
+    private static final String INVALID_RESOURCE_ENTRY = "forest_glade_001";
     private static final String FOREST_GLADE_0001 = "forest_glade_0001";
     private static final String FOREST_GLADE_0002 = "forest_glade_0002";
     private static final String FOREST_GLADE_0003 = "forest_glade_0003";
@@ -78,9 +75,9 @@ public class LazyLocationLoaderTest {
     }
 
     @Test
-    public void shouldStartWithClearCache() {
+    public void shouldStartWithClearCache() throws IOException {
         // WHEN
-        LazyLocationLoader loader = new LazyLocationLoader(LOCATIONS_FOREST_GLADE_TEST);
+        LazyLocationLoader loader = new LazyLocationLoader();
 
         // THEN
         assertThat(loader.getCache()).isEmpty();
@@ -91,7 +88,7 @@ public class LazyLocationLoaderTest {
     public void shouldLoadAndValidateLocations(String locationId, String expectedShort, String expectedLong,
                                                List<Exit> exits) throws IOException {
         // WHEN
-        LazyLocationLoader loader = new LazyLocationLoader(LOCATIONS_FOREST_GLADE_TEST);
+        LazyLocationLoader loader = new LazyLocationLoader();
         BaseLocation forestGladeLocation = loader.getLocation(locationId);
 
         // THEN
@@ -104,7 +101,7 @@ public class LazyLocationLoaderTest {
     @Test
     public void shouldStoreLocationsInCache() throws IOException {
         // WHEN
-        LazyLocationLoader loader = new LazyLocationLoader(LOCATIONS_FOREST_GLADE_TEST);
+        LazyLocationLoader loader = new LazyLocationLoader();
         loadAndAssertProperId(loader, FOREST_GLADE_0001);   // Loading from file
 
         // THEN
@@ -127,21 +124,21 @@ public class LazyLocationLoaderTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenFileIsNotFound() {
+    public void shouldThrowExceptionWhenFileIsNotFound() throws IOException {
         // WHEN
-        LazyLocationLoader loader = new LazyLocationLoader(LOCATIONS_FOREST_GLADE_TEST);
-        Throwable thrown = catchThrowable(() -> loader.getLocation(INVALID_FILENAME));
+        LazyLocationLoader loader = new LazyLocationLoader();
+        Throwable thrown = catchThrowable(() -> loader.getLocation(INVALID_RESOURCE_ENTRY));
 
         // THEN
         assertThat(thrown)
             .isInstanceOf(FileNotFoundException.class)
-            .hasMessageContaining(MISSING_FILE);
+            .hasMessageContaining(INVALID_RESOURCE_ENTRY);
     }
 
     private void loadAndAssertProperId(LazyLocationLoader loader, String targetId) throws IOException {
         BaseLocation location = loader.getLocation(targetId);
         assertThat(location).isNotNull();
-        assertThat(location.getId()).isEqualTo(targetId);
+        assertThat(location.getTargetId()).isEqualTo(targetId);
     }
 
 }

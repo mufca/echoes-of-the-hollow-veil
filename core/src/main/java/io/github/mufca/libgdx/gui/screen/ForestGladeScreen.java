@@ -35,7 +35,7 @@ public class ForestGladeScreen extends ScreenAdapter {
     }
 
     public ForestGladeScreen() throws IOException {
-        loader = new LazyLocationLoader("locations/forest_glade_test");
+        loader = new LazyLocationLoader();
         current = loader.getLocation("forest_glade_0001");
     }
 

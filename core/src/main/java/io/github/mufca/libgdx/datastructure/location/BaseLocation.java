@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Getter
 public class BaseLocation {
-    private final String id;
+    private final String targetId;
     private final String shortDescription;
     private final String longDescription;
     private final List<Exit> exits;
@@ -24,14 +24,14 @@ public class BaseLocation {
 
     @JsonCreator
     public BaseLocation(
-        @JsonProperty("id") String id,
+        @JsonProperty("id") String targetId,
         @JsonProperty("shortDescription") String shortDescription,
         @JsonProperty("longDescription") String longDescription,
         @JsonProperty("exits") List<Exit> exits,
         @JsonProperty("characters") List<Character> characters,
         @JsonProperty("objects") List<Item> objects
     ) {
-        this.id = id;
+        this.targetId = targetId;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
         this.exits = exits;

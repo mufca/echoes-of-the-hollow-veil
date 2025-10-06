@@ -4,11 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import io.github.mufca.libgdx.datastructure.location.BaseLocation;
 import io.github.mufca.libgdx.datastructure.location.Exit;
 import io.github.mufca.libgdx.datastructure.location.LazyLocationLoader;
+import io.github.mufca.libgdx.datastructure.location.MapLocation;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,21 +31,21 @@ public class MapRenderer {
     }
 
 
-    public void computePositions(BaseLocation start) throws IOException {
+    public void computePositions(MapLocation start) {
         positions.clear();
-        dfs(start, 0, 0); // od środka
+        dfs(start, 0, 0);
     }
 
-    private void dfs(BaseLocation loc, int x, int y) throws IOException {
-        if (positions.containsKey(loc.getId())) {
+    private void dfs(MapLocation mapLocation, int x, int y) {
+        if (positions.containsKey(mapLocation.targetId())) {
             return;
         }
-        positions.put(loc.getId(), new GridPosition(x, y));
+        positions.put(mapLocation.targetId(), new GridPosition(x, y));
 
-        for (Exit exit : loc.getExits()) {
+        for (Exit exit : mapLocation.exits()) {
             GridPosition offset = directionToOffset(exit.name());
             if (offset != null) {
-                dfs(loader.getLocation(exit.targetId()), x + offset.x, y + offset.y);
+                dfs(loader.getMapCache().get(exit.targetId()), x + offset.x, y + offset.y);
             }
         }
     }
@@ -65,7 +64,7 @@ public class MapRenderer {
         };
     }
 
-    public void render(Map<String, BaseLocation> world, int gridXToCenterOn, int gridYToCenterOn) {
+    public void render(Map<String, MapLocation> world, int gridXToCenterOn, int gridYToCenterOn) {
         camera.position.set(gridXToCenterOn * TILE_SIZE, gridYToCenterOn * TILE_SIZE, 0);
         camera.update();
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -75,12 +74,12 @@ public class MapRenderer {
         shapeRenderer.end();
     }
 
-    private void drawLocationExitPaths(Map<String, BaseLocation> world) {
+    private void drawLocationExitPaths(Map<String, MapLocation> world) {
         shapeRenderer.setColor(Color.LIGHT_GRAY);
-        for (BaseLocation location : world.values()) {
-            GridPosition startingPosition = positions.get(location.getId());
+        for (MapLocation location : world.values()) {
+            GridPosition startingPosition = positions.get(location.targetId());
             if (startingPosition == null) continue;
-            for (Exit exit : location.getExits()) {
+            for (Exit exit : location.exits()) {
                 GridPosition endingPosition = positions.get(exit.targetId());
                 if (endingPosition == null) continue;
                 drawLine(startingPosition, endingPosition);

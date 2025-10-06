@@ -3,8 +3,8 @@ package io.github.mufca.libgdx.gui.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL32;
-import io.github.mufca.libgdx.datastructure.location.BaseLocation;
 import io.github.mufca.libgdx.datastructure.location.LazyLocationLoader;
+import io.github.mufca.libgdx.datastructure.location.MapLocation;
 
 import java.io.IOException;
 import java.util.Map;
@@ -12,17 +12,14 @@ import java.util.Map;
 public class MapScreen implements Screen {
 
     private final MapRenderer mapRenderer;
-    private final Map<String, BaseLocation> world;
+    private final Map<String, MapLocation> world;
 
     public MapScreen() throws IOException {
-        LazyLocationLoader loader = new LazyLocationLoader("locations/forest_glade_test");
-        loader.getLocation("forest_glade_0001");
-        loader.getLocation("forest_glade_0002");
-        loader.getLocation("forest_glade_0003");
-        loader.getLocation("forest_glade_0004");
-        world = loader.getCache();
+        LazyLocationLoader loader = new LazyLocationLoader();
+
+        world = loader.getMapCache();
         mapRenderer = new MapRenderer(loader);
-        mapRenderer.computePositions(loader.getLocation("forest_glade_0001"));
+        mapRenderer.computePositions(loader.getMapCache().get(("forest_glade_0001")));
     }
 
     @Override

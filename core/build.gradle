@@ -1,3 +1,5 @@
+import java.nio.file.Files
+
 plugins {
   id 'java'
 }
@@ -28,4 +30,36 @@ tasks.named("build") {
 
 test {
   useJUnitPlatform()
+}
+
+def assetDirectories = [
+        "$projectDir/../core/assets/locations",
+        "$projectDir/../core/src/test/resources/locations"
+]
+
+tasks.register('generateLocationIndexes') {
+
+    doLast {
+        assetDirectories.each { directoryPath ->
+            def directory = file(directoryPath)
+            if (!directory.exists()) {
+                println "[!] Warning ${directory} doesnt exist, skipping generation of index.txt"
+                return
+            }
+
+            def jsonFiles = []
+            Files.walk(directory.toPath())
+                    .filter { Files.isRegularFile(it) && it.toString().toLowerCase().endsWith(".json") }
+                    .forEach { jsonFiles << directory.toPath().relativize(it).toString().replace("\\", "/") }
+            if (!jsonFiles.isEmpty()) {
+                def indexFile = new File(directory, "index.txt")
+                indexFile.text = jsonFiles.join("\n")
+                println "[ok] Generated ${jsonFiles.size()} entries to ${indexFile}"
+            }
+        }
+    }
+}
+
+tasks.named("processResources") {
+    dependsOn("generateLocationIndexes")
 }
