@@ -7,14 +7,14 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.Vector4;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import io.github.mufca.libgdx.util.LogHelper;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import lombok.Getter;
+import lombok.Setter;
 
 public class ShaderHandler {
+
     @Getter
     private final ShaderProgram shader;
     private final ShaderType type;

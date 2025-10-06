@@ -1,5 +1,7 @@
 package io.github.mufca.libgdx.gui.core.icon;
 
+import static io.github.mufca.libgdx.util.SafeCast.floatToIntExact;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,9 +14,8 @@ import io.github.mufca.libgdx.datastructure.keyprovider.KeyboardKey;
 import io.github.mufca.libgdx.util.UIHelper;
 import lombok.Getter;
 
-import static io.github.mufca.libgdx.util.SafeCast.floatToIntExact;
-
 public class KeycapIcon extends Actor {
+
     private static final float radius = 5f;
     private final Layout layout;
     @Getter
@@ -78,7 +79,7 @@ public class KeycapIcon extends Actor {
 
         // Inner
         pixmap.setColor(Color.DARK_GRAY);
-        drawRoundedRect(pixmap, 1, 1,  width - 2, height - 2, floatToIntExact(KeycapIcon.radius - 1));
+        drawRoundedRect(pixmap, 1, 1, width - 2, height - 2, floatToIntExact(KeycapIcon.radius - 1));
 
         keycapTexture = new Texture(pixmap);
         keycapTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);

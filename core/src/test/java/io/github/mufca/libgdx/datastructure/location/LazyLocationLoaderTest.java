@@ -29,19 +29,11 @@ public class LazyLocationLoaderTest {
     private static final String FOREST_GLADE_0003 = "forest_glade_0003";
     private static final String FOREST_GLADE_0004 = "forest_glade_0004";
 
-    @BeforeEach
-    public void mockGdxFiles() {
-        // GIVEN
-        Gdx.files = Mockito.mock(Files.class);
-        when(Gdx.files.internal(anyString()))
-            .thenAnswer(inv -> new FileHandle(SRC_TEST_RESOURCES + inv.getArgument(0)));
-    }
-
     public static Stream<Arguments> locationProvider() {
         return Stream.of(
             Arguments.of(FOREST_GLADE_0001, "Shady forest glade",
                 "A quiet glade surrounded by tall oaks. The ground is covered with moss, and you hear the distant " +
-                "sound of running water.",
+                    "sound of running water.",
                 List.of(
                     new Exit("east", FOREST_GLADE_0002),
                     new Exit("south-east", FOREST_GLADE_0004),
@@ -49,7 +41,7 @@ public class LazyLocationLoaderTest {
                 )),
             Arguments.of(FOREST_GLADE_0002, "Glade with a fallen tree",
                 "This glade is marked by a massive fallen oak lying across the clearing. Birds nest among its broken " +
-                "branches.",
+                    "branches.",
                 List.of(
                     new Exit("west", FOREST_GLADE_0001),
                     new Exit("south-west", FOREST_GLADE_0003),
@@ -57,7 +49,7 @@ public class LazyLocationLoaderTest {
                 )),
             Arguments.of(FOREST_GLADE_0003, "Glade with a stone circle",
                 "Several mossy stones are arranged in a rough circle here. The air feels colder, as if the place held" +
-                " ancient secrets.",
+                    " ancient secrets.",
                 List.of(
                     new Exit("north", FOREST_GLADE_0001),
                     new Exit("north-east", FOREST_GLADE_0002),
@@ -65,13 +57,21 @@ public class LazyLocationLoaderTest {
                 )),
             Arguments.of(FOREST_GLADE_0004, "Sunny forest glade",
                 "Sunlight pierces through the canopy above, illuminating wildflowers in vivid colors. The buzzing of " +
-                "bees fills the clearing.",
+                    "bees fills the clearing.",
                 List.of(
                     new Exit("north-west", FOREST_GLADE_0001),
                     new Exit("north", FOREST_GLADE_0002),
                     new Exit("west", FOREST_GLADE_0003)
                 ))
         );
+    }
+
+    @BeforeEach
+    public void mockGdxFiles() {
+        // GIVEN
+        Gdx.files = Mockito.mock(Files.class);
+        when(Gdx.files.internal(anyString()))
+            .thenAnswer(inv -> new FileHandle(SRC_TEST_RESOURCES + inv.getArgument(0)));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class LazyLocationLoaderTest {
     @ParameterizedTest
     @MethodSource("locationProvider")
     public void shouldLoadAndValidateLocations(String locationId, String expectedShort, String expectedLong,
-                                               List<Exit> exits) throws IOException {
+        List<Exit> exits) throws IOException {
         // WHEN
         LazyLocationLoader loader = new LazyLocationLoader();
         BaseLocation forestGladeLocation = loader.getLocation(locationId);

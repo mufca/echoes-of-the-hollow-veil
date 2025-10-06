@@ -1,5 +1,10 @@
 package io.github.mufca.libgdx.gui.screen;
 
+import static com.badlogic.gdx.Input.Keys.DOWN;
+import static com.badlogic.gdx.Input.Keys.ENTER;
+import static com.badlogic.gdx.Input.Keys.UP;
+import static io.github.mufca.libgdx.shaders.ShaderType.CINEMATIC_RISING_STAR;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL32;
@@ -12,15 +17,9 @@ import io.github.mufca.libgdx.gui.screen.cinematic.CinematicScreen;
 import io.github.mufca.libgdx.gui.screen.cinematic.CinematicStep;
 import io.github.mufca.libgdx.gui.screen.mainmenu.MainMenu;
 import io.github.mufca.libgdx.shaders.ShaderFactory;
-import lombok.SneakyThrows;
-
 import java.io.IOException;
 import java.util.List;
-
-import static com.badlogic.gdx.Input.Keys.DOWN;
-import static com.badlogic.gdx.Input.Keys.ENTER;
-import static com.badlogic.gdx.Input.Keys.UP;
-import static io.github.mufca.libgdx.shaders.ShaderType.CINEMATIC_RISING_STAR;
+import lombok.SneakyThrows;
 
 public class ScreenSelector extends CoreScreen {
 
@@ -52,7 +51,7 @@ public class ScreenSelector extends CoreScreen {
     @SneakyThrows
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0,0,0,1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
 
         batch.begin();

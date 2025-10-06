@@ -1,22 +1,21 @@
 package io.github.mufca.libgdx.datastructure.character;
 
+import static io.github.mufca.libgdx.datastructure.statistics.StatisticsUtils.calculateMaximumHitPoints;
+import static io.github.mufca.libgdx.datastructure.statistics.StatisticsUtils.calculateMaximumMana;
+import static io.github.mufca.libgdx.datastructure.statistics.StatisticsUtils.calculateMaximumStamina;
+
 import io.github.mufca.libgdx.datastructure.faction.Faction;
 import io.github.mufca.libgdx.datastructure.inventory.Inventory;
 import io.github.mufca.libgdx.datastructure.skill.Skill;
 import io.github.mufca.libgdx.datastructure.statistics.PrimaryStatistics;
 import io.github.mufca.libgdx.datastructure.statistics.SecondaryStatistic;
 import io.github.mufca.libgdx.gui.core.portrait.Portrait;
-
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Objects;
-
-import static io.github.mufca.libgdx.datastructure.statistics.StatisticsUtils.calculateMaximumHitPoints;
-import static io.github.mufca.libgdx.datastructure.statistics.StatisticsUtils.calculateMaximumMana;
-import static io.github.mufca.libgdx.datastructure.statistics.StatisticsUtils.calculateMaximumStamina;
 
 public class GameCharacter {
+
     private PrimaryStatistics primaryStatistics;
     private CharacteristicTraits characteristicTraits;
     private int statsSnapshotHash;
@@ -33,7 +32,7 @@ public class GameCharacter {
     private List<Faction> guilds;
 
     public GameCharacter(CharacteristicTraits characteristicTraits, PrimaryStatistics primaryStatistics,
-                         List<Skill> skills, Portrait portrait, Inventory inventory, List<Faction> guilds) {
+        List<Skill> skills, Portrait portrait, Inventory inventory, List<Faction> guilds) {
         this.primaryStatistics = primaryStatistics;
         this.characteristicTraits = characteristicTraits;
         updateAllSecondaryStats();

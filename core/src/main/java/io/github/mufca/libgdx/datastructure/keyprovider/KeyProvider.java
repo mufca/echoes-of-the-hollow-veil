@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public class KeyProvider {
+
     public static final String NO_KEY_AVAILABLE = "No key available";
     private final Set<KeyboardKey> usedKeys = new HashSet<>();
     private final KeyboardLayout layout;

@@ -1,6 +1,7 @@
 package io.github.mufca.libgdx.datastructure.statistics;
 
 public class StatisticsUtils {
+
     private static final float horizon = 10000f;
     private static final float scalingBuffer = 300f;
     private static final float enduranceScalingForHitPoints = 0.62f;
@@ -19,7 +20,7 @@ public class StatisticsUtils {
 
         return horizon * (float) Math.sin(angle);
     }
-    
+
     public static float calculateMaximumHitPoints(PrimaryStatistics stats) {
         return sinusBasedFormulaDefaultScalingBuffer(
             stats.getEndurance(), enduranceScalingForHitPoints,
@@ -35,8 +36,8 @@ public class StatisticsUtils {
 
     public static float calculateMaximumMana(PrimaryStatistics stats) {
         return sinusBasedFormulaDefaultScalingBuffer(
-          stats.getIntelligence(), intelligenceScalingForMana,
-          stats.getCharisma(), charismaScalingForMana
+            stats.getIntelligence(), intelligenceScalingForMana,
+            stats.getCharisma(), charismaScalingForMana
         );
     }
 }

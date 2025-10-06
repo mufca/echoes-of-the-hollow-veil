@@ -1,5 +1,9 @@
 package io.github.mufca.libgdx.gui.core.widget;
 
+import static com.badlogic.gdx.graphics.GL32.GL_COLOR_BUFFER_BIT;
+import static com.badlogic.gdx.graphics.Texture.TextureFilter.Nearest;
+import static com.badlogic.gdx.graphics.Texture.TextureWrap.ClampToEdge;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL32;
@@ -12,16 +16,12 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.mufca.libgdx.shaders.ShaderHandler;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.badlogic.gdx.graphics.GL32.GL_COLOR_BUFFER_BIT;
-import static com.badlogic.gdx.graphics.Texture.TextureFilter.Nearest;
-import static com.badlogic.gdx.graphics.Texture.TextureWrap.ClampToEdge;
+import lombok.Setter;
 
 public abstract class CoreScreen extends ScreenAdapter {
+
     protected Stage stage;
     protected FrameBuffer frameBufferToDraw, frameBufferToRead;
     private TextureRegion drawRegion;
@@ -81,8 +81,12 @@ public abstract class CoreScreen extends ScreenAdapter {
     }
 
     private void updateFrameBuffers() {
-        if (frameBufferToDraw != null) frameBufferToDraw.dispose();
-        if (frameBufferToRead != null) frameBufferToRead.dispose();
+        if (frameBufferToDraw != null) {
+            frameBufferToDraw.dispose();
+        }
+        if (frameBufferToRead != null) {
+            frameBufferToRead.dispose();
+        }
         frameBufferToRead = getNewFrameBuffer();
         frameBufferToDraw = getNewFrameBuffer();
         frameBufferToRead.getColorBufferTexture().setFilter(Nearest, Nearest);

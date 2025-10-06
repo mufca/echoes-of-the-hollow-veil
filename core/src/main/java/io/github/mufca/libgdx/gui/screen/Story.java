@@ -13,6 +13,7 @@ import io.github.mufca.libgdx.temporarytrash.ParagraphConstants;
  * First screen of the application. Displayed after the application is created.
  */
 public class Story extends CoreScreen {
+
     private Table innerTable;
     private ScrollPane scrollPane;
 
@@ -32,7 +33,6 @@ public class Story extends CoreScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
-
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             Paragraph paragraph = new Paragraph(ParagraphConstants.getRandomParagraph());

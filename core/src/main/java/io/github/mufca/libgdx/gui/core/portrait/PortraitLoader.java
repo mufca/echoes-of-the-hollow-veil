@@ -2,7 +2,6 @@ package io.github.mufca.libgdx.gui.core.portrait;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
 import java.util.List;
 
 public class PortraitLoader {
@@ -28,7 +27,6 @@ public class PortraitLoader {
 
         // Check if they exists
         portraitFiles.stream().forEach(BoundFileHandle::check);
-
 
         // Create texture regions
         Texture smallTexture = new Texture(smallPath);

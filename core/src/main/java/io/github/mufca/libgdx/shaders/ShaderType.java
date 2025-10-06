@@ -1,18 +1,17 @@
 package io.github.mufca.libgdx.shaders;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import lombok.Getter;
-
-import java.util.Map;
-import java.util.function.Function;
-
 import static io.github.mufca.libgdx.constant.PathConstants.CINEMATIC_DEFAULT_VERT;
 import static io.github.mufca.libgdx.constant.PathConstants.CINEMATIC_RISING_STAR_FRAG;
 import static io.github.mufca.libgdx.constant.PathConstants.SHADERS_HIGHLIGHT_FRAG;
 import static io.github.mufca.libgdx.constant.PathConstants.SHADERS_HIGHLIGHT_VERT;
 import static io.github.mufca.libgdx.constant.PathConstants.SHADERS_UI_STROKE_FRAG;
 import static io.github.mufca.libgdx.constant.PathConstants.SHADERS_UI_STROKE_VERT;
+
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import java.util.Map;
+import java.util.function.Function;
+import lombok.Getter;
 
 @Getter
 public enum ShaderType {

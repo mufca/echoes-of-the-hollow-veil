@@ -4,14 +4,14 @@ import com.badlogic.gdx.Input;
 import io.github.mufca.libgdx.datastructure.lowlevel.CursorList;
 import io.github.mufca.libgdx.gui.core.interfaces.WithCommand;
 import io.github.mufca.libgdx.gui.core.interfaces.WithShortcut;
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import lombok.Getter;
 
 public class TraversalRoot {
+
     private TraversalContainer head, tail;
     @Getter
     private TraversalContainer currentContainer;
@@ -71,7 +71,9 @@ public class TraversalRoot {
     }
 
     public boolean handleKeyDown(int keycode) {
-        if (currentContainer == null) return false;
+        if (currentContainer == null) {
+            return false;
+        }
 
         Direction direction = currentContainer.getDirection();
         CursorList<WithCommand> widgets = currentContainer.getContent();
@@ -80,14 +82,22 @@ public class TraversalRoot {
 
         switch (direction) {
             case VERTICAL -> {
-                if (keycode == Input.Keys.UP) moved = widgets.moveToPrevious();
-                else if (keycode == Input.Keys.DOWN) moved = widgets.moveToNext();
-                else if (keycode == Input.Keys.LEFT) moved = moveToPreviousContainer();
-                else if (keycode == Input.Keys.RIGHT) moved = moveToNextContainer();
+                if (keycode == Input.Keys.UP) {
+                    moved = widgets.moveToPrevious();
+                } else if (keycode == Input.Keys.DOWN) {
+                    moved = widgets.moveToNext();
+                } else if (keycode == Input.Keys.LEFT) {
+                    moved = moveToPreviousContainer();
+                } else if (keycode == Input.Keys.RIGHT) {
+                    moved = moveToNextContainer();
+                }
             }
             case HORIZONTAL -> {
-                if (keycode == Input.Keys.LEFT) moved = widgets.moveToPrevious() || moveToPreviousContainer();
-                else if (keycode == Input.Keys.RIGHT) moved = widgets.moveToNext() || moveToNextContainer();
+                if (keycode == Input.Keys.LEFT) {
+                    moved = widgets.moveToPrevious() || moveToPreviousContainer();
+                } else if (keycode == Input.Keys.RIGHT) {
+                    moved = widgets.moveToNext() || moveToNextContainer();
+                }
             }
         }
 

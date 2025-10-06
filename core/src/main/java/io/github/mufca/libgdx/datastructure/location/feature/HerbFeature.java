@@ -1,12 +1,12 @@
 package io.github.mufca.libgdx.datastructure.location.feature;
 
-import lombok.Getter;
+import static io.github.mufca.libgdx.datastructure.location.feature.FeatureType.HERB;
 
 import java.util.List;
-
-import static io.github.mufca.libgdx.datastructure.location.feature.FeatureType.*;
+import lombok.Getter;
 
 public class HerbFeature extends LocationFeature {
+
     @Getter
     private final List<String> herbs;
 

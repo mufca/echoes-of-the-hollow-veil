@@ -8,10 +8,11 @@ import io.github.mufca.libgdx.gui.screen.ScreenSelector;
 import io.github.mufca.libgdx.gui.screen.Story;
 
 /**
- * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
- * Manages the game's screens and global resources.
+ * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. Manages the game's screens and
+ * global resources.
  */
 public class Main extends Game {
+
     public static final Story storyHook = new Story();
     private Screen currentScreen;
 

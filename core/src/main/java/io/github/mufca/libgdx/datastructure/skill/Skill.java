@@ -3,6 +3,7 @@ package io.github.mufca.libgdx.datastructure.skill;
 import lombok.Getter;
 
 public class Skill {
+
     private SkillDescription description;
     @Getter
     private float value;

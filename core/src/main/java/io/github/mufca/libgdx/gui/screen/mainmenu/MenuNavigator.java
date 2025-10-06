@@ -1,5 +1,8 @@
 package io.github.mufca.libgdx.gui.screen.mainmenu;
 
+import static io.github.mufca.libgdx.util.UIHelper.BLACK_70A;
+import static io.github.mufca.libgdx.util.UIHelper.getFilledColor;
+
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -8,20 +11,16 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
-
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 
-import static io.github.mufca.libgdx.util.UIHelper.BLACK_70A;
-import static io.github.mufca.libgdx.util.UIHelper.getFilledColor;
-
 /**
- * Handles keyboard and mouse navigation for a vertical menu of CoreTypingLabel items.
- * Arrow keys rotate the list; hovering updates selection to the hovered label.
- * Clicking or pressing Enter shows a content panel.
+ * Handles keyboard and mouse navigation for a vertical menu of CoreTypingLabel items. Arrow keys rotate the list;
+ * hovering updates selection to the hovered label. Clicking or pressing Enter shows a content panel.
  */
 public class MenuNavigator implements InputProcessor {
+
     private final Deque<CoreTypingLabel> labels;
     private final Table paddingContainer;
     private final Table detailTable;

@@ -1,5 +1,14 @@
 package io.github.mufca.libgdx.gui.screen.mainmenu;
 
+import static com.badlogic.gdx.graphics.Texture.TextureFilter.Linear;
+import static com.badlogic.gdx.utils.Scaling.none;
+import static io.github.mufca.libgdx.constant.AssetConstants.BACKGROUND_MAIN_MENU;
+import static io.github.mufca.libgdx.constant.AssetConstants.LEAF;
+import static io.github.mufca.libgdx.util.UIHelper.BLACK_70A;
+import static io.github.mufca.libgdx.util.UIHelper.doNothing;
+import static io.github.mufca.libgdx.util.UIHelper.getFilledColor;
+import static io.github.mufca.libgdx.util.UIHelper.getTopLeftPaddings;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,16 +20,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import io.github.mufca.libgdx.gui.core.widget.CoreScreen;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 
-import static com.badlogic.gdx.graphics.Texture.TextureFilter.Linear;
-import static com.badlogic.gdx.utils.Scaling.none;
-import static io.github.mufca.libgdx.constant.AssetConstants.BACKGROUND_MAIN_MENU;
-import static io.github.mufca.libgdx.constant.AssetConstants.LEAF;
-import static io.github.mufca.libgdx.util.UIHelper.BLACK_70A;
-import static io.github.mufca.libgdx.util.UIHelper.doNothing;
-import static io.github.mufca.libgdx.util.UIHelper.getFilledColor;
-import static io.github.mufca.libgdx.util.UIHelper.getTopLeftPaddings;
-
 public class MainMenu extends CoreScreen {
+
     private static final float outerPad = 30f;
     private static final float innerPad = 15f;
     private static final float topPadding = 0.10f;
@@ -31,13 +32,12 @@ public class MainMenu extends CoreScreen {
     private final Table bottomLayer = new Table();
     private final Table menu = new Table();
     private final Table paddingContainer = new Table();
+    private final Group leafLayer = new Group();
     private CoreTypingLabel newGame;
     private CoreTypingLabel loadGame;
     private CoreTypingLabel settings;
     private CoreTypingLabel licences;
     private CoreTypingLabel exit;
-
-    private final Group leafLayer = new Group();
     private WindManager wind = new WindManager();
     private Image background;
     private TextureRegion leaf;
@@ -128,7 +128,7 @@ public class MainMenu extends CoreScreen {
 
     private void setUpPaddingContainer() {
         var paddings = getTopLeftPaddings(stage, topPadding, leftPadding);
-        paddingContainer.top().left().pad(paddings.first(),paddings.second(),paddings.first(),paddings.second());
+        paddingContainer.top().left().pad(paddings.first(), paddings.second(), paddings.first(), paddings.second());
     }
 
     private void spawnLeaf() {

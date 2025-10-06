@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.mufca.libgdx.gui.core.bookevent.DataAwareBookEvent;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
-
 import java.util.List;
 
 public class ChooseRaceEvent extends DataAwareBookEvent {

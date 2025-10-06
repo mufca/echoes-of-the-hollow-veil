@@ -3,8 +3,6 @@ package io.github.mufca.libgdx.datastructure.location;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Getter;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,9 +10,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import lombok.Getter;
 
 public class LazyLocationLoader {
-    private static final String BASE_DIR = "locations" ;
+
+    private static final String BASE_DIR = "locations";
     private static final String PATH_PATTERN = "%s/%s";
     private static final String JSON_EXTENSION = ".json";
     private static final String NO_ENTRY = "No index entry for resource with id: %s";
@@ -51,13 +51,13 @@ public class LazyLocationLoader {
 
     private String getLocationPath(String targetId) throws FileNotFoundException {
         return resourcePaths.stream()
-                            .filter(path -> path.endsWith(targetId + JSON_EXTENSION))
-                            .findFirst()
-                            .orElseThrow(() -> new FileNotFoundException(NO_ENTRY.formatted(targetId)));
+            .filter(path -> path.endsWith(targetId + JSON_EXTENSION))
+            .findFirst()
+            .orElseThrow(() -> new FileNotFoundException(NO_ENTRY.formatted(targetId)));
     }
 
     private void readEntireMap() throws IOException {
-        for (String resourcePath:resourcePaths) {
+        for (String resourcePath : resourcePaths) {
             FileHandle file = Gdx.files.internal(PATH_PATTERN.formatted(BASE_DIR, resourcePath));
             MapLocation mapLocation = mapper.readValue(file.read(), MapLocation.class);
             mapCache.put(mapLocation.targetId(), mapLocation);

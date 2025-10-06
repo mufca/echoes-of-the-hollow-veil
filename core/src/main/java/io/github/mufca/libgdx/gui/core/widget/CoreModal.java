@@ -1,5 +1,7 @@
 package io.github.mufca.libgdx.gui.core.widget;
 
+import static io.github.mufca.libgdx.gui.core.bookevent.BookEvent.THE_END;
+
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -7,20 +9,18 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.mufca.libgdx.datastructure.utils.ListHelper;
 import io.github.mufca.libgdx.gui.core.bookevent.BookEvent;
 import io.github.mufca.libgdx.util.JsonHelper;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static io.github.mufca.libgdx.gui.core.bookevent.BookEvent.THE_END;
-
 /**
- * Simple modal overlay with a black background, implemented as a Table subclass.
- * Each instance represents one layer (LOWER or UPPER).
+ * Simple modal overlay with a black background, implemented as a Table subclass. Each instance represents one layer
+ * (LOWER or UPPER).
  */
 public class CoreModal extends Table {
+
     private final Table stepListTable = new Table();
     private final Table rightContentTable = new Table();
     private final List<BookEvent> steps;
@@ -30,8 +30,8 @@ public class CoreModal extends Table {
 
     /**
      * @param stage The Stage to which the modal will be added.
-     * @param layer Determines stacking: LOWER is added first (over the game UI),
-     *              UPPER is added last (on top of everything).
+     * @param layer Determines stacking: LOWER is added first (over the game UI), UPPER is added last (on top of
+     *              everything).
      */
     public CoreModal(Stage stage, Layer layer, List<BookEvent> steps, boolean progressive) {
         super();

@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public abstract class LocationFeature {
+
     private final FeatureType type;
 
     protected LocationFeature(FeatureType type) {

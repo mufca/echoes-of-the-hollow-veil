@@ -15,14 +15,16 @@ public class ListHelper {
     }
 
     /**
-     * Returns a new list containing elements up to and including the target.
-     * If the target is not found, returns the full list.
+     * Returns a new list containing elements up to and including the target. If the target is not found, returns the
+     * full list.
      */
     public static <T> List<T> upToInclusive(List<T> list, T target) {
         List<T> result = new ArrayList<>();
         for (T item : list) {
             result.add(item);
-            if (Objects.equals(item, target)) break;
+            if (Objects.equals(item, target)) {
+                break;
+            }
         }
         return result;
     }

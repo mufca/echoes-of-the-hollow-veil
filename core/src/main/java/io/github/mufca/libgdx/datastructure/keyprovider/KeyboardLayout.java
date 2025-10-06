@@ -1,7 +1,6 @@
 package io.github.mufca.libgdx.datastructure.keyprovider;
 
 import com.badlogic.gdx.Input;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -137,6 +136,6 @@ public enum KeyboardLayout {
     }
 
     public List<List<KeyboardKey>> getAll() {
-        return List.of(preferredNumerics,preferredLetters,theRest);
+        return List.of(preferredNumerics, preferredLetters, theRest);
     }
 }

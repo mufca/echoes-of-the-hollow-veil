@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 public class ParagraphConstants {
+
     private static final String SHORT_PARAGRAPH = "This is a paragraph";
     private static final String LONG_PARAGRAPH =
         "This is a long paragraph that is used to test the scrolling functionality of the paragraph class. This is a " +

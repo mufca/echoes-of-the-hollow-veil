@@ -4,6 +4,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 
 public class BoundFileHandle extends FileHandle {
+
     private final int expectedWidth;
     private final int expectedHeight;
 

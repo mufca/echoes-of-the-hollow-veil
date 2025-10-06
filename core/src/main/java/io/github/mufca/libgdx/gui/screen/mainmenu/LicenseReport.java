@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 
 public class LicenseReport {
+
     private static ScrollPane report;
 
     private LicenseReport() {

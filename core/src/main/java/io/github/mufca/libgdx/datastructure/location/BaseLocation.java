@@ -5,14 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.mufca.libgdx.datastructure.inventory.Item;
 import io.github.mufca.libgdx.datastructure.location.feature.FeatureType;
 import io.github.mufca.libgdx.datastructure.location.feature.LocationFeature;
-import lombok.Getter;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
 
 @Getter
 public class BaseLocation {
+
     private final String targetId;
     private final String shortDescription;
     private final String longDescription;

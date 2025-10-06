@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 
 public abstract class BaseBookEvent implements BookEvent {
+
     private final CoreTypingLabel label;
     private final Table view;
 

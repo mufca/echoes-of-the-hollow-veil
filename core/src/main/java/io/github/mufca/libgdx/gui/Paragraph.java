@@ -1,18 +1,19 @@
 package io.github.mufca.libgdx.gui;
 
+import static io.github.mufca.libgdx.constant.AssetConstants.ORC_FEMALE_PORTRAIT;
+
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 import io.github.mufca.libgdx.constant.AssetConstants;
+import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 import io.github.mufca.libgdx.temporarytrash.ParagraphParameters;
 import io.github.mufca.libgdx.temporarytrash.TextProcessor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import static io.github.mufca.libgdx.constant.AssetConstants.ORC_FEMALE_PORTRAIT;
-
 public class Paragraph extends Table {
+
     private final CoreTypingLabel typingLabel;
     private final Image image;
 

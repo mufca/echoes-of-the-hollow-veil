@@ -9,6 +9,7 @@ import io.github.mufca.libgdx.gui.core.interfaces.WithShortcut;
 import lombok.Setter;
 
 public class ActorWithShortcut<T extends Actor> extends Table implements WithShortcut {
+
     private final T actor;
     private final KeycapIcon icon;
     private final ShortcutBinding binding;

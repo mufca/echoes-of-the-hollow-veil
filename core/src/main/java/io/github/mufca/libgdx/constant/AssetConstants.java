@@ -1,15 +1,15 @@
 package io.github.mufca.libgdx.constant;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Texture;
-
 import static io.github.mufca.libgdx.constant.PathConstants.BACKGROUND_MAIN_MENU_PNG;
 import static io.github.mufca.libgdx.constant.PathConstants.BACKGROUND_MENU_CANVAS_PNG;
 import static io.github.mufca.libgdx.constant.PathConstants.FRAME_PNG;
 import static io.github.mufca.libgdx.constant.PathConstants.LEAF_PNG;
 import static io.github.mufca.libgdx.constant.PathConstants.NOTO_SANS_TTF;
 import static io.github.mufca.libgdx.constant.PathConstants.ORC_PNG;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
 
 public class AssetConstants {
 

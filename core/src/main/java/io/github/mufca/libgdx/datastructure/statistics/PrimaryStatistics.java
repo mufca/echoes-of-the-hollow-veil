@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class PrimaryStatistics {
+
     private float strength;
     private float dexterity;
     private float endurance;
@@ -12,7 +13,7 @@ public class PrimaryStatistics {
     private float charisma;
 
     public PrimaryStatistics(float strength, float dexterity, float endurance, float intelligence, float willpower,
-                             float charisma) {
+        float charisma) {
         this.strength = strength;
         this.dexterity = dexterity;
         this.endurance = endurance;
@@ -22,7 +23,7 @@ public class PrimaryStatistics {
     }
 
     public PrimaryStatistics() {
-        this(1f,1f,1f,1f,1f,1f);
+        this(1f, 1f, 1f, 1f, 1f, 1f);
     }
 
 }

@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import io.github.mufca.libgdx.datastructure.location.Exit;
 import io.github.mufca.libgdx.datastructure.location.LazyLocationLoader;
 import io.github.mufca.libgdx.datastructure.location.MapLocation;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,10 +77,14 @@ public class MapRenderer {
         shapeRenderer.setColor(Color.LIGHT_GRAY);
         for (MapLocation location : world.values()) {
             GridPosition startingPosition = positions.get(location.targetId());
-            if (startingPosition == null) continue;
+            if (startingPosition == null) {
+                continue;
+            }
             for (Exit exit : location.exits()) {
                 GridPosition endingPosition = positions.get(exit.targetId());
-                if (endingPosition == null) continue;
+                if (endingPosition == null) {
+                    continue;
+                }
                 drawLine(startingPosition, endingPosition);
             }
         }
@@ -92,7 +95,7 @@ public class MapRenderer {
         float startY = start.y * TILE_SIZE;
         float endX = end.x * TILE_SIZE;
         float endY = end.y * TILE_SIZE;
-        shapeRenderer.rectLine(startX, startY, endX, endY,2f);
+        shapeRenderer.rectLine(startX, startY, endX, endY, 2f);
     }
 
     private void drawLocationNodes() {
@@ -114,6 +117,8 @@ public class MapRenderer {
         shapeRenderer.rect(bottomLeftCornerX, bottomLeftCornerY, FILL_SIZE, FILL_SIZE);
     }
 
-    private record GridPosition(int x, int y) {}
+    private record GridPosition(int x, int y) {
+
+    }
 }
 

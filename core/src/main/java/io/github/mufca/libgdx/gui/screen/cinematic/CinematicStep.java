@@ -6,4 +6,5 @@ import io.github.mufca.libgdx.shaders.ShaderProgramEnumerated;
 
 public record CinematicStep(TextureRegion background, String text, Sound narration, ShaderProgramEnumerated shader,
                             boolean autoAdvance, float delaySeconds, Runnable onShow) {
+
 }

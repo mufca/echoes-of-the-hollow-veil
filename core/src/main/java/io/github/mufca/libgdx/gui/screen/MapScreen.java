@@ -5,7 +5,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL32;
 import io.github.mufca.libgdx.datastructure.location.LazyLocationLoader;
 import io.github.mufca.libgdx.datastructure.location.MapLocation;
-
 import java.io.IOException;
 import java.util.Map;
 
@@ -30,7 +29,7 @@ public class MapScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
-        mapRenderer.render(world, 0,0);
+        mapRenderer.render(world, 0, 0);
     }
 
     @Override

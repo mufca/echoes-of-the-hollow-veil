@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 public class ShaderFactory {
 
+    private ShaderFactory() {
+    }
+
     private static ShaderProgram create(String vertexPath, String fragmentPath) {
         FileHandle vertex = Gdx.files.internal(vertexPath);
         FileHandle fragment = Gdx.files.internal(fragmentPath);
@@ -18,8 +21,5 @@ public class ShaderFactory {
 
     public static ShaderProgramEnumerated create(ShaderType type) {
         return new ShaderProgramEnumerated(create(type.getVertex(), type.getFragment()), type);
-    }
-
-    private ShaderFactory() {
     }
 }

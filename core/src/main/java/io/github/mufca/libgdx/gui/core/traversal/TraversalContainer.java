@@ -8,6 +8,7 @@ import lombok.Setter;
 
 @Getter
 public class TraversalContainer {
+
     private final CursorList<WithCommand> content;
     private final Direction direction;
     @Setter

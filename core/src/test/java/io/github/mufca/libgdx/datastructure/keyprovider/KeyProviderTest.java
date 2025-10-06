@@ -1,15 +1,14 @@
 package io.github.mufca.libgdx.datastructure.keyprovider;
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import static io.github.mufca.libgdx.datastructure.keyprovider.KeyProvider.NO_KEY_AVAILABLE;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
-import static io.github.mufca.libgdx.datastructure.keyprovider.KeyProvider.NO_KEY_AVAILABLE;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 public class KeyProviderTest {
 

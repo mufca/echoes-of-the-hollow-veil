@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class CursorList<T> {
+
     private final List<T> list = new ArrayList<>();
     private T current;
 
@@ -56,13 +57,13 @@ public class CursorList<T> {
     }
 
     public boolean setCurrent(T newCurrent) {
-        for (T element:list) {
+        for (T element : list) {
             if (element == newCurrent) {
                 current = newCurrent;
                 return true;
             }
         }
-        return  false;
+        return false;
     }
 
     public Stream<T> stream() {

@@ -1,5 +1,9 @@
 package io.github.mufca.libgdx.util;
 
+import static com.badlogic.gdx.graphics.Texture.TextureFilter.Nearest;
+import static io.github.mufca.libgdx.constant.AssetConstants.NOTO_FONT_HANDLE;
+import static io.github.mufca.libgdx.constant.FontConstants.getDefaultFontParameters;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -7,16 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.github.tommyettinger.textra.Font;
 import io.github.mufca.libgdx.datastructure.lowlevel.Pair;
 import io.github.mufca.libgdx.gui.core.lowlevel.FilledColor;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static com.badlogic.gdx.graphics.Texture.TextureFilter.Nearest;
-import static io.github.mufca.libgdx.constant.AssetConstants.NOTO_FONT_HANDLE;
-import static io.github.mufca.libgdx.constant.FontConstants.getDefaultFontParameters;
-
 public class UIHelper {
+
     public final static Color BLACK_70A = new Color(0, 0, 0, 0.7f);
     private final static Set<FilledColor> colorTextures = new HashSet<>();
     private static Font defaultFont;

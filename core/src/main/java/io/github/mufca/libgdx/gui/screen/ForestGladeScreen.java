@@ -9,20 +9,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.mufca.libgdx.datastructure.location.BaseLocation;
 import io.github.mufca.libgdx.datastructure.location.Exit;
 import io.github.mufca.libgdx.datastructure.location.LazyLocationLoader;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ForestGladeScreen extends ScreenAdapter {
-    private final LazyLocationLoader loader;
-    private BaseLocation current;
-
-    private final SpriteBatch batch = new SpriteBatch();
-    private final BitmapFont font = new BitmapFont();
 
     // mapowanie klawiszy numerycznych na kierunki
     private static final Map<Integer, String> DIRECTION_MAP = new HashMap<>();
+
     static {
         DIRECTION_MAP.put(Input.Keys.NUMPAD_7, "north-west");
         DIRECTION_MAP.put(Input.Keys.NUMPAD_8, "north");
@@ -33,6 +28,11 @@ public class ForestGladeScreen extends ScreenAdapter {
         DIRECTION_MAP.put(Input.Keys.NUMPAD_2, "south");
         DIRECTION_MAP.put(Input.Keys.NUMPAD_3, "south-east");
     }
+
+    private final LazyLocationLoader loader;
+    private final SpriteBatch batch = new SpriteBatch();
+    private final BitmapFont font = new BitmapFont();
+    private BaseLocation current;
 
     public ForestGladeScreen() throws IOException {
         loader = new LazyLocationLoader();

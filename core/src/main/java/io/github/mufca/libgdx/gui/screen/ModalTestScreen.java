@@ -1,5 +1,7 @@
 package io.github.mufca.libgdx.gui.screen;
 
+import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -18,12 +20,9 @@ import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 import io.github.mufca.libgdx.shaders.ShaderFactory;
 import io.github.mufca.libgdx.shaders.ShaderType;
 import io.github.mufca.libgdx.util.UIHelper;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 
 public class ModalTestScreen extends CoreScreen {

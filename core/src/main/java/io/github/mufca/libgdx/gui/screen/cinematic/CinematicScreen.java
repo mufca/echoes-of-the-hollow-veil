@@ -11,7 +11,6 @@ import io.github.mufca.libgdx.gui.core.widget.CoreScreen;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 import io.github.mufca.libgdx.shaders.ShaderHandler;
 import io.github.mufca.libgdx.util.LogHelper;
-
 import java.util.List;
 
 public class CinematicScreen extends CoreScreen {
@@ -78,13 +77,15 @@ public class CinematicScreen extends CoreScreen {
 
         sceneMainImage.setDrawable(new TextureRegionDrawable(step.background()));
         LogHelper.debug(this,
-                SCENE_IMAGE_AFTER_LAYOUT_SIZE.formatted(
-                        sceneMainImage.getX(),
-                        sceneMainImage.getY(),
-                        sceneMainImage.getWidth(),
-                        sceneMainImage.getHeight()));
+            SCENE_IMAGE_AFTER_LAYOUT_SIZE.formatted(
+                sceneMainImage.getX(),
+                sceneMainImage.getY(),
+                sceneMainImage.getWidth(),
+                sceneMainImage.getHeight()));
         textLabel.restart(step.text());
-        if (step.narration() != null) step.narration().play();
+        if (step.narration() != null) {
+            step.narration().play();
+        }
 
         if (step.shader() != null) {
             shaderHandler = new ShaderHandler(step.shader());
@@ -94,7 +95,9 @@ public class CinematicScreen extends CoreScreen {
             setPostProcessingShaders(List.of());
         }
 
-        if (step.onShow() != null) step.onShow().run();
+        if (step.onShow() != null) {
+            step.onShow().run();
+        }
     }
 
     private void advance() {

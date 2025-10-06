@@ -1,6 +1,7 @@
 package io.github.mufca.libgdx.constant;
 
 public class PathConstants {
+
     public static final String ORC_PNG = "textures/orc.png";
     public static final String FRAME_PNG = "textures/frame.png";
     public static final String BACKGROUND_MAIN_MENU_PNG = "textures/backgroundMainMenu.png";

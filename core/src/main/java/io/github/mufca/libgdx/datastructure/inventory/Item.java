@@ -19,6 +19,6 @@ public class Item {
     }
 
     public Item(ItemBase itemBase) {
-        this(itemBase,0f,0f,100f);
+        this(itemBase, 0f, 0f, 100f);
     }
 }

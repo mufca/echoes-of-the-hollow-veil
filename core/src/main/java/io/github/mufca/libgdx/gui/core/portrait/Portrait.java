@@ -2,7 +2,6 @@ package io.github.mufca.libgdx.gui.core.portrait;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Disposable;
-
 import java.util.Objects;
 
 public record Portrait(TextureRegion small, TextureRegion medium, TextureRegion large) implements Disposable {

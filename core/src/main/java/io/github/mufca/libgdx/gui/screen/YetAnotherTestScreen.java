@@ -1,5 +1,11 @@
 package io.github.mufca.libgdx.gui.screen;
 
+import static io.github.mufca.libgdx.datastructure.keyprovider.KeyboardLayout.QWERTY_ENGLISH;
+import static io.github.mufca.libgdx.gui.core.traversal.Direction.HORIZONTAL;
+import static io.github.mufca.libgdx.gui.core.traversal.Direction.VERTICAL;
+import static io.github.mufca.libgdx.shaders.ShaderType.WIDGET_HIGHLIGHT;
+import static io.github.mufca.libgdx.shaders.ShaderType.WIDGET_STROKE;
+
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -16,17 +22,11 @@ import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 import io.github.mufca.libgdx.shaders.ShaderFactory;
 import io.github.mufca.libgdx.shaders.ShaderHandler;
 import io.github.mufca.libgdx.util.WidgetBuilder;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.mufca.libgdx.datastructure.keyprovider.KeyboardLayout.QWERTY_ENGLISH;
-import static io.github.mufca.libgdx.gui.core.traversal.Direction.HORIZONTAL;
-import static io.github.mufca.libgdx.gui.core.traversal.Direction.VERTICAL;
-import static io.github.mufca.libgdx.shaders.ShaderType.WIDGET_HIGHLIGHT;
-import static io.github.mufca.libgdx.shaders.ShaderType.WIDGET_STROKE;
-
 public class YetAnotherTestScreen extends CoreScreen {
+
     TraversalRoot root = new TraversalRoot();
     TraversalContainer vertical = new TraversalContainer(VERTICAL);
     TraversalContainer horizontal = new TraversalContainer(HORIZONTAL);
