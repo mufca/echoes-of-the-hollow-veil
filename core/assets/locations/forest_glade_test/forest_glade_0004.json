@@ -5,8 +5,8 @@
   "exits": [
     { "name": "north-west", "targetId": "forest_glade_0001" },
     { "name": "north", "targetId": "forest_glade_0002" },
-    { "name": "west", "targetId": "forest_glade_0003" }
-
+    { "name": "west", "targetId": "forest_glade_0003" },
+    { "name": "south-east", "targetId": "forest_glade_0005" }
   ],
   "characters": [],
   "objects": [],

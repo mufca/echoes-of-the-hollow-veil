@@ -49,6 +49,10 @@ public class LazyLocationLoader {
         return loc;
     }
 
+    public MapLocation getMapLocation(BaseLocation location) {
+        return mapCache.get(location.getTargetId());
+    }
+
     private String getLocationPath(String targetId) throws FileNotFoundException {
         return resourcePaths.stream()
             .filter(path -> path.endsWith(targetId + JSON_EXTENSION))
