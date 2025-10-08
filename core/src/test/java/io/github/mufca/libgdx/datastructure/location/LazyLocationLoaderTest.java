@@ -12,6 +12,7 @@ import com.badlogic.gdx.files.FileHandle;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -133,6 +134,17 @@ public class LazyLocationLoaderTest {
         assertThat(thrown)
             .isInstanceOf(FileNotFoundException.class)
             .hasMessageContaining(INVALID_RESOURCE_ENTRY);
+    }
+
+    @Test
+    public void shouldReadEntireMap() throws IOException {
+        // WHEN
+        LazyLocationLoader loader = new LazyLocationLoader();
+        Map<String, MapLocation> mapCache = loader.getMapCache();
+
+        // THEN
+        assertThat(mapCache).hasSize(4)
+            .containsKeys(FOREST_GLADE_0001, FOREST_GLADE_0002, FOREST_GLADE_0003, FOREST_GLADE_0004);
     }
 
     private void loadAndAssertProperId(LazyLocationLoader loader, String targetId) throws IOException {
