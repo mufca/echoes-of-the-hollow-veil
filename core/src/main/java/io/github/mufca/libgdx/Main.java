@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import io.github.mufca.libgdx.constant.AssetConstants;
 import io.github.mufca.libgdx.gui.screen.ScreenSelector;
-import io.github.mufca.libgdx.gui.screen.Story;
+import io.github.mufca.libgdx.gui.screen.veryunready.Story;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. Manages the game's screens and

@@ -1,4 +1,4 @@
-package io.github.mufca.libgdx.gui.screen;
+package io.github.mufca.libgdx.gui.screen.veryunready;
 
 import static io.github.mufca.libgdx.datastructure.keyprovider.KeyboardLayout.QWERTY_ENGLISH;
 import static io.github.mufca.libgdx.gui.core.traversal.Direction.HORIZONTAL;

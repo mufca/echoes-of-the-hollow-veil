@@ -1,4 +1,4 @@
-package io.github.mufca.libgdx.gui.screen;
+package io.github.mufca.libgdx.gui.screen.veryunready;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Screen;

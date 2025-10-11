@@ -1,4 +1,4 @@
-package io.github.mufca.libgdx.gui.screen;
+package io.github.mufca.libgdx.gui.screen.map;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;

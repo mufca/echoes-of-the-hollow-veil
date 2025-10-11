@@ -12,16 +12,17 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.mufca.libgdx.datastructure.location.BaseLocation;
 import io.github.mufca.libgdx.datastructure.location.Exit;
 import io.github.mufca.libgdx.datastructure.location.LazyLocationLoader;
+import io.github.mufca.libgdx.gui.screen.map.MapRenderer;
 import io.github.mufca.libgdx.util.LogHelper;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ForestGladeScreen extends ScreenAdapter {
+public class GameplayScreen extends ScreenAdapter {
 
     private static final Map<Integer, String> DIRECTION_MAP = new HashMap<>();
-    public static final int MINIMAP_SIZE = 350;
-    public static final int MINIMAP_OFFSET = 10;
+    private static final int MINIMAP_SIZE = 350;
+    private static final int MINIMAP_OFFSET = 10;
 
     static {
         DIRECTION_MAP.put(Input.Keys.NUMPAD_7, "north-west");
@@ -34,8 +35,8 @@ public class ForestGladeScreen extends ScreenAdapter {
         DIRECTION_MAP.put(Input.Keys.NUMPAD_3, "south-east");
     }
 
-    private final ScreenViewport minimapViewport = new ScreenViewport();
-    private final ScreenViewport mainViewport = new ScreenViewport();
+    private final ScreenViewport minimap = new ScreenViewport();
+    private final ScreenViewport text = new ScreenViewport();
     private final LazyLocationLoader loader;
     private final SpriteBatch batch = new SpriteBatch();
     private final BitmapFont font = new BitmapFont();
@@ -43,11 +44,11 @@ public class ForestGladeScreen extends ScreenAdapter {
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
     private BaseLocation currentLocation;
 
-    public ForestGladeScreen() throws IOException {
+    public GameplayScreen() throws IOException {
         loader = new LazyLocationLoader();
         currentLocation = loader.getLocation("forest_glade_0001");
 
-        mapRenderer = new MapRenderer(loader, minimapViewport);
+        mapRenderer = new MapRenderer(loader, minimap);
         mapRenderer.computePositions(loader.getMapCache().get("forest_glade_0001"));
 
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -59,7 +60,7 @@ public class ForestGladeScreen extends ScreenAdapter {
         handleInput();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
-        mainViewport.apply();
+        text.apply();
 
         batch.begin();
         font.draw(batch, "Location: " + currentLocation.getShortDescription(), 50, 400);
@@ -72,7 +73,7 @@ public class ForestGladeScreen extends ScreenAdapter {
         font.draw(batch, exits.toString(), 50, 340);
         batch.end();
 
-        minimapViewport.apply();
+        minimap.apply();
         mapRenderer.render(loader.getMapCache(), loader.getMapLocation(currentLocation));
 
         drawMinimapBorder();
@@ -80,14 +81,14 @@ public class ForestGladeScreen extends ScreenAdapter {
     }
 
     private void drawMinimapBorder() {
-        mainViewport.apply();
+        text.apply();
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.DARK_GRAY);
         shapeRenderer.rect(
-            minimapViewport.getScreenX(),
-            minimapViewport.getScreenY(),
-            minimapViewport.getScreenWidth(),
-            minimapViewport.getScreenHeight()
+            minimap.getScreenX(),
+            minimap.getScreenY(),
+            minimap.getScreenWidth(),
+            minimap.getScreenHeight()
         );
         shapeRenderer.end();
     }
@@ -123,8 +124,8 @@ public class ForestGladeScreen extends ScreenAdapter {
 
     @Override
     public void resize (int width, int height) {
-        mainViewport.setScreenBounds(0,0, width, height);
-        minimapViewport.setScreenBounds(
+        text.setScreenBounds(0,0, width, height);
+        minimap.setScreenBounds(
             width- MINIMAP_SIZE - MINIMAP_OFFSET,
             height - MINIMAP_SIZE - MINIMAP_OFFSET,
             MINIMAP_SIZE, MINIMAP_SIZE);

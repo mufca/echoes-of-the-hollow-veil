@@ -1,4 +1,4 @@
-package io.github.mufca.libgdx.gui.screen;
+package io.github.mufca.libgdx.gui.screen.veryunready;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
