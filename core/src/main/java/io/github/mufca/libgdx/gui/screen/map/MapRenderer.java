@@ -1,34 +1,28 @@
 package io.github.mufca.libgdx.gui.screen.map;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.mufca.libgdx.datastructure.location.LazyLocationLoader;
 import io.github.mufca.libgdx.datastructure.location.MapLocation;
 import io.github.mufca.libgdx.datastructure.map.GridPosition;
 import io.github.mufca.libgdx.datastructure.map.MapLayout;
-
+import io.github.mufca.libgdx.gui.core.widget.DockedViewportPanel;
 import java.util.Map;
 import lombok.Getter;
 
-public class MapRenderer {
+public class MapRenderer extends DockedViewportPanel {
+
 
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
-    private final Viewport viewport;
     @Getter
     private final MapLayout mapLayout;
     private static final int TILE_SIZE = 30;
-    @Getter
-    private final OrthographicCamera camera;
+    private static final float TILE_SIZE_OFFSET = 7.5f;
     private MapLocation currentLocation;
 
-    public MapRenderer(LazyLocationLoader loader, Viewport viewport) {
-        this.viewport = viewport;
-        this.camera = (OrthographicCamera) viewport.getCamera();
+    public MapRenderer(LazyLocationLoader loader) {
+        super();
         this.mapLayout = new MapLayout(loader, TILE_SIZE);
-        this.camera.update();
-        shapeRenderer.setProjectionMatrix(camera.combined);
     }
 
     public void computePositions(MapLocation start) {
@@ -46,9 +40,20 @@ public class MapRenderer {
         camera.update();
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        drawBackground();
         drawLocationExitPaths(world);
         drawLocationNodes();
         shapeRenderer.end();
+    }
+
+    private void drawBackground() {
+        shapeRenderer.setColor(new Color(0f, 0f, 0f, 1f)); // pełne czarne tło
+        shapeRenderer.rect(
+            camera.position.x - viewport.getScreenWidth() / 2f,
+            camera.position.y - viewport.getScreenHeight() / 2f,
+            viewport.getScreenWidth(),
+            viewport.getScreenHeight()
+        );
     }
 
     private void drawLocationExitPaths(Map<String, MapLocation> world) {
@@ -56,10 +61,14 @@ public class MapRenderer {
         Map<String, GridPosition> positions = mapLayout.getPositions();
         for (MapLocation location : world.values()) {
             GridPosition startingPosition = positions.get(location.targetId());
-            if (startingPosition == null) continue;
+            if (startingPosition == null) {
+                continue;
+            }
             for (var exit : location.exits()) {
                 GridPosition endingPosition = positions.get(exit.targetId());
-                if (endingPosition == null) continue;
+                if (endingPosition == null) {
+                    continue;
+                }
                 drawLine(startingPosition, endingPosition);
             }
         }
@@ -81,13 +90,15 @@ public class MapRenderer {
 
     private void drawLocationNode(Map.Entry<String, GridPosition> entry) {
         Color fillColor = new Color(0.2f, 0.5f, 0.3f, 1f);
-        Color borderColor = new Color(0.2f, 0.8f, 0.3f, 1f);
+        Color borderColor;
         if (entry.getKey().equals(currentLocation.targetId())) {
             borderColor = new Color(1f, 0.7f, 0.7f, 1f);
+        } else {
+            borderColor = new Color(0.2f, 0.8f, 0.3f, 1f);
         }
         shapeRenderer.setColor(borderColor); // border
-        float bottomLeftCornerX = entry.getValue().x() * TILE_SIZE - 7.5f;
-        float bottomLeftCornerY = entry.getValue().y() * TILE_SIZE - 7.5f;
+        float bottomLeftCornerX = entry.getValue().x() * TILE_SIZE - TILE_SIZE_OFFSET;
+        float bottomLeftCornerY = entry.getValue().y() * TILE_SIZE - TILE_SIZE_OFFSET;
         shapeRenderer.rect(bottomLeftCornerX, bottomLeftCornerY, mapLayout.getBorderSize(), mapLayout.getBorderSize());
         shapeRenderer.setColor(fillColor);
         bottomLeftCornerX += mapLayout.getBorder();

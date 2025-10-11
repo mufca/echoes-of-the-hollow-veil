@@ -15,9 +15,10 @@ import io.github.mufca.libgdx.constant.AssetConstants;
 import io.github.mufca.libgdx.gui.core.widget.CoreScreen;
 import io.github.mufca.libgdx.gui.screen.cinematic.CinematicScreen;
 import io.github.mufca.libgdx.gui.screen.cinematic.CinematicStep;
-import io.github.mufca.libgdx.gui.screen.veryunready.YetAnotherTestScreen;
 import io.github.mufca.libgdx.gui.screen.mainmenu.MainMenu;
 import io.github.mufca.libgdx.gui.screen.map.MapScreen;
+import io.github.mufca.libgdx.gui.screen.veryunready.Story;
+import io.github.mufca.libgdx.gui.screen.veryunready.YetAnotherTestScreen;
 import io.github.mufca.libgdx.shaders.ShaderFactory;
 import java.io.IOException;
 import java.util.List;
@@ -30,6 +31,7 @@ public class ScreenSelector extends CoreScreen {
     private static final String CINEMATIC_SCREEN = "CinematicScreen";
     private static final String GAMEPLAY_SCREEN = "GameplayScreen";
     private static final String MAP_SCREEN = "MapScreen";
+    private static final String STORY = "Story";
     private final Game game;
     private final SpriteBatch batch;
     private final BitmapFont font;
@@ -39,7 +41,8 @@ public class ScreenSelector extends CoreScreen {
         YET_ANOTHER_TEST_SCREEN,
         CINEMATIC_SCREEN,
         GAMEPLAY_SCREEN,
-        MAP_SCREEN
+        MAP_SCREEN,
+        STORY
     };
 
     private int selected = 0;
@@ -82,6 +85,7 @@ public class ScreenSelector extends CoreScreen {
                 case MAIN_MENU -> game.setScreen(new MainMenu());
                 case YET_ANOTHER_TEST_SCREEN -> game.setScreen(new YetAnotherTestScreen());
                 case GAMEPLAY_SCREEN -> game.setScreen(new GameplayScreen());
+                case STORY -> game.setScreen(new Story());
                 case MAP_SCREEN -> game.setScreen(new MapScreen());
                 case CINEMATIC_SCREEN -> game.setScreen(
                     new CinematicScreen(

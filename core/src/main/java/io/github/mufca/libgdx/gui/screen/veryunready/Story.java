@@ -31,7 +31,7 @@ public class Story extends CoreScreen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+        stage.act();
         stage.draw();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -50,15 +50,6 @@ public class Story extends CoreScreen {
             innerTable.getChild(0).remove();
         }
 
-    }
-
-
-    @Override
-    public void pause() {
-    }
-
-    @Override
-    public void resume() {
     }
 
     @Override

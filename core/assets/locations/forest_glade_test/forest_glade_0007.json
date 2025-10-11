@@ -1,7 +1,7 @@
 {
   "id": "forest_glade_0007",
   "shortDescription": "Shady forest glade 7",
-  "longDescription": "A quiet glade surrounded by tall oaks. The ground is covered with moss, and you hear the distant sound of running water.",
+  "longDescription": "You find yourself in a secluded forest glade, where the dappled sunlight filters through a dense canopy of towering birch and oak trees. The air is thick with the scent of moss, wet earth, and distant pine, and every breath carries a hint of something older—something ancient. A carpet of soft grass and fallen leaves muffles your steps, while tiny blue flowers bloom in scattered patches near the gnarled roots of a long-dead tree at the center of the clearing. Above, birds call to one another in melodic bursts, and far off, you can hear the slow, rhythmic croak of frogs hiding among reeds. A small brook winds its way lazily along the edge of the glade, its waters clear enough to see the rounded stones beneath the surface. It gurgles softly, as if whispering secrets to the trees. On the northern side of the clearing, you notice a series of weathered stone markers arranged in a rough circle—perhaps the remnants of some forgotten ritual, now reclaimed by the forest. A faint path leads away from the glade to the east, where the trees grow closer together and the light fades to a soft green gloom. Something about this place feels untouched by time—both peaceful and strangely heavy, as if the forest itself were holding its breath.",
   "exits": [
     { "name": "north-west", "targetId": "forest_glade_0006" },
     { "name": "south-east", "targetId": "forest_glade_0008" }

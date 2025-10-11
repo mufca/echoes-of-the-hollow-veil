@@ -3,15 +3,12 @@ package io.github.mufca.libgdx.gui.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL32;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.mufca.libgdx.datastructure.location.BaseLocation;
 import io.github.mufca.libgdx.datastructure.location.Exit;
 import io.github.mufca.libgdx.datastructure.location.LazyLocationLoader;
+import io.github.mufca.libgdx.gui.screen.gameplay.TextRenderer;
 import io.github.mufca.libgdx.gui.screen.map.MapRenderer;
 import io.github.mufca.libgdx.util.LogHelper;
 import java.io.IOException;
@@ -35,12 +32,9 @@ public class GameplayScreen extends ScreenAdapter {
         DIRECTION_MAP.put(Input.Keys.NUMPAD_3, "south-east");
     }
 
-    private final ScreenViewport minimap = new ScreenViewport();
-    private final ScreenViewport text = new ScreenViewport();
+    private final TextRenderer text = new TextRenderer();
     private final LazyLocationLoader loader;
-    private final SpriteBatch batch = new SpriteBatch();
-    private final BitmapFont font = new BitmapFont();
-    private final MapRenderer mapRenderer;
+    private final MapRenderer minimap;
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
     private BaseLocation currentLocation;
 
@@ -48,11 +42,17 @@ public class GameplayScreen extends ScreenAdapter {
         loader = new LazyLocationLoader();
         currentLocation = loader.getLocation("forest_glade_0001");
 
-        mapRenderer = new MapRenderer(loader, minimap);
-        mapRenderer.computePositions(loader.getMapCache().get("forest_glade_0001"));
+        minimap = new MapRenderer(loader);
+        minimap.computePositions(loader.getMapCache().get("forest_glade_0001"));
 
-        resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         shapeRenderer.setAutoShapeType(true);
+    }
+
+    @Override
+    public void show() {
+        resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        text.show();
+        text.moveToLocation(currentLocation);
     }
 
     @Override
@@ -61,36 +61,12 @@ public class GameplayScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
         text.apply();
-
-        batch.begin();
-        font.draw(batch, "Location: " + currentLocation.getShortDescription(), 50, 400);
-        font.draw(batch, currentLocation.getLongDescription(), 50, 370);
-
-        StringBuilder exits = new StringBuilder("Exits: ");
-        for (Exit e : currentLocation.getExits()) {
-            exits.append(e.name()).append(" ");
-        }
-        font.draw(batch, exits.toString(), 50, 340);
-        batch.end();
+        text.render(minimap.getViewport());
+        text.update(delta);
+        text.draw();
 
         minimap.apply();
-        mapRenderer.render(loader.getMapCache(), loader.getMapLocation(currentLocation));
-
-        drawMinimapBorder();
-
-    }
-
-    private void drawMinimapBorder() {
-        text.apply();
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.DARK_GRAY);
-        shapeRenderer.rect(
-            minimap.getScreenX(),
-            minimap.getScreenY(),
-            minimap.getScreenWidth(),
-            minimap.getScreenHeight()
-        );
-        shapeRenderer.end();
+        minimap.render(loader.getMapCache(), loader.getMapLocation(currentLocation));
     }
 
     private void handleInput() {
@@ -105,8 +81,9 @@ public class GameplayScreen extends ScreenAdapter {
                 if (targetExit != null) {
                     try {
                         currentLocation = loader.getLocation(targetExit.targetId());
+                        text.moveToLocation(currentLocation);
                     } catch (IOException e) {
-                        LogHelper.error(this,"Failed to load location: " + targetExit.targetId());
+                        LogHelper.error(this, "Failed to load location: " + targetExit.targetId());
                     }
                 } else {
                     LogHelper.info(this, "No exit in direction: " + direction);
@@ -117,16 +94,15 @@ public class GameplayScreen extends ScreenAdapter {
 
     @Override
     public void dispose() {
-        batch.dispose();
-        font.dispose();
+        text.dispose();
         shapeRenderer.dispose();
     }
 
     @Override
-    public void resize (int width, int height) {
-        text.setScreenBounds(0,0, width, height);
-        minimap.setScreenBounds(
-            width- MINIMAP_SIZE - MINIMAP_OFFSET,
+    public void resize(int width, int height) {
+        text.setBounds(300, 0, width - 300, height);
+        minimap.setBounds(
+            width - MINIMAP_SIZE - MINIMAP_OFFSET,
             height - MINIMAP_SIZE - MINIMAP_OFFSET,
             MINIMAP_SIZE, MINIMAP_SIZE);
     }
