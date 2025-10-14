@@ -6,11 +6,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import io.github.mufca.libgdx.datastructure.location.BaseLocation;
 import io.github.mufca.libgdx.datastructure.location.Exit;
+import io.github.mufca.libgdx.datastructure.location.feature.LocationFeature;
+import io.github.mufca.libgdx.datastructure.location.feature.logic.HerbFeature;
+import io.github.mufca.libgdx.datastructure.location.logic.BaseLocation;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 import io.github.mufca.libgdx.gui.core.widget.DockedViewportPanel;
 import java.util.LinkedList;
+import java.util.List;
 
 public class TextRenderer extends DockedViewportPanel {
 
@@ -35,6 +38,20 @@ public class TextRenderer extends DockedViewportPanel {
     public void moveToLocation(BaseLocation location) {
         addText("Moved to location: " + location.getShortDescription());
         addText(location.getLongDescription());
+        List<LocationFeature> features = location.getFeatures();
+        if (!features.isEmpty()) {
+            for (LocationFeature feature : features) {
+                switch (feature.getType()) {
+                    case HERB:
+                        addText("You see herbs: " + String.join(", ", ((HerbFeature) feature).getHerbs()));
+                        break;
+                    case CAMPFIRE:
+                        addText("You see a campfire.");
+                        break;
+                }
+            }
+
+        }
         addText(getExits(location));
     }
 

@@ -9,12 +9,12 @@ public final class Scheduler {
 
         final long id;
         final String locationId;
-        final String featureId;
+        final long featureId;
         final long interval;
         long nextTick;
         final Runnable action;
 
-        Task(long id, String locationId, String featureId, long firstTick, long interval, Runnable action) {
+        Task(long id, String locationId, long featureId, long firstTick, long interval, Runnable action) {
             this.id = id;
             this.locationId = locationId;
             this.featureId = featureId;
@@ -32,28 +32,24 @@ public final class Scheduler {
     private final PriorityQueue<Task> priorityQueue = new PriorityQueue<>();
     private long seq = 0;
 
-    public long scheduleAt(String targetId, String featureId, long tick, Runnable action) {
+    public long schedule(String targetId, long featureId, long tick, Runnable action) {
         Task t = new Task(++seq, targetId, featureId, tick, 0, action);
         priorityQueue.add(t);
         return t.id;
     }
 
-    public long scheduleIn(String loc, String feat, long now, long delay, Runnable action) {
-        return scheduleAt(loc, feat, now + delay, action);
-    }
-
-    public long scheduleEvery(String loc, String feat, long now, long period, Runnable action) {
-        Task t = new Task(++seq, loc, feat, now + period, period, action);
+    public long scheduleRepeating(String loc, long featureId, long now, long period, Runnable action) {
+        Task t = new Task(++seq, loc, featureId, now + period, period, action);
         priorityQueue.add(t);
         return t.id;
     }
 
-    public void cancelByFeature(String loc, String feat) {
-        priorityQueue.removeIf(t -> Objects.equals(t.locationId, loc) && Objects.equals(t.featureId, feat));
+    public void cancelByFeature(String loc, long featureId) {
+        priorityQueue.removeIf(t -> Objects.equals(t.locationId, loc) && Objects.equals(t.featureId, featureId));
     }
 
-    public void cancelByFeature(String feat) {
-        priorityQueue.removeIf(t -> Objects.equals(t.featureId, feat));
+    public void cancelByFeature(long featureId) {
+        priorityQueue.removeIf(t -> Objects.equals(t.featureId, featureId));
     }
 
     public void executeDue(long nowTick) {

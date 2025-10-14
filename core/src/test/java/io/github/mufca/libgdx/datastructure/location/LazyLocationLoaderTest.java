@@ -9,6 +9,11 @@ import static org.mockito.Mockito.when;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import io.github.mufca.libgdx.datastructure.location.jsondata.MapLocation;
+import io.github.mufca.libgdx.datastructure.location.logic.BaseLocation;
+import io.github.mufca.libgdx.scheduler.MessageRouter;
+import io.github.mufca.libgdx.scheduler.TimeSystem;
+import io.github.mufca.libgdx.scheduler.event.EventBus;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
@@ -78,7 +83,8 @@ public class LazyLocationLoaderTest {
     @Test
     public void shouldStartWithClearCache() throws IOException {
         // WHEN
-        LazyLocationLoader loader = new LazyLocationLoader();
+        LazyLocationLoader loader = new LazyLocationLoader(
+            new TimeSystem(), new MessageRouter(new EventBus(), "ignore"));
 
         // THEN
         assertThat(loader.getCache()).isEmpty();
@@ -89,7 +95,8 @@ public class LazyLocationLoaderTest {
     public void shouldLoadAndValidateLocations(String locationId, String expectedShort, String expectedLong,
         List<Exit> exits) throws IOException {
         // WHEN
-        LazyLocationLoader loader = new LazyLocationLoader();
+        LazyLocationLoader loader = new LazyLocationLoader(
+            new TimeSystem(), new MessageRouter(new EventBus(), "ignore"));
         BaseLocation forestGladeLocation = loader.getLocation(locationId);
 
         // THEN
@@ -102,7 +109,8 @@ public class LazyLocationLoaderTest {
     @Test
     public void shouldStoreLocationsInCache() throws IOException {
         // WHEN
-        LazyLocationLoader loader = new LazyLocationLoader();
+        LazyLocationLoader loader = new LazyLocationLoader(
+            new TimeSystem(), new MessageRouter(new EventBus(), "ignore"));
         loadAndAssertProperId(loader, FOREST_GLADE_0001);   // Loading from file
 
         // THEN
@@ -127,7 +135,8 @@ public class LazyLocationLoaderTest {
     @Test
     public void shouldThrowExceptionWhenFileIsNotFound() throws IOException {
         // WHEN
-        LazyLocationLoader loader = new LazyLocationLoader();
+        LazyLocationLoader loader = new LazyLocationLoader(
+            new TimeSystem(), new MessageRouter(new EventBus(), "ignore"));
         Throwable thrown = catchThrowable(() -> loader.getLocation(INVALID_RESOURCE_ENTRY));
 
         // THEN
@@ -139,7 +148,8 @@ public class LazyLocationLoaderTest {
     @Test
     public void shouldReadEntireMap() throws IOException {
         // WHEN
-        LazyLocationLoader loader = new LazyLocationLoader();
+        LazyLocationLoader loader = new LazyLocationLoader(
+            new TimeSystem(), new MessageRouter(new EventBus(), "ignore"));
         Map<String, MapLocation> mapCache = loader.getMapCache();
 
         // THEN

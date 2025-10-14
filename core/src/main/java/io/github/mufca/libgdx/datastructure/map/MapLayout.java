@@ -2,7 +2,7 @@ package io.github.mufca.libgdx.datastructure.map;
 
 import io.github.mufca.libgdx.datastructure.location.Exit;
 import io.github.mufca.libgdx.datastructure.location.LazyLocationLoader;
-import io.github.mufca.libgdx.datastructure.location.MapLocation;
+import io.github.mufca.libgdx.datastructure.location.jsondata.MapLocation;
 
 import java.util.HashMap;
 import java.util.Map;

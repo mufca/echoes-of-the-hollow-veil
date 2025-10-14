@@ -3,7 +3,7 @@ package io.github.mufca.libgdx.gui.screen.map;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import io.github.mufca.libgdx.datastructure.location.LazyLocationLoader;
-import io.github.mufca.libgdx.datastructure.location.MapLocation;
+import io.github.mufca.libgdx.datastructure.location.jsondata.MapLocation;
 import io.github.mufca.libgdx.datastructure.map.GridPosition;
 import io.github.mufca.libgdx.datastructure.map.MapLayout;
 import io.github.mufca.libgdx.gui.core.widget.DockedViewportPanel;

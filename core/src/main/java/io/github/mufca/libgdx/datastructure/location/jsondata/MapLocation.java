@@ -1,8 +1,9 @@
-package io.github.mufca.libgdx.datastructure.location;
+package io.github.mufca.libgdx.datastructure.location.jsondata;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.github.mufca.libgdx.datastructure.location.Exit;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

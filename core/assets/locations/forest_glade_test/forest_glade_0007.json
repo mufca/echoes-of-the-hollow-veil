@@ -8,5 +8,14 @@
   ],
   "characters": [],
   "objects": [],
-  "features": {}
+  "features": [
+    {
+      "type": "HERB",
+      "herbs": [
+        "basil",
+        "mint",
+        "sage"
+      ]
+    }
+  ]
 }

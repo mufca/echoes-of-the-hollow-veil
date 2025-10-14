@@ -5,11 +5,14 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import io.github.mufca.libgdx.datastructure.location.BaseLocation;
+import io.github.mufca.libgdx.datastructure.location.logic.BaseLocation;
 import io.github.mufca.libgdx.datastructure.location.Exit;
 import io.github.mufca.libgdx.datastructure.location.LazyLocationLoader;
 import io.github.mufca.libgdx.gui.screen.gameplay.TextRenderer;
 import io.github.mufca.libgdx.gui.screen.map.MapRenderer;
+import io.github.mufca.libgdx.scheduler.MessageRouter;
+import io.github.mufca.libgdx.scheduler.TimeSystem;
+import io.github.mufca.libgdx.scheduler.event.EventBus;
 import io.github.mufca.libgdx.util.LogHelper;
 import java.io.IOException;
 import java.util.HashMap;
@@ -36,10 +39,14 @@ public class GameplayScreen extends ScreenAdapter {
     private final LazyLocationLoader loader;
     private final MapRenderer minimap;
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private final TimeSystem time;
+    private final MessageRouter router;
     private BaseLocation currentLocation;
 
     public GameplayScreen() throws IOException {
-        loader = new LazyLocationLoader();
+        time = new TimeSystem();
+        router = new MessageRouter(new EventBus(), "forest_glade_0001");
+        loader = new LazyLocationLoader(time, router);
         currentLocation = loader.getLocation("forest_glade_0001");
 
         minimap = new MapRenderer(loader);

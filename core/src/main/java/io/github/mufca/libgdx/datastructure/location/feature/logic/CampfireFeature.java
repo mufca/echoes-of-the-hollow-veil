@@ -1,35 +1,44 @@
-package io.github.mufca.libgdx.datastructure.location.feature;
+package io.github.mufca.libgdx.datastructure.location.feature.logic;
 
 import static io.github.mufca.libgdx.datastructure.location.feature.FeatureType.CAMPFIRE;
+import static io.github.mufca.libgdx.datastructure.location.feature.logic.CampfireFeature.Phase.BLAZE;
+import static io.github.mufca.libgdx.datastructure.location.feature.logic.CampfireFeature.Phase.BURNING;
+import static io.github.mufca.libgdx.datastructure.location.feature.logic.CampfireFeature.Phase.EMBERS;
+import static io.github.mufca.libgdx.datastructure.location.feature.logic.CampfireFeature.Phase.OUT;
+import static io.github.mufca.libgdx.datastructure.location.feature.logic.CampfireFeature.Phase.UNLIT;
 import static io.github.mufca.libgdx.scheduler.event.DeliveryScope.CURRENT_LOCATION;
 
+import io.github.mufca.libgdx.datastructure.location.feature.LocationFeature;
+import io.github.mufca.libgdx.datastructure.location.feature.jsondata.CampfireData;
 import io.github.mufca.libgdx.scheduler.MessageRouter;
-import io.github.mufca.libgdx.scheduler.event.TextEvent;
 import io.github.mufca.libgdx.scheduler.TimeSystem;
+import io.github.mufca.libgdx.scheduler.event.TextEvent;
 import java.util.Random;
 
 public final class CampfireFeature extends LocationFeature {
 
     private long scheduledTaskId = -1;
 
-    private int fuel = 0;
-    private Phase phase = Phase.UNLIT;
+    private int fuel;
+    private Phase phase = UNLIT;
 
     private static final long HEARTBEAT_TICKS = 5; // co 1s przy 5 TPS
-    private static final Random rng = new Random();
+    private static final Random random = new Random();
 
     public enum Phase {
         UNLIT, BLAZE, BURNING, EMBERS, OUT
     }
 
-    public CampfireFeature(String locationId, String featureId, TimeSystem time, MessageRouter router) {
+    public CampfireFeature(long featureId, String locationId, CampfireData data, TimeSystem time,
+        MessageRouter router) {
         super(CAMPFIRE, locationId, featureId, time, router);
+        fuel = data.fuel();
     }
 
     public void light(int initialFuel) {
-        if (phase == Phase.OUT || phase == Phase.UNLIT) {
+        if (phase == OUT || phase == UNLIT) {
             fuel = Math.max(0, initialFuel);
-            phase = (fuel > 60) ? Phase.BLAZE : Phase.BURNING;
+            phase = (fuel > 60) ? BLAZE : BURNING;
             scheduleHeartbeat();
             send("Rozpalasz ognisko. Płomienie trzaskają.");
         } else {
@@ -38,13 +47,15 @@ public final class CampfireFeature extends LocationFeature {
     }
 
     public void addFuel(int amount) {
-        if (phase == Phase.OUT) {
+        if (phase == OUT) {
             send("Nie ma już czego podsycać. Pozostały tylko zimne popioły.");
             return;
         }
         fuel = Math.min(100, fuel + amount);
-        if (fuel > 60) phase = Phase.BLAZE;
-        if (phase == Phase.UNLIT) {
+        if (fuel > 60) {
+            phase = BLAZE;
+        }
+        if (phase == UNLIT) {
             light(amount);
         } else {
             send("Dokładasz drewna. Ogień przybiera na sile.");
@@ -53,7 +64,7 @@ public final class CampfireFeature extends LocationFeature {
 
     private void scheduleHeartbeat() {
         cancel();
-        scheduledTaskId = time.getScheduler().scheduleEvery(locationId, featureId,
+        scheduledTaskId = time.getScheduler().scheduleRepeating(locationId, featureId,
             time.now(), HEARTBEAT_TICKS, this::heartbeat);
     }
 
@@ -65,7 +76,10 @@ public final class CampfireFeature extends LocationFeature {
     }
 
     private void heartbeat() {
-        if (phase == Phase.UNLIT || phase == Phase.OUT) return;
+        if (phase == UNLIT
+            || phase == OUT) {
+            return;
+        }
 
         int drain = switch (phase) {
             case BLAZE -> 3;
@@ -78,17 +92,18 @@ public final class CampfireFeature extends LocationFeature {
 
         // zmiana fazy przy braku paliwa
         if (fuel == 0) {
-            if (phase == Phase.BLAZE || phase == Phase.BURNING) {
-                phase = Phase.EMBERS;
+            if (phase == BLAZE
+                || phase == BURNING) {
+                phase = EMBERS;
                 send("Ogień przygasa, zostają żarzące się węgle.");
-            } else if (phase == Phase.EMBERS) {
-                phase = Phase.OUT;
+            } else if (phase == EMBERS) {
+                phase = OUT;
                 send("Ognisko dogasło.");
                 cancel();
             }
         }
 
-        if (fuel > 0 && rng.nextFloat() < 0.25f) {
+        if (fuel > 0 && random.nextFloat() < 0.25f) {
             switch (phase) {
                 case BLAZE -> send("Płomienie huczą, iskry strzelają w górę.");
                 case BURNING -> send("Ogień trzaska równym rytmem.");
