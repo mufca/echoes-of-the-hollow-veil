@@ -4,7 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum FeatureType {
-    HERB(HerbFeature.class);
+    HERB(HerbFeature.class),
+    CAMPFIRE(CampfireFeature.class);
 
     private final Class<? extends LocationFeature> implementation;
 

@@ -29,7 +29,8 @@ public class BaseLocation {
         @JsonProperty("longDescription") String longDescription,
         @JsonProperty("exits") List<Exit> exits,
         @JsonProperty("characters") List<Character> characters,
-        @JsonProperty("objects") List<Item> objects
+        @JsonProperty("objects") List<Item> objects,
+        @JsonProperty("features") Map<FeatureType, LocationFeature> features
     ) {
         this.targetId = targetId;
         this.shortDescription = shortDescription;
@@ -37,6 +38,9 @@ public class BaseLocation {
         this.exits = exits;
         this.characters = characters;
         this.objects = objects;
+        if (features != null) {
+            this.features.putAll(features);
+        }
     }
 
     public <T extends LocationFeature> void addFeature(T feature) {
