@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.mufca.libgdx.datastructure.location.Exit;
 import io.github.mufca.libgdx.datastructure.location.feature.LocationFeature;
+import io.github.mufca.libgdx.datastructure.location.feature.logic.ForestEvent;
 import io.github.mufca.libgdx.datastructure.location.feature.logic.HerbFeature;
 import io.github.mufca.libgdx.datastructure.location.logic.BaseLocation;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
@@ -42,20 +43,17 @@ public class TextRenderer extends DockedViewportPanel {
         if (!features.isEmpty()) {
             for (LocationFeature feature : features) {
                 switch (feature.getType()) {
-                    case HERB:
-                        addText("You see herbs: " + String.join(", ", ((HerbFeature) feature).getHerbs()));
-                        break;
-                    case CAMPFIRE:
-                        addText("You see a campfire.");
-                        break;
+                    case HERB -> addText("You see herbs: " + String.join(", ", ((HerbFeature) feature).getHerbs()));
+                    case CAMPFIRE -> addText("You could set a campfire here.");
+                    case FOREST -> addText("Forest events should be ticking every %d seconds..."
+                        .formatted(((ForestEvent) feature).getHeartbeatTicks() / 5));
                 }
             }
-
         }
         addText(getExits(location));
     }
 
-    private void addText(String text) {
+    public void addText(String text) {
         CoreTypingLabel label = new CoreTypingLabel(text);
         label.setWrap(true);
         label.skipToTheEnd();

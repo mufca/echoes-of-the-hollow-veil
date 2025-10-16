@@ -13,6 +13,7 @@ import io.github.mufca.libgdx.gui.screen.map.MapRenderer;
 import io.github.mufca.libgdx.scheduler.MessageRouter;
 import io.github.mufca.libgdx.scheduler.TimeSystem;
 import io.github.mufca.libgdx.scheduler.event.EventBus;
+import io.github.mufca.libgdx.scheduler.event.TextEvent;
 import io.github.mufca.libgdx.util.LogHelper;
 import java.io.IOException;
 import java.util.HashMap;
@@ -40,19 +41,25 @@ public class GameplayScreen extends ScreenAdapter {
     private final MapRenderer minimap;
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final TimeSystem time;
+    private final EventBus eventBus;
     private final MessageRouter router;
     private BaseLocation currentLocation;
 
     public GameplayScreen() throws IOException {
         time = new TimeSystem();
-        router = new MessageRouter(new EventBus(), "forest_glade_0001");
+        eventBus = new EventBus();
+        router = new MessageRouter(eventBus, "forest_glade_0001");
         loader = new LazyLocationLoader(time, router);
         currentLocation = loader.getLocation("forest_glade_0001");
-
+        eventBus.subscribe(TextEvent.class, this::handleTextEvent);
         minimap = new MapRenderer(loader);
         minimap.computePositions(loader.getMapCache().get("forest_glade_0001"));
 
         shapeRenderer.setAutoShapeType(true);
+    }
+
+    private void handleTextEvent(TextEvent textEvent) {
+        text.addText(textEvent.textMessage());
     }
 
     @Override
@@ -65,6 +72,8 @@ public class GameplayScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         handleInput();
+        time.update(delta);
+        router.setCurrentLocationId(currentLocation.getTargetId());
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
         text.apply();

@@ -1,7 +1,7 @@
 {
   "id": "forest_glade_0003",
   "shortDescription": "Glade with a stone circle",
-  "longDescription": "Several mossy stones are arranged in a rough circle here. The air feels colder, as if the place held ancient secrets.",
+  "longDescription": "Several mossy stones are arranged in a rough circle here.",
   "exits": [
     { "name": "north", "targetId": "forest_glade_0001" },
     { "name": "north-east", "targetId": "forest_glade_0002" },
@@ -9,5 +9,11 @@
   ],
   "characters": [],
   "objects": [],
-  "features": []
+  "features": [
+    {
+      "type": "FOREST",
+      "events": [],
+      "merge": true
+    }
+  ]
 }

@@ -9,7 +9,7 @@ import io.github.mufca.libgdx.scheduler.TimeSystem;
 import java.util.List;
 import lombok.Getter;
 
-public class HerbFeature extends LocationFeature {
+public final class HerbFeature extends LocationFeature {
 
     @Getter
     private final List<String> herbs;

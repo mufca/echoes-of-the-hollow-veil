@@ -22,15 +22,15 @@ public final class CampfireFeature extends LocationFeature {
     private int fuel;
     private Phase phase = UNLIT;
 
-    private static final long HEARTBEAT_TICKS = 5; // co 1s przy 5 TPS
+    private static final long HEARTBEAT_TICKS = 5;
     private static final Random random = new Random();
 
     public enum Phase {
         UNLIT, BLAZE, BURNING, EMBERS, OUT
     }
 
-    public CampfireFeature(long featureId, String locationId, CampfireData data, TimeSystem time,
-        MessageRouter router) {
+    public CampfireFeature(long featureId, String locationId, CampfireData data,
+        TimeSystem time, MessageRouter router) {
         super(CAMPFIRE, locationId, featureId, time, router);
         fuel = data.fuel();
     }
@@ -40,15 +40,15 @@ public final class CampfireFeature extends LocationFeature {
             fuel = Math.max(0, initialFuel);
             phase = (fuel > 60) ? BLAZE : BURNING;
             scheduleHeartbeat();
-            send("Rozpalasz ognisko. Płomienie trzaskają.");
+            send("You light the campfire. The flames crackle.");
         } else {
-            send("Ognisko już płonie.");
+            send("The campfire is already burning.");
         }
     }
 
     public void addFuel(int amount) {
         if (phase == OUT) {
-            send("Nie ma już czego podsycać. Pozostały tylko zimne popioły.");
+            send("There's nothing left to fuel the campfire. Only cold ashes remain.");
             return;
         }
         fuel = Math.min(100, fuel + amount);
@@ -58,7 +58,7 @@ public final class CampfireFeature extends LocationFeature {
         if (phase == UNLIT) {
             light(amount);
         } else {
-            send("Dokładasz drewna. Ogień przybiera na sile.");
+            send("You add wood. The fire grows stronger.");
         }
     }
 
@@ -90,24 +90,23 @@ public final class CampfireFeature extends LocationFeature {
 
         fuel = Math.max(0, fuel - drain);
 
-        // zmiana fazy przy braku paliwa
         if (fuel == 0) {
             if (phase == BLAZE
                 || phase == BURNING) {
                 phase = EMBERS;
-                send("Ogień przygasa, zostają żarzące się węgle.");
+                send("The fire dies down, leaving only glowing embers.");
             } else if (phase == EMBERS) {
                 phase = OUT;
-                send("Ognisko dogasło.");
+                send("The campfire went out");
                 cancel();
             }
         }
 
         if (fuel > 0 && random.nextFloat() < 0.25f) {
             switch (phase) {
-                case BLAZE -> send("Płomienie huczą, iskry strzelają w górę.");
-                case BURNING -> send("Ogień trzaska równym rytmem.");
-                case EMBERS -> send("Żar czerwienieje cicho w popiele.");
+                case BLAZE -> send("The flames roar, sparks shoot upwards.");
+                case BURNING -> send("The fire crackles with a steady rhythm.");
+                case EMBERS -> send("The embers redden quietly in the ashes.");
             }
         }
     }
