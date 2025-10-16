@@ -10,10 +10,11 @@ import java.util.Map;
 import lombok.Setter;
 
 public final class MessageRouter {
+
     private final EventBus bus;
     @Setter
     private String currentLocationId;
-    private final Map<String, Deque<String>> locationBuffers = new HashMap();
+    private final Map<String, Deque<String>> locationBuffers = new HashMap<>();
     private final int maxPerLocation = 50;
 
     public MessageRouter(EventBus bus, String currentLocationId) {
@@ -22,32 +23,32 @@ public final class MessageRouter {
     }
 
 
-    public void publish(TextEvent ev) {
-        switch (ev.scope()) {
+    public void publish(TextEvent textEvent) {
+        switch (textEvent.scope()) {
             case CURRENT_LOCATION -> {
-                if (ev.locationId().equals(currentLocationId)) {
-                    bus.publish(ev);
+                if (textEvent.locationId().equals(currentLocationId)) {
+                    bus.publish(textEvent);
                 }
             }
-            case LOCATION -> {
-                var dq = locationBuffers.computeIfAbsent(ev.locationId(), k -> new ArrayDeque<>());
-                if (dq.size() == maxPerLocation) dq.removeFirst();
-                dq.addLast(ev.textMessage());
+            case LOCATION -> { // Not used as for now but in the future may be useful
+                var deque = locationBuffers.computeIfAbsent(textEvent.locationId(), k -> new ArrayDeque<>());
+                if (deque.size() == maxPerLocation) {
+                    deque.removeFirst();
+                }
+                deque.addLast(textEvent.textMessage());
 
-                if (ev.locationId().equals(currentLocationId)) {
-                    bus.publish(ev);
+                if (textEvent.locationId().equals(currentLocationId)) {
+                    bus.publish(textEvent);
                 }
             }
-            case GLOBAL, PRIVATE_TO_PLAYER -> {
-                bus.publish(ev);
-            }
+            case GLOBAL, PRIVATE_TO_PLAYER -> bus.publish(textEvent);
         }
     }
 
     public List<String> drainLocationBuffer(String locationId) {
-        var dq = locationBuffers.getOrDefault(locationId, new ArrayDeque<>());
-        var out = List.copyOf(dq);
-        dq.clear();
+        var deque = locationBuffers.getOrDefault(locationId, new ArrayDeque<>());
+        var out = List.copyOf(deque);
+        deque.clear();
         return out;
     }
 }

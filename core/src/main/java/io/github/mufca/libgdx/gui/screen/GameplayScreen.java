@@ -5,9 +5,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import io.github.mufca.libgdx.datastructure.location.logic.BaseLocation;
 import io.github.mufca.libgdx.datastructure.location.Exit;
 import io.github.mufca.libgdx.datastructure.location.LazyLocationLoader;
+import io.github.mufca.libgdx.datastructure.location.logic.BaseLocation;
 import io.github.mufca.libgdx.gui.screen.gameplay.TextRenderer;
 import io.github.mufca.libgdx.gui.screen.map.MapRenderer;
 import io.github.mufca.libgdx.scheduler.MessageRouter;
@@ -82,7 +82,7 @@ public class GameplayScreen extends ScreenAdapter {
         text.draw();
 
         minimap.apply();
-        minimap.render(loader.getMapCache(), loader.getMapLocation(currentLocation));
+        minimap.render(loader.getMapCache(), loader.getMapLocation(currentLocation), delta);
     }
 
     private void handleInput() {

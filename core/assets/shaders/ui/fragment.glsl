@@ -1,3 +1,5 @@
+#version 150 core
+
 // This shader is used to highlight a component. It inverts colors progressing from the left to the right.
 
 // The texture coordinates passed from the vertex shader.

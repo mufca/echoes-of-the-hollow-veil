@@ -18,7 +18,11 @@ public class LogHelper {
     }
 
     public static void log(Object obj, Level level, String message) {
-        String tag = (obj != null) ? obj.getClass().getSimpleName() : "Unknown";
+        String tag = switch (obj) {
+            case Class<?> cls -> cls.getSimpleName();
+            case null -> "Unknown";
+            default -> obj.getClass().getSimpleName();
+        };
         level.logMethod.accept(tag, message);
     }
 

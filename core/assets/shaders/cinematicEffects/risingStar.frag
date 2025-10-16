@@ -1,3 +1,5 @@
+#version 150 core
+
 // ---------------------------------------------
 // Shader: Rising Star Fragment
 // Author: Mówca & Jadzia
@@ -5,7 +7,6 @@
 // Last updated: 2025-06-14
 // ---------------------------------------------
 
-#version 330 core
 #ifdef GL_ES
 precision mediump float;
 #endif

@@ -4,6 +4,8 @@ import static io.github.mufca.libgdx.constant.PathConstants.CINEMATIC_DEFAULT_VE
 import static io.github.mufca.libgdx.constant.PathConstants.CINEMATIC_RISING_STAR_FRAG;
 import static io.github.mufca.libgdx.constant.PathConstants.SHADERS_HIGHLIGHT_FRAG;
 import static io.github.mufca.libgdx.constant.PathConstants.SHADERS_HIGHLIGHT_VERT;
+import static io.github.mufca.libgdx.constant.PathConstants.SHADERS_UI_MINIMAP_CIRCLE_FRAG;
+import static io.github.mufca.libgdx.constant.PathConstants.SHADERS_UI_MINIMAP_CIRCLE_VERT;
 import static io.github.mufca.libgdx.constant.PathConstants.SHADERS_UI_STROKE_FRAG;
 import static io.github.mufca.libgdx.constant.PathConstants.SHADERS_UI_STROKE_VERT;
 
@@ -33,6 +35,12 @@ public enum ShaderType {
         @Override
         public Map<String, Object> generateUniforms(Actor actor) {
             return ShaderHelper.getStrokeUniforms(actor);
+        }
+    },
+    MINIMAP_RING(SHADERS_UI_MINIMAP_CIRCLE_VERT, SHADERS_UI_MINIMAP_CIRCLE_FRAG) {
+        @Override
+        public Map<String, Object> generateUniforms(Actor actor) {
+            return Map.of();
         }
     };
 

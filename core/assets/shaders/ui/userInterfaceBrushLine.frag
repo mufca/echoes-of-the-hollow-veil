@@ -1,4 +1,4 @@
-#version 330 core
+#version 150 core
 
 // Input data from vertex shader
 in vec4 v_color;// Color of the vertex

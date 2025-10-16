@@ -3,6 +3,7 @@ package io.github.mufca.libgdx.shaders;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import io.github.mufca.libgdx.util.LogHelper;
 
 public class ShaderFactory {
 
@@ -14,7 +15,7 @@ public class ShaderFactory {
         FileHandle fragment = Gdx.files.internal(fragmentPath);
         ShaderProgram shader = new ShaderProgram(vertex, fragment);
         if (!shader.isCompiled()) {
-            Gdx.app.error("ShaderComponent", "Shader compile error:\n" + shader.getLog());
+            LogHelper.error(ShaderFactory.class, "Shader compile error: %s".formatted(shader.getLog()));
         }
         return shader;
     }

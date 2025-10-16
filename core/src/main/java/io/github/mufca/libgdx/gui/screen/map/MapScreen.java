@@ -39,7 +39,7 @@ public class MapScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
         mapRenderer.apply();
-        mapRenderer.render(world, location);
+        mapRenderer.render(world, location, delta);
     }
 
     @Override

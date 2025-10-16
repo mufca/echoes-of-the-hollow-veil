@@ -49,6 +49,10 @@ public class ShaderHandler {
     }
 
     private void applyUniform(String uniform, Object value) {
+        if (!shader.hasUniform(uniform)) {
+            LogHelper.info(this, "Uniform not found in shader: " + uniform);
+            return;
+        }
         switch (value) {
             case Integer intValue -> shader.setUniformi(uniform, intValue);
             case Float floatValue -> shader.setUniformf(uniform, floatValue);

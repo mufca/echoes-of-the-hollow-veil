@@ -1,27 +1,40 @@
 package io.github.mufca.libgdx.gui.screen.map;
 
+import static io.github.mufca.libgdx.shaders.ShaderType.MINIMAP_RING;
+
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL32;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import io.github.mufca.libgdx.datastructure.location.LazyLocationLoader;
 import io.github.mufca.libgdx.datastructure.location.jsondata.MapLocation;
 import io.github.mufca.libgdx.datastructure.map.GridPosition;
 import io.github.mufca.libgdx.datastructure.map.MapLayout;
 import io.github.mufca.libgdx.gui.core.widget.DockedViewportPanel;
+import io.github.mufca.libgdx.shaders.ShaderFactory;
+import io.github.mufca.libgdx.shaders.ShaderHandler;
 import java.util.Map;
 import lombok.Getter;
 
 public class MapRenderer extends DockedViewportPanel {
 
-
-    private final ShapeRenderer shapeRenderer = new ShapeRenderer();
-    @Getter
-    private final MapLayout mapLayout;
     private static final int TILE_SIZE = 30;
     private static final float TILE_SIZE_OFFSET = 7.5f;
+
+    private final ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private final ShaderHandler ringShader;
+    @Getter
+    private final MapLayout mapLayout;
+    private Mesh ringMesh;
+    private float time;
     private MapLocation currentLocation;
 
     public MapRenderer(LazyLocationLoader loader) {
         super();
+        ringShader = new ShaderHandler(ShaderFactory.create(MINIMAP_RING));
         this.mapLayout = new MapLayout(loader, TILE_SIZE);
     }
 
@@ -30,7 +43,7 @@ public class MapRenderer extends DockedViewportPanel {
         currentLocation = start;
     }
 
-    public void render(Map<String, MapLocation> world, MapLocation currentLocation) {
+    public void render(Map<String, MapLocation> world, MapLocation currentLocation, float delta) {
         this.camera.setToOrtho(false, viewport.getScreenWidth(), viewport.getScreenHeight());
         this.currentLocation = currentLocation;
         GridPosition currentLocationPosition = mapLayout.getPosition(currentLocation.targetId());
@@ -44,6 +57,7 @@ public class MapRenderer extends DockedViewportPanel {
         drawLocationExitPaths(world);
         drawLocationNodes();
         shapeRenderer.end();
+        drawRotatingRing(delta);
     }
 
     private void drawBackground() {
@@ -90,12 +104,7 @@ public class MapRenderer extends DockedViewportPanel {
 
     private void drawLocationNode(Map.Entry<String, GridPosition> entry) {
         Color fillColor = new Color(0.2f, 0.5f, 0.3f, 1f);
-        Color borderColor;
-        if (entry.getKey().equals(currentLocation.targetId())) {
-            borderColor = new Color(1f, 0.7f, 0.7f, 1f);
-        } else {
-            borderColor = new Color(0.2f, 0.8f, 0.3f, 1f);
-        }
+        Color borderColor = new Color(0.2f, 0.8f, 0.3f, 1f);
         shapeRenderer.setColor(borderColor); // border
         float bottomLeftCornerX = entry.getValue().x() * TILE_SIZE - TILE_SIZE_OFFSET;
         float bottomLeftCornerY = entry.getValue().y() * TILE_SIZE - TILE_SIZE_OFFSET;
@@ -105,5 +114,50 @@ public class MapRenderer extends DockedViewportPanel {
         bottomLeftCornerY += mapLayout.getBorder();
         shapeRenderer.rect(bottomLeftCornerX, bottomLeftCornerY, mapLayout.getFillSize(), mapLayout.getFillSize());
     }
+
+    private void drawRotatingRing(float delta) {
+        initializeRingMesh();
+
+        time += delta; // kumulowany czas dla animacji
+        var shader = ringShader.getShader();
+
+        if (shader == null) {
+            return;
+        }
+        shader.bind();
+
+        float width = viewport.getScreenWidth();
+        float height = viewport.getScreenHeight();
+
+        shader.setUniformf("u_time", time);
+        shader.setUniformf("u_resolution", width, height);
+        shader.setUniformf("u_center", width / 2f, height / 2f);
+        shader.setUniformf("u_radius", 18f);
+
+        Gdx.gl.glEnable(GL32.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL32.GL_SRC_ALPHA, GL32.GL_ONE_MINUS_SRC_ALPHA);
+        Gdx.gl.glDisable(GL32.GL_DEPTH_TEST);
+
+        ringMesh.render(shader, GL32.GL_TRIANGLES);
+
+        Gdx.gl.glDisable(GL32.GL_BLEND);
+    }
+
+    private void initializeRingMesh() {
+        if (ringMesh != null) {
+            return;
+        }
+
+        ringMesh = new Mesh(true, 4, 6,
+            new VertexAttribute(VertexAttributes.Usage.Position, 2, "a_position"));
+        ringMesh.setVertices(new float[]{
+            -1, -1,
+            1, -1,
+            1, 1,
+            -1, 1
+        });
+        ringMesh.setIndices(new short[]{0, 1, 2, 2, 3, 0});
+    }
+
 }
 
