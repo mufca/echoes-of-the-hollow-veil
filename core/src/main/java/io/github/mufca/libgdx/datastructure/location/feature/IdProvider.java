@@ -16,6 +16,6 @@ public class IdProvider {
     }
 
     private long getId() {
-        return System.currentTimeMillis();
+        return System.nanoTime();
     }
 }
