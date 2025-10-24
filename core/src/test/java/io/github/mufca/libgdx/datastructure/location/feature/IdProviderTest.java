@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 public class IdProviderTest {
 
-    public final int TESTING_SIZE = 1000000;
+    private final int TESTING_SIZE = 1000000;
 
     @Test
     public void shouldGetUniqueIds() {
@@ -17,7 +17,8 @@ public class IdProviderTest {
 
         // WHEN
         for (int i = 0; i < TESTING_SIZE; i++) {
-            assertThat(usedIds.add(idProvider.generateFeatureId())).isTrue();
+            var isAdded = usedIds.add(idProvider.generateFeatureId());
+            assertThat(isAdded).isTrue();
         }
 
         // THEN

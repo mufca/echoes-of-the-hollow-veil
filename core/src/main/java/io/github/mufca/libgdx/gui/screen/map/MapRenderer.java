@@ -118,7 +118,7 @@ public class MapRenderer extends DockedViewportPanel {
     private void drawRotatingRing(float delta) {
         initializeRingMesh();
 
-        time += delta; // kumulowany czas dla animacji
+        time += delta;
         var shader = ringShader.getShader();
 
         if (shader == null) {

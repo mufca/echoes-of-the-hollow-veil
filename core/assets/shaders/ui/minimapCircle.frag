@@ -9,29 +9,29 @@ in vec2 v_uv;
 out vec4 fragColor;
 
 void main() {
+    const float tau = 6.28318;
     vec2 fragCoord = v_uv * u_resolution;
     vec2 uv = fragCoord - u_center;
-
-    float angle = atan(uv.y, uv.x);
     float dist = length(uv);
+    float angle = atan(uv.y, uv.x) + u_time * .3;
 
-    angle += u_time * .3;
+    float spikes = 0.;
+    float triLength = 7.;
+    float triHalfAngle = .35;
 
-    float mainWave = sin(angle * 4.);
+    for (int i = 0; i < 4; i++) {
+        float dir = float(i) * (tau * .25);
+        float diff = angle - dir;
+        diff = mod(diff + tau / 2., tau) - tau / 2.;
+        float insideAngle = step(abs(diff), triHalfAngle);
+        float tipStart = u_radius;
+        float tipEnd = u_radius + triLength;
+        float radialMask = step(tipStart, dist) * step(dist, tipEnd);
+        spikes = max(spikes, insideAngle * radialMask);
+    }
 
-    float subWave = sin(angle * 12. + u_time * 2.) * .3;
-
-    float wave = mainWave + subWave;
-
-    float dynamicRadius = u_radius + wave * 4.;
-
-    float thickness = 3.;
-    float edge = smoothstep(dynamicRadius + thickness, dynamicRadius, dist)
-    - smoothstep(dynamicRadius, dynamicRadius - thickness, dist);
-
-    vec3 baseColor = vec3(.85, .25, .1);
-    vec3 glow = vec3(1., .8, .4) * pow(max(mainWave, 0.), 2.);// lekki połysk na kierunkach
-    vec3 color = baseColor + glow * .5;
-
-    fragColor = vec4(color, edge);
+    float shape = spikes;
+    vec3 color = vec3(1., 1., 1.);
+    if (shape < .01) discard;
+    fragColor = vec4(color, shape);
 }
