@@ -23,7 +23,7 @@ public abstract class LocationFeature {
         this.featureId = featureId;
         this.time = time;
         this.router = router;
-        this.scheduler = time.getScheduler();
+        this.scheduler = time.scheduler();
     }
 
     public void onAddedToLocation() {

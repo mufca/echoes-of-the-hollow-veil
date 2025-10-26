@@ -81,7 +81,7 @@ public class YetAnotherTestScreen extends CoreScreen {
             }
         });
         initializeShaders();
-        setPostProcessingShaders(List.of(stroke, focus));
+        postProcessingShaders(List.of(stroke, focus));
     }
 
     @Override

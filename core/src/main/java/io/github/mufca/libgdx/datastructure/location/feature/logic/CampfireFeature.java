@@ -64,13 +64,13 @@ public final class CampfireFeature extends LocationFeature {
 
     private void scheduleHeartbeat() {
         cancel();
-        scheduledTaskId = time.getScheduler().scheduleRepeating(locationId, featureId,
+        scheduledTaskId = time.scheduler().scheduleRepeating(locationId, featureId,
             time.now(), HEARTBEAT_TICKS, this::heartbeat);
     }
 
     private void cancel() {
         if (scheduledTaskId != -1) {
-            time.getScheduler().cancelByFeature(locationId, featureId);
+            time.scheduler().cancelByFeature(locationId, featureId);
             scheduledTaskId = -1;
         }
     }

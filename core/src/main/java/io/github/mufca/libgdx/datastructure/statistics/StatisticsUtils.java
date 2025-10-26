@@ -23,21 +23,21 @@ public class StatisticsUtils {
 
     public static float calculateMaximumHitPoints(PrimaryStatistics stats) {
         return sinusBasedFormulaDefaultScalingBuffer(
-            stats.getEndurance(), enduranceScalingForHitPoints,
-            stats.getStrength(), strengthScalingForHitPoints);
+            stats.endurance(), enduranceScalingForHitPoints,
+            stats.strength(), strengthScalingForHitPoints);
     }
 
     public static float calculateMaximumStamina(PrimaryStatistics stats) {
         return sinusBasedFormulaDefaultScalingBuffer(
-            stats.getEndurance(), enduranceScalingForStamina,
-            stats.getWillpower(), willpowerScalingForStamina
+            stats.endurance(), enduranceScalingForStamina,
+            stats.willpower(), willpowerScalingForStamina
         );
     }
 
     public static float calculateMaximumMana(PrimaryStatistics stats) {
         return sinusBasedFormulaDefaultScalingBuffer(
-            stats.getIntelligence(), intelligenceScalingForMana,
-            stats.getCharisma(), charismaScalingForMana
+            stats.intelligence(), intelligenceScalingForMana,
+            stats.charisma(), charismaScalingForMana
         );
     }
 }

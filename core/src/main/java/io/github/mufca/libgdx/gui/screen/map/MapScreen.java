@@ -23,10 +23,10 @@ public class MapScreen implements Screen {
         time = new TimeSystem();
         router = new MessageRouter(new EventBus(), "forest_glade_0001");
         LazyLocationLoader loader = new LazyLocationLoader(time, router);
-        world = loader.getMapCache();
+        world = loader.mapCache();
         mapRenderer = new MapRenderer(loader);
         mapRenderer.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        location = loader.getMapCache().get(("forest_glade_0001"));
+        location = loader.mapCache().get(("forest_glade_0001"));
         mapRenderer.computePositions(location);
     }
 

@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public final class EventBus {
-    private final Map<Class<?>, List<EventListener<?>>> listeners = new HashMap();
+
+    private final Map<Class<? extends GameEvent>, List<EventListener<?>>> listeners = new HashMap<>();
 
     public <E extends GameEvent> void subscribe(Class<E> type, EventListener<E> listener) {
         listeners.computeIfAbsent(type, k -> new ArrayList<>()).add(listener);

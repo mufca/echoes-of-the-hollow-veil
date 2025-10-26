@@ -44,7 +44,7 @@ public class BaseLocation {
     }
 
     public List<LocationFeature> getFeaturesByType(FeatureType type) {
-        return features.stream().filter(feature -> feature.getType() == type).
+        return features.stream().filter(feature -> feature.type() == type).
             toList();
     }
 }

@@ -53,7 +53,7 @@ public class GameplayScreen extends ScreenAdapter {
         currentLocation = loader.getLocation("forest_glade_0001");
         eventBus.subscribe(TextEvent.class, this::handleTextEvent);
         minimap = new MapRenderer(loader);
-        minimap.computePositions(loader.getMapCache().get("forest_glade_0001"));
+        minimap.computePositions(loader.mapCache().get("forest_glade_0001"));
 
         shapeRenderer.setAutoShapeType(true);
     }
@@ -73,23 +73,23 @@ public class GameplayScreen extends ScreenAdapter {
     public void render(float delta) {
         handleInput();
         time.update(delta);
-        router.setCurrentLocationId(currentLocation.getTargetId());
+        router.currentLocationId(currentLocation.targetId());
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
         text.apply();
-        text.render(minimap.getViewport());
+        text.render(minimap.viewport());
         text.update(delta);
         text.draw();
 
         minimap.apply();
-        minimap.render(loader.getMapCache(), loader.getMapLocation(currentLocation), delta);
+        minimap.render(loader.mapCache(), loader.getMapLocation(currentLocation), delta);
     }
 
     private void handleInput() {
         for (Map.Entry<Integer, String> entry : DIRECTION_MAP.entrySet()) {
             if (Gdx.input.isKeyJustPressed(entry.getKey())) {
                 String direction = entry.getValue();
-                Exit targetExit = currentLocation.getExits().stream()
+                Exit targetExit = currentLocation.exits().stream()
                     .filter(e -> e.name().equalsIgnoreCase(direction))
                     .findFirst()
                     .orElse(null);

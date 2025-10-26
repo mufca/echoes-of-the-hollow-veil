@@ -32,11 +32,11 @@ public class UIHelper {
 
     public static TextureRegionDrawable getFilledColor(Color color) {
         if (containsAColor(color)) {
-            return colorTextures.stream().filter(getFilledColorPredicate(color)).findAny().orElseThrow().getDrawable();
+            return colorTextures.stream().filter(getFilledColorPredicate(color)).findAny().orElseThrow().drawable();
         } else {
             FilledColor filledColor = new FilledColor(color);
             colorTextures.add(filledColor);
-            return filledColor.getDrawable();
+            return filledColor.drawable();
         }
     }
 
@@ -45,7 +45,7 @@ public class UIHelper {
     }
 
     private static Predicate<FilledColor> getFilledColorPredicate(Color color) {
-        return filledColor -> filledColor.getColor().equals(color);
+        return filledColor -> filledColor.color().equals(color);
     }
 
     public static Pair<Float> getTopLeftPaddings(Stage stage, float top, float left) {

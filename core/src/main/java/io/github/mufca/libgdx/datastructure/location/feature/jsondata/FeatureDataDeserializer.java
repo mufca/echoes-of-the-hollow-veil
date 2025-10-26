@@ -19,6 +19,6 @@ public class FeatureDataDeserializer extends JsonDeserializer<FeatureData> {
         JsonNode node = codec.readTree(parser);
         String typeText = node.get(FIELD_NAME).asText();
         FeatureType type = FeatureType.valueOf(typeText);
-        return codec.treeToValue(node, type.getData());
+        return codec.treeToValue(node, type.data());
     }
 }

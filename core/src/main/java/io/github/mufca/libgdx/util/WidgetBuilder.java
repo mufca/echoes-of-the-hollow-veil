@@ -13,10 +13,10 @@ public class WidgetBuilder {
         Table toReturn = new Table();
 
         toReturn.pad(defaultPadding);
-        for (WithCommand widget : container.getContent().stream().toList()) {
-            if (container.getDirection() == Direction.HORIZONTAL) {
+        for (WithCommand widget : container.content().stream().toList()) {
+            if (container.direction() == Direction.HORIZONTAL) {
                 toReturn.add(widget.asActor()).padRight(2 * defaultPadding);
-            } else if (container.getDirection() == Direction.VERTICAL) {
+            } else if (container.direction() == Direction.VERTICAL) {
                 toReturn.add(widget.asActor()).left().row();
             }
         }

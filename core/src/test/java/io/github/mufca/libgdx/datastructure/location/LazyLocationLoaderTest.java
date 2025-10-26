@@ -87,7 +87,7 @@ public class LazyLocationLoaderTest {
             new TimeSystem(), new MessageRouter(new EventBus(), "ignore"));
 
         // THEN
-        assertThat(loader.getCache()).isEmpty();
+        assertThat(loader.cache()).isEmpty();
     }
 
     @ParameterizedTest
@@ -101,9 +101,9 @@ public class LazyLocationLoaderTest {
 
         // THEN
         assertThat(forestGladeLocation).isNotNull();
-        assertThat(forestGladeLocation.getShortDescription()).isEqualTo(expectedShort);
-        assertThat(forestGladeLocation.getLongDescription()).isEqualTo(expectedLong);
-        assertThat(forestGladeLocation.getExits()).containsExactlyInAnyOrderElementsOf(exits);
+        assertThat(forestGladeLocation.shortDescription()).isEqualTo(expectedShort);
+        assertThat(forestGladeLocation.longDescription()).isEqualTo(expectedLong);
+        assertThat(forestGladeLocation.exits()).containsExactlyInAnyOrderElementsOf(exits);
     }
 
     @Test
@@ -114,13 +114,13 @@ public class LazyLocationLoaderTest {
         loadAndAssertProperId(loader, FOREST_GLADE_0001);   // Loading from file
 
         // THEN
-        assertThat(loader.getCache()).hasSize(1); // Cache size is 1
+        assertThat(loader.cache()).hasSize(1); // Cache size is 1
 
         // WHEN
         loadAndAssertProperId(loader, FOREST_GLADE_0001);  // Loading from cache
 
         // THEN
-        assertThat(loader.getCache()).hasSize(1);  // Cache size should still be 1.
+        assertThat(loader.cache()).hasSize(1);  // Cache size should still be 1.
 
         // WHEN
         loadAndAssertProperId(loader, FOREST_GLADE_0002);
@@ -129,7 +129,7 @@ public class LazyLocationLoaderTest {
         loadAndAssertProperId(loader, FOREST_GLADE_0004);
 
         // THEN
-        assertThat(loader.getCache()).hasSize(4);
+        assertThat(loader.cache()).hasSize(4);
     }
 
     @Test
@@ -150,7 +150,7 @@ public class LazyLocationLoaderTest {
         // WHEN
         LazyLocationLoader loader = new LazyLocationLoader(
             new TimeSystem(), new MessageRouter(new EventBus(), "ignore"));
-        Map<String, MapLocation> mapCache = loader.getMapCache();
+        Map<String, MapLocation> mapCache = loader.mapCache();
 
         // THEN
         assertThat(mapCache).hasSize(4)
@@ -160,7 +160,7 @@ public class LazyLocationLoaderTest {
     private void loadAndAssertProperId(LazyLocationLoader loader, String targetId) throws IOException {
         BaseLocation location = loader.getLocation(targetId);
         assertThat(location).isNotNull();
-        assertThat(location.getTargetId()).isEqualTo(targetId);
+        assertThat(location.targetId()).isEqualTo(targetId);
     }
 
 }

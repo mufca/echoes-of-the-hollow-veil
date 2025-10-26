@@ -90,9 +90,9 @@ public class CinematicScreen extends CoreScreen {
         if (step.shader() != null) {
             shaderHandler = new ShaderHandler(step.shader());
             shaderHandler.baseOnActor(sceneMainImage);             // any actor in stage will do
-            setPostProcessingShaders(List.of(shaderHandler));
+            postProcessingShaders(List.of(shaderHandler));
         } else {
-            setPostProcessingShaders(List.of());
+            postProcessingShaders(List.of());
         }
 
         if (step.onShow() != null) {

@@ -71,7 +71,7 @@ public class MainMenu extends CoreScreen {
         if (wind.isTimeToStart()) {
             for (Actor actor : leafLayer.getChildren()) {
                 switch (actor) {
-                    case LeafActor currentLeaf -> currentLeaf.blowWind(wind.getDuration());
+                    case LeafActor currentLeaf -> currentLeaf.blowWind(wind.duration());
                     default -> doNothing();
                 }
             }

@@ -23,10 +23,10 @@ public class TraversalRoot {
     public void add(TraversalContainer container) {
         if (currentContainer == null) {
             currentContainer = head = tail = container;
-            setCurrentWidget(container.getContent().current().orElseThrow());
+            setCurrentWidget(container.content().current().orElseThrow());
         } else {
-            tail.setNext(container);
-            container.setPrevious(tail);
+            tail.next(container);
+            container.previous(tail);
             tail = container;
         }
     }
@@ -36,17 +36,17 @@ public class TraversalRoot {
         while (cursor != null) {
             if (cursor == container) {
                 currentContainer = container;
-                setCurrentWidget(currentContainer.getContent().current().orElseThrow());
+                setCurrentWidget(currentContainer.content().current().orElseThrow());
                 return true;
             }
-            cursor = cursor.getNext();
+            cursor = cursor.next();
         }
         return false;
     }
 
     public Stream<TraversalContainer> streamContainers() {
         List<TraversalContainer> list = new ArrayList<>();
-        for (TraversalContainer cursor = head; cursor != null; cursor = cursor.getNext()) {
+        for (TraversalContainer cursor = head; cursor != null; cursor = cursor.next()) {
             list.add(cursor);
         }
         return list.stream();
@@ -54,8 +54,8 @@ public class TraversalRoot {
 
     public boolean moveToNextContainer() {
         if (currentContainer != null && currentContainer.hasNext()) {
-            setCurrentContainer(currentContainer = currentContainer.getNext());
-            setCurrentWidget(currentContainer.getContent().current().orElseThrow());
+            setCurrentContainer(currentContainer = currentContainer.next());
+            setCurrentWidget(currentContainer.content().current().orElseThrow());
             return true;
         }
         return false;
@@ -63,8 +63,8 @@ public class TraversalRoot {
 
     public boolean moveToPreviousContainer() {
         if (currentContainer != null && currentContainer.hasPrevious()) {
-            setCurrentContainer(currentContainer.getPrevious());
-            setCurrentWidget(currentContainer.getContent().current().orElseThrow());
+            setCurrentContainer(currentContainer.previous());
+            setCurrentWidget(currentContainer.content().current().orElseThrow());
             return true;
         }
         return false;
@@ -75,8 +75,8 @@ public class TraversalRoot {
             return false;
         }
 
-        Direction direction = currentContainer.getDirection();
-        CursorList<WithCommand> widgets = currentContainer.getContent();
+        Direction direction = currentContainer.direction();
+        CursorList<WithCommand> widgets = currentContainer.content();
 
         boolean moved = false;
 
@@ -103,7 +103,7 @@ public class TraversalRoot {
 
         if (moved) {
             setCurrentWidget(widgets.current().orElseThrow());
-            setCurrentWidget(currentContainer.getContent().current().orElseThrow());
+            setCurrentWidget(currentContainer.content().current().orElseThrow());
             return true;
         }
 
@@ -112,7 +112,7 @@ public class TraversalRoot {
 
     private boolean handleShortcuts(int keycode) {
         return streamContainers()
-            .flatMap(container -> container.getContent().stream())
+            .flatMap(container -> container.content().stream())
             .flatMap(wc -> (wc instanceof WithShortcut ws) ? Stream.of(ws) : Stream.empty())
             .filter(widget -> widget.getShortcutBinding() != null)
             .filter(widget -> widget.getShortcutBinding().matches(keycode))
@@ -127,9 +127,9 @@ public class TraversalRoot {
 
     private void setCurrentContainerContaining(WithCommand target) {
         streamContainers().forEach(container -> {
-            if (container.getContent().contains(target)) {
+            if (container.content().contains(target)) {
                 setCurrentContainer(container);
-                container.getContent().setCurrent(target);
+                container.content().setCurrent(target);
             }
         });
     }

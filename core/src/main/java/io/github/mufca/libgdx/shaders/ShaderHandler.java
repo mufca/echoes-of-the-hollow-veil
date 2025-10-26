@@ -42,9 +42,9 @@ public class ShaderHandler {
 
     public void applyElapsedUniform(float delta) {
         elapsed += delta;
-        float elapsedValue = elapsedFunction == null ? type.getDefaultElapsedFunction().apply(elapsed) :
+        float elapsedValue = elapsedFunction == null ? type.defaultElapsedFunction().apply(elapsed) :
             elapsedFunction.apply(elapsed);
-        String localElapsedUniform = elapsedUniform == null ? type.getDefaultElapsedUniform() : elapsedUniform;
+        String localElapsedUniform = elapsedUniform == null ? type.defaultElapsedUniform() : elapsedUniform;
         shader.setUniformf(localElapsedUniform, elapsedValue);
     }
 

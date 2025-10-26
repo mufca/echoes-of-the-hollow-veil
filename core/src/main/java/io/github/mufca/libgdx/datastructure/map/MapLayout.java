@@ -41,7 +41,7 @@ public class MapLayout {
         positions.put(mapLocation.targetId(), new GridPosition(x, y));
 
         for (Exit exit : mapLocation.exits()) {
-            MapLocation exitLocation = loader.getMapCache().get(exit.targetId());
+            MapLocation exitLocation = loader.mapCache().get(exit.targetId());
             GridPosition offset = directionToOffset(exit.name());
             if (exitLocation == null) continue;
             if (offset == null) continue;

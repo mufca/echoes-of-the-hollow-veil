@@ -37,16 +37,16 @@ public class TextRenderer extends DockedViewportPanel {
     }
 
     public void moveToLocation(BaseLocation location) {
-        addText("Moved to location: " + location.getShortDescription());
-        addText(location.getLongDescription());
-        List<LocationFeature> features = location.getFeatures();
+        addText("Moved to location: " + location.shortDescription());
+        addText(location.longDescription());
+        List<LocationFeature> features = location.features();
         if (!features.isEmpty()) {
             for (LocationFeature feature : features) {
-                switch (feature.getType()) {
-                    case HERB -> addText("You see herbs: " + String.join(", ", ((HerbFeature) feature).getHerbs()));
+                switch (feature.type()) {
+                    case HERB -> addText("You see herbs: " + String.join(", ", ((HerbFeature) feature).herbs()));
                     case CAMPFIRE -> addText("You could set a campfire here.");
                     case FOREST -> addText("Forest events should be ticking every %d seconds..."
-                        .formatted(((ForestEvent) feature).getHeartbeatTicks() / 5));
+                        .formatted(((ForestEvent) feature).heartbeatTicks() / 5));
                 }
             }
         }
@@ -68,7 +68,7 @@ public class TextRenderer extends DockedViewportPanel {
     }
 
     private String getExits(BaseLocation location) {
-        String exits = String.join(", ", location.getExits().stream().map(Exit::name).toList());
+        String exits = String.join(", ", location.exits().stream().map(Exit::name).toList());
         return "Exits: %s".formatted(exits);
     }
 

@@ -99,7 +99,7 @@ public abstract class CoreScreen extends ScreenAdapter {
         for (ShaderHandler handler : shaders) {
             drawRegion = createFlippedRegion(frameBufferToDraw);
             frameBufferToRead.begin();
-            screenBatch.setShader(handler.getShader());
+            screenBatch.setShader(handler.shader());
             screenBatch.begin();
             handler.applyUniforms(delta);
             screenBatch.draw(drawRegion, 0, 0);

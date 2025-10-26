@@ -21,6 +21,6 @@ public class ShaderFactory {
     }
 
     public static ShaderProgramEnumerated create(ShaderType type) {
-        return new ShaderProgramEnumerated(create(type.getVertex(), type.getFragment()), type);
+        return new ShaderProgramEnumerated(create(type.vertex(), type.fragment()), type);
     }
 }

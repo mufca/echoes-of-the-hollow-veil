@@ -108,18 +108,18 @@ public class MapRenderer extends DockedViewportPanel {
         shapeRenderer.setColor(borderColor); // border
         float bottomLeftCornerX = entry.getValue().x() * TILE_SIZE - TILE_SIZE_OFFSET;
         float bottomLeftCornerY = entry.getValue().y() * TILE_SIZE - TILE_SIZE_OFFSET;
-        shapeRenderer.rect(bottomLeftCornerX, bottomLeftCornerY, mapLayout.getBorderSize(), mapLayout.getBorderSize());
+        shapeRenderer.rect(bottomLeftCornerX, bottomLeftCornerY, mapLayout.borderSize(), mapLayout.borderSize());
         shapeRenderer.setColor(fillColor);
-        bottomLeftCornerX += mapLayout.getBorder();
-        bottomLeftCornerY += mapLayout.getBorder();
-        shapeRenderer.rect(bottomLeftCornerX, bottomLeftCornerY, mapLayout.getFillSize(), mapLayout.getFillSize());
+        bottomLeftCornerX += mapLayout.border();
+        bottomLeftCornerY += mapLayout.border();
+        shapeRenderer.rect(bottomLeftCornerX, bottomLeftCornerY, mapLayout.fillSize(), mapLayout.fillSize());
     }
 
     private void drawRotatingRing(float delta) {
         initializeRingMesh();
 
         time += delta;
-        var shader = ringShader.getShader();
+        var shader = ringShader.shader();
 
         if (shader == null) {
             return;

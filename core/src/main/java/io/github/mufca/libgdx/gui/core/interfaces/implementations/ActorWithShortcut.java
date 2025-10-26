@@ -20,7 +20,7 @@ public class ActorWithShortcut<T extends Actor> extends Table implements WithSho
     public ActorWithShortcut(T actor, KeycapIcon icon, Command command) {
         this.actor = actor;
         this.icon = icon;
-        this.binding = new ShortcutBinding(icon.getKey().keycode(), command);
+        this.binding = new ShortcutBinding(icon.key().keycode(), command);
 
         add(icon).padRight(5).center();
         add(actor).left();

@@ -64,7 +64,7 @@ public class LazyLocationLoader {
     }
 
     public MapLocation getMapLocation(BaseLocation location) {
-        return mapCache.get(location.getTargetId());
+        return mapCache.get(location.targetId());
     }
 
     private String getLocationPath(String targetId) throws FileNotFoundException {
