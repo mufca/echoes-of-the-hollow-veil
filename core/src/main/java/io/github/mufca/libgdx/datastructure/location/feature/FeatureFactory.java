@@ -7,6 +7,7 @@ import io.github.mufca.libgdx.datastructure.location.feature.jsondata.HerbData;
 import io.github.mufca.libgdx.datastructure.location.feature.logic.CampfireFeature;
 import io.github.mufca.libgdx.datastructure.location.feature.logic.ForestEvent;
 import io.github.mufca.libgdx.datastructure.location.feature.logic.HerbFeature;
+import io.github.mufca.libgdx.datastructure.lowlevel.IdProvider;
 import io.github.mufca.libgdx.scheduler.MessageRouter;
 import io.github.mufca.libgdx.scheduler.TimeSystem;
 
@@ -16,7 +17,7 @@ public class FeatureFactory {
 
     public static LocationFeature createFeature(FeatureData data, String locationId, TimeSystem time,
         MessageRouter router) {
-        long featureId = idProvider.generateFeatureId();
+        long featureId = idProvider.generateUniqueId();
         return switch (data.type()) {
             case HERB -> new HerbFeature(featureId, locationId, (HerbData) data, time, router);
             case CAMPFIRE -> new CampfireFeature(featureId, locationId, (CampfireData) data, time, router);

@@ -25,7 +25,7 @@ public class LazyLocationLoader {
     private static final String BASE_DIR = "locations";
     private static final String PATH_PATTERN = "%s/%s";
     private static final String JSON_EXTENSION = ".json";
-    private static final String NO_ENTRY = "No index entry for resource with id: %s";
+    private static final String NO_ENTRY = "No index entry for resource with characterId: %s";
     private static final String LOCATION_FILE_NOT_FOUND = "Location file not found: %s.json";
 
     private final ObjectMapper mapper = new ObjectMapper()

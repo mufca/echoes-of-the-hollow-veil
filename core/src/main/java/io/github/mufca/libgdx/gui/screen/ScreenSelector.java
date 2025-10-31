@@ -12,11 +12,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import io.github.mufca.libgdx.constant.AssetConstants;
+import io.github.mufca.libgdx.datastructure.GameContext;
 import io.github.mufca.libgdx.gui.core.widget.CoreScreen;
 import io.github.mufca.libgdx.gui.screen.cinematic.CinematicScreen;
 import io.github.mufca.libgdx.gui.screen.cinematic.CinematicStep;
 import io.github.mufca.libgdx.gui.screen.mainmenu.MainMenu;
 import io.github.mufca.libgdx.gui.screen.map.MapScreen;
+import io.github.mufca.libgdx.gui.screen.veryunready.PlayerPanelScreen;
 import io.github.mufca.libgdx.gui.screen.veryunready.Story;
 import io.github.mufca.libgdx.gui.screen.veryunready.YetAnotherTestScreen;
 import io.github.mufca.libgdx.shaders.ShaderFactory;
@@ -27,6 +29,7 @@ import lombok.SneakyThrows;
 public class ScreenSelector extends CoreScreen {
 
     private static final String MAIN_MENU = "MainMenu";
+    private static final String PLAYER_PANEL = "PlayerPanel";
     private static final String YET_ANOTHER_TEST_SCREEN = "YetAnotherTestScreen";
     private static final String CINEMATIC_SCREEN = "CinematicScreen";
     private static final String GAMEPLAY_SCREEN = "GameplayScreen";
@@ -42,6 +45,7 @@ public class ScreenSelector extends CoreScreen {
         CINEMATIC_SCREEN,
         GAMEPLAY_SCREEN,
         MAP_SCREEN,
+        PLAYER_PANEL,
         STORY
     };
 
@@ -87,6 +91,7 @@ public class ScreenSelector extends CoreScreen {
                 case GAMEPLAY_SCREEN -> game.setScreen(new GameplayScreen());
                 case STORY -> game.setScreen(new Story());
                 case MAP_SCREEN -> game.setScreen(new MapScreen());
+                case PLAYER_PANEL -> game.setScreen(new PlayerPanelScreen(new GameContext("forest_glade_0001")));
                 case CINEMATIC_SCREEN -> game.setScreen(
                     new CinematicScreen(
                         List.of(
