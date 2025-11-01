@@ -49,17 +49,20 @@ lwjgl3/build/libs/
 ### Done
 - Project initialization and Gradle setup
 - Post-processing shaders framework
+- Location system
 
 ### In Progress
 - Character logic layer (stats, inventory, skills)
 - Dialog and event system
 - Exploration prototype
 - Basic UI and screen system
-- Dialog and event system
-- Exploration prototype
 
 ### Planned
 - Playable demo
+
+# License
+
+MIT License
 
 # Acknowledgments
 - My gratitude goes to [Tommy Ettinger](https://github.com/tommyettinger) for crafting the [TextraTypist](https://github.com/tommyettinger/textratypist) library — a tool that gives words the life and presence they deserve.
