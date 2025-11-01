@@ -27,7 +27,7 @@ public final class PortraitHandler {
         for (PortraitFile portraitFile : portraitFiles) {
             checkSize(portraitFile);
             FileHandle handle = portraitDirectory.child(portraitFile.filename());
-            context.portraitRepository().addOrReferencePortrait(characterId, handle, portraitFile);
+            context.portraitRepository().loadPortraitAsync(characterId, handle, portraitFile);
         }
     }
 

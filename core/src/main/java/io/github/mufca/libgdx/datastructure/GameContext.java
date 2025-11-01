@@ -9,7 +9,11 @@ import io.github.mufca.libgdx.gui.core.portrait.PortraitRepository;
 import io.github.mufca.libgdx.scheduler.MessageRouter;
 import io.github.mufca.libgdx.scheduler.TimeSystem;
 import io.github.mufca.libgdx.scheduler.event.EventBus;
+import io.github.mufca.libgdx.util.LogHelper;
+import io.github.mufca.libgdx.util.NvidiaSmiMonitor;
+import io.github.mufca.libgdx.util.NvidiaSmiMonitor.GpuStatus;
 import java.io.IOException;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,6 +37,10 @@ public final class GameContext {
         loader = new LazyLocationLoader(time, router);
         currentLocation = loader.getLocation(startingLocationId);
         portraitRepository = new PortraitRepository(idProvider);
+        time.scheduler().scheduleRepeating("1", 1L, time().now(), 10L, () -> {
+            Optional<GpuStatus> query = NvidiaSmiMonitor.query();
+            query.ifPresent(q -> LogHelper.info(this, q.toString()));
+        });
     }
 
     public void createPlayer() {

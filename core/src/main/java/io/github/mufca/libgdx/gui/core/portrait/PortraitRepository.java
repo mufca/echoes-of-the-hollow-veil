@@ -1,36 +1,38 @@
 package io.github.mufca.libgdx.gui.core.portrait;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.RemovalCause;
 import io.github.mufca.libgdx.datastructure.lowlevel.IdProvider;
-
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Many-to-many characterId <-> portraitId
+ * Thread-safe, async-loading portrait repository with many-to-many characterId <-> portraitId mapping.
  */
 public final class PortraitRepository {
 
     private static final int MAX_CACHE_SIZE = 70;
 
-    private final Map<Long, PortraitEntry> portraits =
-        new LinkedHashMap<>(MAX_CACHE_SIZE, 0.75f, true) {
-            @Override
-            protected boolean removeEldestEntry(Map.Entry<Long, PortraitEntry> eldest) {
-                if (size() > MAX_CACHE_SIZE) {
-                    removeReferences(eldest.getKey(), eldest.getValue().path());
-                    eldest.getValue().dispose();
-                    return true;
-                }
-                return false;
-            }
-        };
-
-    private final Map<Long, Set<Long>> characterToPortraits = new ConcurrentHashMap<>();
-    private final Map<Long, Set<Long>> portraitToCharacters = new ConcurrentHashMap<>();
     private final Map<String, Long> pathToPortraitId = new ConcurrentHashMap<>();
+    private final Map<Long, Set<Long>> characterToPortraits = new ConcurrentHashMap<>();
+
+    private final Cache<Long, PortraitEntry> portraits = Caffeine.newBuilder()
+        .maximumSize(MAX_CACHE_SIZE)
+        .removalListener((Long id, PortraitEntry entry, RemovalCause cause) -> {
+            pathToPortraitId.remove(entry.path());
+            entry.dispose();
+        })
+        .build();
 
     private final IdProvider idProvider;
 
@@ -38,107 +40,89 @@ public final class PortraitRepository {
         this.idProvider = idProvider;
     }
 
-    public synchronized TextureRegion getPortrait(Long characterId, PortraitFile type) {
+    public CompletableFuture<Void> loadPortraitAsync(Long characterId, FileHandle file, PortraitFile type) {
+        Long existingId = pathToPortraitId.get(file.path());
+        if (existingId != null) {
+            addRelation(characterId, existingId);
+            return CompletableFuture.completedFuture(null);
+        }
+
+        long newId = idProvider.generateUniqueId();
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
+        CompletableFuture
+            .supplyAsync(() -> {
+                try {
+                    return new Pixmap(file);
+                } catch (Exception e) {
+                    throw new CompletionException(e);
+                }
+            })
+            .thenAcceptAsync(pixmap -> {
+                try {
+                    Texture texture = new Texture(pixmap);
+                    pixmap.dispose();
+                    TextureRegion region = new TextureRegion(texture);
+                    PortraitEntry entry = new PortraitEntry(newId, type, file.path(), texture, region);
+
+                    portraits.put(newId, entry);
+                    pathToPortraitId.put(file.path(), newId);
+                    addRelation(characterId, newId);
+
+                    future.complete(null);
+                } catch (Exception e) {
+                    future.completeExceptionally(e);
+                }
+            }, runnable -> Gdx.app.postRunnable(runnable));
+
+        return future;
+    }
+
+    public TextureRegion getPortrait(Long characterId, PortraitFile type) {
         Set<Long> portraitIds = characterToPortraits.get(characterId);
         if (portraitIds == null) {
             return null;
         }
-        return portraitIds.stream()
-            .map(portraits::get)
-            .filter(Objects::nonNull)
-            .filter(entry -> entry.portraitFile() == type)
-            .map(PortraitEntry::region)
-            .findFirst()
-            .orElse(null);
-    }
 
-    /**
-     * Checks if portrait (filepath) already exists in repository if not loads a new texture and creates a new portrait
-     * entry and updates relations
-     */
-    public synchronized void addOrReferencePortrait(Long characterId, FileHandle fileHandle, PortraitFile fileType) {
-        Long existingId = findPortraitIdByPath(fileHandle.path());
-
-        if (existingId != null) {
-            addRelation(characterId, existingId);
-            return;
-        }
-
-        // Create a new portrait
-        long newPortraitId = idProvider.generateUniqueId();
-        Texture texture = new Texture(fileHandle);
-        TextureRegion region = new TextureRegion(texture);
-
-        PortraitEntry entry = new PortraitEntry(newPortraitId, fileType, fileHandle.path(), texture, region);
-        portraits.put(newPortraitId, entry);
-        pathToPortraitId.put(fileHandle.path(), newPortraitId);
-        addRelation(characterId, newPortraitId);
-    }
-
-    private Long findPortraitIdByPath(String path) {
-        return pathToPortraitId.get(path);
-    }
-
-    private synchronized void removeReferences(Long portraitId, String path) {
-        Set<Long> removedCharacters = portraitToCharacters.remove(portraitId);
-        pathToPortraitId.remove(path);
-        if (removedCharacters != null) {
-            for (Long characterId : removedCharacters) {
-                Set<Long> charactersWithRemovedPortrait = characterToPortraits.get(characterId);
-                if (charactersWithRemovedPortrait != null) {
-                    charactersWithRemovedPortrait.remove(portraitId);
-                    if (charactersWithRemovedPortrait.isEmpty()) {
-                        characterToPortraits.remove(characterId);
-                    }
-                }
+        for (Long portraitId : portraitIds) {
+            PortraitEntry portraitEntry = portraits.getIfPresent(portraitId);
+            if (portraitEntry != null && portraitEntry.portraitFile() == type) {
+                return portraitEntry.region();
             }
         }
+        return null;
     }
 
-    /**
-     * Removes characters ids and if corresponding portraits are orphaned removes them too
-     */
-    public synchronized void removeGivenCharacters(List<Long> characterIds) {
+    public void removeCharacters(List<Long> characterIds) {
         for (Long characterId : characterIds) {
-            Set<Long> portraitIds = characterToPortraits.remove(characterId);
-            if (portraitIds == null) {
+            Set<Long> ids = characterToPortraits.remove(characterId);
+            if (ids == null) {
                 continue;
             }
 
-            for (Long portraitId : portraitIds) {
-                Set<Long> chars = portraitToCharacters.get(portraitId);
-                if (chars != null) {
-                    chars.remove(characterId);
-                    if (chars.isEmpty()) {
-                        portraitToCharacters.remove(portraitId);
-                        removePortrait(portraitId);
+            for (Long portraitId : ids) {
+                boolean orphan = characterToPortraits.values().stream()
+                    .noneMatch(set -> set.contains(portraitId));
+
+                if (orphan) {
+                    PortraitEntry removed = portraits.asMap().remove(portraitId);
+                    if (removed != null) {
+                        pathToPortraitId.remove(removed.path());
                     }
                 }
             }
         }
     }
 
-    private void removePortrait(Long portraitId) {
-        PortraitEntry entry = portraits.remove(portraitId);
-        if (entry != null) {
-            pathToPortraitId.remove(entry.path());
-            entry.dispose();
-        }
-    }
-
-    private void addRelation(Long characterId, Long portraitId) {
-        characterToPortraits.computeIfAbsent(characterId, ignored -> new HashSet<>()).add(portraitId);
-        portraitToCharacters.computeIfAbsent(portraitId, ignored -> new HashSet<>()).add(characterId);
-    }
-
-    public synchronized void disposeAll() {
-        for (PortraitEntry entry : portraits.values()) {
-            entry.dispose();
-        }
-        portraits.clear();
+    public void disposeAll() {
+        portraits.invalidateAll();
         characterToPortraits.clear();
-        portraitToCharacters.clear();
         pathToPortraitId.clear();
     }
 
+    private void addRelation(Long characterId, Long portraitId) {
+        characterToPortraits
+            .computeIfAbsent(characterId, id -> ConcurrentHashMap.newKeySet())
+            .add(portraitId);
+    }
 }

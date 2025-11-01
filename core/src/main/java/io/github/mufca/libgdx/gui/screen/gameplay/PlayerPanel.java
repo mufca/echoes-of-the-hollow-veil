@@ -1,8 +1,11 @@
 package io.github.mufca.libgdx.gui.screen.gameplay;
 
-import com.badlogic.gdx.graphics.Color;
+import static com.badlogic.gdx.graphics.Color.BLACK;
+import static io.github.mufca.libgdx.gui.core.portrait.PortraitFile.SMALL;
+
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import io.github.mufca.libgdx.datastructure.GameContext;
 import io.github.mufca.libgdx.datastructure.character.PrimaryStatistics;
 import io.github.mufca.libgdx.datastructure.character.SecondaryStatistics;
@@ -15,6 +18,7 @@ public final class PlayerPanel extends DockedViewportPanel {
     private static final String RACE_PATTERN = "%s %s %s";
     private final Table root;
     private final GameContext context;
+    private Image portrait;
 
     public PlayerPanel(GameContext context) {
         super();
@@ -29,8 +33,8 @@ public final class PlayerPanel extends DockedViewportPanel {
     private void buildLayout() {
         var player = context.player();
 
-        Image portrait = new Image(player.small());
-        root.add(new Image(UIHelper.getFilledColor(Color.BLACK))).size(300, 1).center().row();
+        portrait = new Image(player.getPortrait(SMALL));
+        root.add(new Image(UIHelper.getFilledColor(BLACK))).size(300, 1).center().row();
         root.add(portrait).pad(10).center().row();
 
         CoreTypingLabel nameLabel = new CoreTypingLabel(player.baseCharacter().name());
@@ -65,7 +69,13 @@ public final class PlayerPanel extends DockedViewportPanel {
     public void render(float delta) {
         this.camera.setToOrtho(false, viewport.getScreenWidth(), viewport.getScreenHeight());
         stage.act(delta);
+        this.act(delta);
         stage.draw();
+    }
+
+    public void act(float delta) {
+        context.player().updatePortraitsIfNeeded();
+        portrait.setDrawable(new TextureRegionDrawable(context.player().getPortrait(SMALL)));
     }
 
 

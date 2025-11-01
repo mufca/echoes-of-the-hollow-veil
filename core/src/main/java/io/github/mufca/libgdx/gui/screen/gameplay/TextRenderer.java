@@ -20,12 +20,11 @@ public class TextRenderer extends DockedViewportPanel {
 
     private static final int MAX_HISTORY = 1000;
     public static final int MINIMAP_BORDER_OFFSET = 1;
-    private Table contentTable, root;
-    private ScrollPane scrollPane;
     private final LinkedList<CoreTypingLabel> content = new LinkedList<>();
-
     private final SpriteBatch batch = new SpriteBatch();
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private Table contentTable, root;
+    private ScrollPane scrollPane;
 
     public void show() {
         contentTable = new Table();
