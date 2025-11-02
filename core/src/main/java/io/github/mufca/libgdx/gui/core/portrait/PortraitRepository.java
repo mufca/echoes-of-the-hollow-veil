@@ -40,15 +40,13 @@ public final class PortraitRepository {
         this.idProvider = idProvider;
     }
 
-    public CompletableFuture<Void> loadPortraitAsync(Long characterId, FileHandle file, PortraitFile type) {
+    public void registerPortraitAsync(Long characterId, FileHandle file, PortraitFile type) {
         Long existingId = pathToPortraitId.get(file.path());
         if (existingId != null) {
             addRelation(characterId, existingId);
-            return CompletableFuture.completedFuture(null);
         }
 
         long newId = idProvider.generateUniqueId();
-        CompletableFuture<Void> future = new CompletableFuture<>();
 
         CompletableFuture
             .supplyAsync(() -> {
@@ -61,21 +59,18 @@ public final class PortraitRepository {
             .thenAcceptAsync(pixmap -> {
                 try {
                     Texture texture = new Texture(pixmap);
-                    pixmap.dispose();
                     TextureRegion region = new TextureRegion(texture);
                     PortraitEntry entry = new PortraitEntry(newId, type, file.path(), texture, region);
 
-                    portraits.put(newId, entry);
-                    pathToPortraitId.put(file.path(), newId);
-                    addRelation(characterId, newId);
-
-                    future.complete(null);
-                } catch (Exception e) {
-                    future.completeExceptionally(e);
+                    synchronized (this) {
+                        portraits.put(newId, entry);
+                        pathToPortraitId.put(file.path(), newId);
+                        addRelation(characterId, newId);
+                    }
+                } finally {
+                    pixmap.dispose(); // always dispose, even if Texture throws
                 }
             }, runnable -> Gdx.app.postRunnable(runnable));
-
-        return future;
     }
 
     public TextureRegion getPortrait(Long characterId, PortraitFile type) {
