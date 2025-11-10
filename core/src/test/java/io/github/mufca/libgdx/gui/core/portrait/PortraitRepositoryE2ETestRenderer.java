@@ -9,16 +9,12 @@ import io.github.mufca.libgdx.util.UIHelper;
 public class PortraitRepositoryE2ETestRenderer {
 
     private static final int PADDING = 2;
-    private static final SpriteBatch batch = new SpriteBatch();
 
     private PortraitRepositoryE2ETestRenderer() {
     }
 
-    public static void render(DockedViewportPanel panel, PortraitRepository repository) {
-        panel.apply(batch);
-
-        batch.begin();
-        int x = 0;
+    public static void render(SpriteBatch batch, PortraitRepository repository) {
+        int x;
         int y = 0;
 
         for (var entry : repository.snapshotCharacterToPortraits().entrySet()) {
@@ -46,13 +42,9 @@ public class PortraitRepositoryE2ETestRenderer {
             }
             y += maxY + PADDING;
         }
-
-        batch.end();
     }
 
-    public static void renderUnderStress(DockedViewportPanel panel, PortraitRepository repository) {
-        batch.begin();
-        panel.apply(batch);
+    public static void renderUnderStress(DockedViewportPanel panel, SpriteBatch batch, PortraitRepository repository) {
         int cols = 10;
         int rows = 7;
         int totalSlots = cols * rows;
@@ -84,6 +76,5 @@ public class PortraitRepositoryE2ETestRenderer {
             }
             index++;
         }
-        batch.end();
     }
 }

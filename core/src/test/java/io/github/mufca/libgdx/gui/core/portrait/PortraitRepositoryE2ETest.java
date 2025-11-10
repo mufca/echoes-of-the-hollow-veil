@@ -7,7 +7,7 @@ import static org.awaitility.Awaitility.await;
 import com.badlogic.gdx.files.FileHandle;
 import io.github.mufca.libgdx.datastructure.lowlevel.IdProvider;
 import io.github.mufca.libgdx.util.LogHelper;
-import io.github.mufca.libgdx.utils.GdxExtension;
+import io.github.mufca.libgdx.utils.gdxextension.GdxExtension;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -76,8 +76,8 @@ public class PortraitRepositoryE2ETest {
 
         // WHEN
         portraits.forEach(portrait -> this.registerPortraitAsync(portrait, repository));
-        extension.setRenderCallback((panel, delta)
-            -> PortraitRepositoryE2ETestRenderer.render(panel, repository));
+        extension.setRenderCallback((panel, batch, renderer, delta)
+            -> PortraitRepositoryE2ETestRenderer.render(batch, repository));
 
         // THEN
         int expectedSize = Math.min(parameters.size(), MAX_CACHE_SIZE);
@@ -103,8 +103,8 @@ public class PortraitRepositoryE2ETest {
             .map(portrait -> repository.registerPortraitAsync(portrait.characterId(), new FileHandle(portrait.file()),
                 portrait.type()))
             .toList();
-        extension.setRenderCallback((panel, delta)
-            -> PortraitRepositoryE2ETestRenderer.renderUnderStress(panel, repository));
+        extension.setRenderCallback((panel, batch, renderer, delta)
+            -> PortraitRepositoryE2ETestRenderer.renderUnderStress(panel, batch, repository));
 
         // THEN
         CompletableFuture<Void> allTasks = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));

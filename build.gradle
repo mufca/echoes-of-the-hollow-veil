@@ -73,6 +73,8 @@ subprojects {
     dependencies {
         compileOnly "org.projectlombok:lombok:$lombokVersion"
         annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+        testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+        testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
         implementation "com.github.ben-manes.caffeine:caffeine:$caffeineVersion"

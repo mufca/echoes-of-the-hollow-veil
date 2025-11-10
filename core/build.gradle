@@ -36,6 +36,7 @@ tasks.named("build") {
 
 test {
     useJUnitPlatform()
+    forkEvery = 1
 }
 
 def assetDirectories = [
