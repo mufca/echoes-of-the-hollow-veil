@@ -1,32 +1,49 @@
 package io.github.mufca.libgdx.util;
 
-import com.badlogic.gdx.Gdx;
-import java.util.function.BiConsumer;
+import org.tinylog.Logger;
 
-public class LogHelper {
+public final class LogHelper {
+
+    private LogHelper() {
+    }
 
     public enum Level {
-        DEBUG(Gdx.app::debug),
-        INFO(Gdx.app::log),
-        ERROR(Gdx.app::error);
+        DEBUG, INFO, ERROR, WARN
+    }
 
-        final BiConsumer<String, String> logMethod;
+    private static String tagOf(Object obj) {
+        if (obj == null) {
+            return "Unknown";
+        }
+        if (obj instanceof Class<?> cls) {
+            return cls.getSimpleName();
+        }
+        return obj.getClass().getSimpleName();
+    }
 
-        Level(BiConsumer<String, String> logMethod) {
-            this.logMethod = logMethod;
+    private static void log(Object obj, Level level, String message) {
+        String tag = tagOf(obj);
+        switch (level) {
+            case DEBUG -> Logger.tag(tag).debug(message);
+            case INFO -> Logger.tag(tag).info(message);
+            case ERROR -> Logger.tag(tag).error(message);
+            case WARN -> Logger.tag(tag).warn(message);
         }
     }
 
-    public static void log(Object obj, Level level, String message) {
-        String tag = switch (obj) {
-            case Class<?> cls -> cls.getSimpleName();
-            case null -> "Unknown";
-            default -> obj.getClass().getSimpleName();
-        };
-        level.logMethod.accept(tag, message);
+    public static void debug(Object obj, String msg) {
+        log(obj, Level.DEBUG, msg);
     }
 
-    public static void debug(Object obj, String msg) { log(obj, Level.DEBUG, msg); }
-    public static void info(Object obj, String msg)  { log(obj, Level.INFO, msg); }
-    public static void error(Object obj, String msg) { log(obj, Level.ERROR, msg); }
+    public static void info(Object obj, String msg) {
+        log(obj, Level.INFO, msg);
+    }
+
+    public static void error(Object obj, String msg) {
+        log(obj, Level.ERROR, msg);
+    }
+
+    public static void warn(Object obj, String msg) {
+        log(obj, Level.WARN, msg);
+    }
 }

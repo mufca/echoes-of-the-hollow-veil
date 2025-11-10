@@ -25,8 +25,9 @@ public class IdProviderTest {
 
         // WHEN
         for (int i = 0; i < TESTING_SIZE; i++) {
-            var isAdded = usedIds.add(idProvider.generateUniqueId());
-            assertThat(isAdded).as("Failed to add ID at iteration %s due to duplication", i).isTrue();
+            var idToAdd = idProvider.generateUniqueId();
+            var isAdded = usedIds.add(idToAdd);
+            assertThat(isAdded).as("Failed to add ID %s at iteration %s due to duplication", idToAdd, i).isTrue();
         }
 
         // THEN
@@ -49,13 +50,12 @@ public class IdProviderTest {
                         long id = idProvider.generateUniqueId();
                         boolean added = allIds.add(id);
                         if (!added) {
-                            throw new IllegalStateException("Duplicate ID detected: " + id);
+                            throw new IllegalStateException("Duplicate ID detected: %d".formatted(id));
                         }
                     }
                     latch.countDown();
                 });
             }
-
             executor.shutdownNow();
         }
 

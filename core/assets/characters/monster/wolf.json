@@ -1,0 +1,29 @@
+{
+  "id": "wolf",
+  "name": "Unnamed",
+  "type": "ANIMAL",
+  "respawningTicks": 600,
+  "aggressive": true,
+  "appearance": {
+    "firstTrait": [
+      "black"
+    ],
+    "secondTrait": [
+      "haunting"
+    ],
+    "race": "wolf"
+  },
+  "primaryStatistics": {
+    "strength": 6.0,
+    "dexterity": 7.5,
+    "constitution": 5.0,
+    "intelligence": 1.0,
+    "wisdom": 2.0,
+    "charisma": 1.5
+  },
+  "secondaryStatistics": {
+    "hitPoints": 18.0,
+    "stamina": 10.0,
+    "mana": 3.0
+  }
+}

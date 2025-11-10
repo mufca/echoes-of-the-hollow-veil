@@ -10,11 +10,12 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import io.github.mufca.libgdx.datastructure.lowlevel.IdProvider;
 import io.github.mufca.libgdx.util.LogHelper;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import lombok.Synchronized;
 
 /**
  * Thread-safe, async-loading portrait repository with many-to-many characterId <-> portraitId mapping.
@@ -26,12 +27,16 @@ public final class PortraitRepository {
 
     private final Map<String, Long> pathToPortraitId = new ConcurrentHashMap<>();
     private final Map<Long, Set<Long>> characterToPortraits = new ConcurrentHashMap<>();
+    private final Object portraitLock = new Object();
 
     private final Cache<Long, PortraitEntry> portraits = Caffeine.newBuilder()
         .maximumSize(MAX_CACHE_SIZE)
-        .removalListener((Long id, PortraitEntry entry, RemovalCause cause) -> {
-            pathToPortraitId.remove(entry.path());
-            entry.dispose();
+        .removalListener((Long portraitId, PortraitEntry entry, RemovalCause cause) -> {
+            synchronized (portraitLock) {
+                removePortraitFromCharacters(portraitId);
+                pathToPortraitId.remove(entry.path());
+                Gdx.app.postRunnable(entry::dispose);
+            }
         })
         .build();
 
@@ -41,16 +46,17 @@ public final class PortraitRepository {
         this.idProvider = idProvider;
     }
 
-    public void registerPortraitAsync(Long characterId, FileHandle file, PortraitFile type) {
+    @Synchronized("portraitLock")
+    public CompletableFuture<Void> registerPortraitAsync(Long characterId, FileHandle file, PortraitFile type) {
         Long existingId = pathToPortraitId.get(file.path());
         if (existingId != null) {
             addRelation(characterId, existingId);
-            return;
+            new CompletableFuture<Void>().complete(null);
         }
 
         long newId = idProvider.generateUniqueId();
 
-        CompletableFuture
+        return CompletableFuture
             .supplyAsync(() -> new Pixmap(file))
             .thenAcceptAsync(pixmap -> {
                 try {
@@ -58,7 +64,7 @@ public final class PortraitRepository {
                     TextureRegion region = new TextureRegion(texture);
                     PortraitEntry entry = new PortraitEntry(newId, type, file.path(), texture, region);
 
-                    synchronized (this) {
+                    synchronized (portraitLock) {
                         portraits.put(newId, entry);
                         pathToPortraitId.put(file.path(), newId);
                         addRelation(characterId, newId);
@@ -86,36 +92,45 @@ public final class PortraitRepository {
         return null;
     }
 
-    public void removeCharacters(List<Long> characterIds) {
-        for (Long characterId : characterIds) {
-            Set<Long> ids = characterToPortraits.remove(characterId);
-            if (ids == null) {
-                continue;
-            }
-
-            for (Long portraitId : ids) {
-                boolean orphan = characterToPortraits.values().stream()
-                    .noneMatch(set -> set.contains(portraitId));
-
-                if (orphan) {
-                    PortraitEntry removed = portraits.asMap().remove(portraitId);
-                    if (removed != null) {
-                        pathToPortraitId.remove(removed.path());
-                    }
-                }
-            }
-        }
-    }
-
-    public void disposeAll() {
-        portraits.invalidateAll();
-        characterToPortraits.clear();
-        pathToPortraitId.clear();
+    private void removePortraitFromCharacters(Long portraitId) {
+        characterToPortraits.entrySet()
+            .removeIf(entry -> {
+                entry.getValue().remove(portraitId);
+                return entry.getValue().isEmpty();
+            });
     }
 
     private void addRelation(Long characterId, Long portraitId) {
         characterToPortraits
             .computeIfAbsent(characterId, id -> ConcurrentHashMap.newKeySet())
             .add(portraitId);
+    }
+
+    /**
+     * Returns an immutable snapshot of the current character-to-portraits mapping.
+     * <p>
+     * This method is intended <strong>for testing and debug visualization only</strong>. The returned map is a deep,
+     * unmodifiable copy — subsequent mutations in the repository will not affect this snapshot.
+     *
+     * @return an immutable map of character IDs to immutable sets of portrait IDs
+     */
+    public Map<Long, Set<Long>> snapshotCharacterToPortraits() {
+        return characterToPortraits.entrySet().stream()
+            .collect(Collectors.toUnmodifiableMap(
+                Map.Entry::getKey,
+                e -> Set.copyOf(e.getValue())
+            ));
+    }
+
+    /**
+     * Returns an immutable snapshot of all portrait entries currently loaded in the cache.
+     * <p>
+     * This method is intended <strong>for testing and debug visualization only</strong>. It captures a stable copy of
+     * the cache contents at the time of invocation. The returned map is unmodifiable and detached from the live cache.
+     *
+     * @return an immutable map of portrait IDs to their corresponding {@link PortraitEntry}
+     */
+    public Map<Long, PortraitEntry> snapshotPortraits() {
+        return Map.copyOf(portraits.asMap());
     }
 }

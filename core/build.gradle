@@ -1,40 +1,47 @@
 import java.nio.file.Files
 
 plugins {
-  id 'java'
+    id 'java'
 }
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 
 dependencies {
-  api "com.badlogicgames.gdx:gdx:$gdxVersion"
+    api "com.badlogicgames.gdx:gdx:$gdxVersion"
 
-  if (enableGraalNative == 'true') {
-    implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
-  }
+    if (enableGraalNative == 'true') {
+        implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
+    }
 
-  testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-  testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
-  testImplementation "org.assertj:assertj-core:$assertjVersion"
-  testImplementation "org.mockito:mockito-core:$mockitoVersion"
-  testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
+    implementation "org.tinylog:tinylog-api:$tinylogVersion"
+    implementation "org.tinylog:tinylog-impl:$tinylogVersion"
+    testImplementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    runtimeOnly "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
+    testImplementation "org.awaitility:awaitility:$awaitilityVersion"
+    testImplementation "commons-io:commons-io:$apacheCommonsIO"
 }
 
 sourceSets.main.resources.srcDirs = ["assets"]
 
 tasks.named("build") {
-  dependsOn(":generateLicenseReport")
+    dependsOn(":generateLicenseReport")
 }
 
 test {
-  useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 def assetDirectories = [
         "$projectDir/../core/assets/locations",
-        "$projectDir/../core/src/test/resources/locations"
+        "$projectDir/../core/src/test/resources/locations",
+        "$projectDir/../core/assets/characters"
 ]
 
 tasks.register('generateLocationIndexes') {
