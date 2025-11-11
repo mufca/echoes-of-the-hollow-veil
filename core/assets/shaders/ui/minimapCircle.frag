@@ -30,8 +30,7 @@ void main() {
         spikes = max(spikes, insideAngle * radialMask);
     }
 
-    float shape = spikes;
     vec3 color = vec3(1., 1., 1.);
-    if (shape < .01) discard;
-    fragColor = vec4(color, shape);
+    if (spikes < .01) discard;
+    fragColor = vec4(color, 0.45);
 }

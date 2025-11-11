@@ -6,18 +6,21 @@ import io.github.mufca.libgdx.datastructure.location.jsondata.MapLocation;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.AccessLevel;
 import lombok.Getter;
 
+@Getter
 public class MapLayout {
+
     private final Map<String, GridPosition> positions = new HashMap<>();
+
+    @Getter(AccessLevel.NONE)
     private final LazyLocationLoader loader;
-    @Getter
+
     private final int tileSize;
-    @Getter
     private final float border;
-    @Getter
     private final float borderSize;
-    @Getter
+
     private final float fillSize;
 
     public MapLayout(LazyLocationLoader loader, int tileSize) {
@@ -43,8 +46,12 @@ public class MapLayout {
         for (Exit exit : mapLocation.exits()) {
             MapLocation exitLocation = loader.mapCache().get(exit.targetId());
             GridPosition offset = directionToOffset(exit.name());
-            if (exitLocation == null) continue;
-            if (offset == null) continue;
+            if (exitLocation == null) {
+                continue;
+            }
+            if (offset == null) {
+                continue;
+            }
             buildMap(exitLocation, x + offset.x(), y + offset.y());
         }
     }
@@ -66,9 +73,4 @@ public class MapLayout {
     public GridPosition getPosition(String targetId) {
         return positions.get(targetId);
     }
-
-    public Map<String, GridPosition> getPositions() {
-        return new HashMap<>(positions);
-    }
-
 }

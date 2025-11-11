@@ -5,8 +5,11 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import regexodus.Pattern;
 
 public final class NvidiaSmiMonitor {
+
+    private static final Pattern SPLIT_PATTERN = Pattern.compile("\\s*,\\s*"); // lub nawet ","
 
     public static Optional<GpuStatus> query() {
         try {
@@ -19,7 +22,7 @@ public final class NvidiaSmiMonitor {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                     String line = reader.readLine();
                     if (line != null && !line.isEmpty()) {
-                        String[] parts = line.trim().split("\\s*,\\s*");
+                        String[] parts = SPLIT_PATTERN.split(line.trim());
                         int total = Integer.parseInt(parts[0]);
                         int used = Integer.parseInt(parts[1]);
                         int utilization = Integer.parseInt(parts[2]);
@@ -31,7 +34,7 @@ public final class NvidiaSmiMonitor {
             return Optional.empty();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogHelper.info(NvidiaSmiMonitor.class, e.getMessage());
             return Optional.empty();
         }
     }

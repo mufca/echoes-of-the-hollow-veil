@@ -30,7 +30,6 @@ public class MapRenderer extends DockedViewportPanel {
     private final MapLayout mapLayout;
     private Mesh ringMesh;
     private float time;
-    private MapLocation currentLocation;
 
     public MapRenderer(LazyLocationLoader loader) {
         super();
@@ -40,12 +39,10 @@ public class MapRenderer extends DockedViewportPanel {
 
     public void computePositions(MapLocation start) {
         mapLayout.computePositions(start);
-        currentLocation = start;
     }
 
     public void render(Map<String, MapLocation> world, MapLocation currentLocation, float delta) {
         this.camera.setToOrtho(false, viewport.getScreenWidth(), viewport.getScreenHeight());
-        this.currentLocation = currentLocation;
         GridPosition currentLocationPosition = mapLayout.getPosition(currentLocation.targetId());
         int gridXToCenterOn = currentLocationPosition.x();
         int gridYToCenterOn = currentLocationPosition.y();
@@ -72,14 +69,14 @@ public class MapRenderer extends DockedViewportPanel {
 
     private void drawLocationExitPaths(Map<String, MapLocation> world) {
         shapeRenderer.setColor(Color.LIGHT_GRAY);
-        Map<String, GridPosition> positions = mapLayout.getPositions();
+        var positions = mapLayout.positions();
         for (MapLocation location : world.values()) {
-            GridPosition startingPosition = positions.get(location.targetId());
+            var startingPosition = positions.get(location.targetId());
             if (startingPosition == null) {
                 continue;
             }
             for (var exit : location.exits()) {
-                GridPosition endingPosition = positions.get(exit.targetId());
+                var endingPosition = positions.get(exit.targetId());
                 if (endingPosition == null) {
                     continue;
                 }
@@ -97,14 +94,14 @@ public class MapRenderer extends DockedViewportPanel {
     }
 
     private void drawLocationNodes() {
-        for (var entry : mapLayout.getPositions().entrySet()) {
+        for (var entry : mapLayout.positions().entrySet()) {
             drawLocationNode(entry);
         }
     }
 
     private void drawLocationNode(Map.Entry<String, GridPosition> entry) {
-        Color fillColor = new Color(0.2f, 0.5f, 0.3f, 1f);
-        Color borderColor = new Color(0.2f, 0.8f, 0.3f, 1f);
+        var fillColor = new Color(0.2f, 0.5f, 0.3f, 1f);
+        var borderColor = new Color(0.2f, 0.8f, 0.3f, 1f);
         shapeRenderer.setColor(borderColor); // border
         float bottomLeftCornerX = entry.getValue().x() * TILE_SIZE - TILE_SIZE_OFFSET;
         float bottomLeftCornerY = entry.getValue().y() * TILE_SIZE - TILE_SIZE_OFFSET;
