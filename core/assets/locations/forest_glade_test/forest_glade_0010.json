@@ -5,7 +5,7 @@
   "exits": [
     { "name": "north-west", "targetId": "forest_glade_0009" }
   ],
-  "characters": [],
+  "npcDefinitions": [],
   "objects": [],
   "features": []
 }

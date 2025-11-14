@@ -1,12 +1,13 @@
-package io.github.mufca.libgdx.datastructure.character;
+package io.github.mufca.libgdx.datastructure.character.jsondata;
 
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.mufca.libgdx.datastructure.character.jsondata.CharacterData;
-
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 

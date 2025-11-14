@@ -6,7 +6,9 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import io.github.mufca.libgdx.datastructure.GameContext;
+import io.github.mufca.libgdx.datastructure.character.logic.NPC;
 import io.github.mufca.libgdx.datastructure.location.Exit;
+import io.github.mufca.libgdx.datastructure.location.logic.BaseLocation;
 import io.github.mufca.libgdx.gui.screen.gameplay.PlayerPanel;
 import io.github.mufca.libgdx.gui.screen.gameplay.TextRenderer;
 import io.github.mufca.libgdx.gui.screen.map.MapRenderer;
@@ -14,6 +16,7 @@ import io.github.mufca.libgdx.scheduler.event.TextEvent;
 import io.github.mufca.libgdx.util.LogHelper;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GameplayScreen extends ScreenAdapter {
@@ -22,7 +25,7 @@ public class GameplayScreen extends ScreenAdapter {
     private static final int MINIMAP_SIZE = 350;
     private static final int MINIMAP_OFFSET = 10;
 
-    private GameContext context;
+    private final GameContext context;
 
     static {
         DIRECTION_MAP.put(Input.Keys.NUMPAD_7, "north-west");
@@ -42,7 +45,7 @@ public class GameplayScreen extends ScreenAdapter {
 
     public GameplayScreen() throws IOException {
         context = new GameContext("forest_glade_0001");
-        context.createPlayer();
+
         context.eventBus().subscribe(TextEvent.class, this::handleTextEvent);
         minimap = new MapRenderer(context.loader());
         minimap.computePositions(context.loader().mapCache().get("forest_glade_0001"));
@@ -59,7 +62,7 @@ public class GameplayScreen extends ScreenAdapter {
     public void show() {
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         text.show();
-        text.moveToLocation(context.currentLocation());
+        text.moveToLocation(context.currentLocation(), List.of());
     }
 
     @Override
@@ -88,11 +91,12 @@ public class GameplayScreen extends ScreenAdapter {
                     .filter(e -> e.name().equalsIgnoreCase(direction))
                     .findFirst()
                     .orElse(null);
-
                 if (targetExit != null) {
                     try {
-                        context.currentLocation(context.loader().getLocation(targetExit.targetId()));
-                        text.moveToLocation(context.currentLocation());
+                        BaseLocation newLocation = context.loader().getLocation(targetExit.targetId());
+                        context.currentLocation(newLocation);
+                        List<NPC> npcList = context.npcSystem().shouldSpawnIfMissing(newLocation.npcDefinitions());
+                        text.moveToLocation(context.currentLocation(), npcList);
                     } catch (IOException e) {
                         LogHelper.error(this, "Failed to load location: " + targetExit.targetId());
                     }

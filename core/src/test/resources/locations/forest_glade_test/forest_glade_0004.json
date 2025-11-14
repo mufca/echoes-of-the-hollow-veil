@@ -8,7 +8,7 @@
     { "name": "west", "targetId": "forest_glade_0003" }
 
   ],
-  "characters": [],
+  "npcDefinitions": [],
   "objects": [],
   "features": []
 }

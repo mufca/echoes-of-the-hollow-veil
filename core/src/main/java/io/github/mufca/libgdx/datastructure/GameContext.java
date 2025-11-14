@@ -1,6 +1,6 @@
 package io.github.mufca.libgdx.datastructure;
 
-import io.github.mufca.libgdx.datastructure.character.NPCRepository;
+import io.github.mufca.libgdx.datastructure.character.storage.NPCSystem;
 import io.github.mufca.libgdx.datastructure.location.LazyLocationLoader;
 import io.github.mufca.libgdx.datastructure.location.logic.BaseLocation;
 import io.github.mufca.libgdx.datastructure.lowlevel.IdProvider;
@@ -28,8 +28,8 @@ public final class GameContext {
     private final MessageRouter router;
     private final LazyLocationLoader loader;
     private final PortraitRepository portraitRepository;
-    private final NPCRepository npcRepository;
-    private Player player;
+    private final NPCSystem npcSystem;
+    private final Player player;
     @Setter
     private BaseLocation currentLocation;
 
@@ -39,14 +39,11 @@ public final class GameContext {
         loader = new LazyLocationLoader(time, router);
         currentLocation = loader.getLocation(startingLocationId);
         portraitRepository = new PortraitRepository(idProvider);
-        npcRepository = new NPCRepository();
+        npcSystem = new NPCSystem(idProvider, portraitRepository, () -> currentLocation);
+        player = new Player(idProvider, portraitRepository);
         time.scheduler().scheduleRepeating("1", 1L, time().now(), 10L, () -> {
             Optional<GpuStatus> query = NvidiaSmiMonitor.query();
             query.ifPresent(q -> LogHelper.info(this, q.toString()));
         });
-    }
-
-    public void createPlayer() {
-        player = new Player(this);
     }
 }

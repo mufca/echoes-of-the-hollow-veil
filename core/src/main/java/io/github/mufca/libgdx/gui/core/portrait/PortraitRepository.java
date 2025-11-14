@@ -11,6 +11,7 @@ import com.github.benmanes.caffeine.cache.RemovalCause;
 import io.github.mufca.libgdx.datastructure.lowlevel.IdProvider;
 import io.github.mufca.libgdx.util.LogHelper;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,7 +52,7 @@ public final class PortraitRepository {
         Long existingId = pathToPortraitId.get(file.path());
         if (existingId != null) {
             addRelation(characterId, existingId);
-            new CompletableFuture<Void>().complete(null);
+            return CompletableFuture.completedFuture(null);
         }
 
         long newId = idProvider.generateUniqueId();
@@ -77,19 +78,19 @@ public final class PortraitRepository {
             }, runnable -> Gdx.app.postRunnable(runnable));
     }
 
-    public TextureRegion getPortrait(Long characterId, PortraitFile type) {
+    public Optional<TextureRegion> getPortrait(Long characterId, PortraitFile type) {
         Set<Long> portraitIds = characterToPortraits.get(characterId);
         if (portraitIds == null) {
-            return null;
+            return Optional.empty();
         }
 
         for (Long portraitId : portraitIds) {
             PortraitEntry portraitEntry = portraits.getIfPresent(portraitId);
             if (portraitEntry != null && portraitEntry.portraitFile() == type) {
-                return portraitEntry.region();
+                return Optional.of(portraitEntry.region());
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     private void removePortraitFromCharacters(Long portraitId) {

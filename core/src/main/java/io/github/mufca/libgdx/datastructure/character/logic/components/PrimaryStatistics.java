@@ -1,4 +1,7 @@
-package io.github.mufca.libgdx.datastructure.character;
+package io.github.mufca.libgdx.datastructure.character.logic.components;
+
+import static io.github.mufca.libgdx.constant.ErrorConstants.STATISTIC_CAN_T_BE_NULL;
+import static io.github.mufca.libgdx.constant.ErrorConstants.CHARACTER_ID_CAN_T_BE_NULL;
 
 import java.util.Objects;
 import lombok.Getter;
@@ -7,9 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public final class PrimaryStatistics {
-
-    public static final String CAN_T_BE_NULL = "%s statistic can't be null";
-    public static final String CHARACTER_ID_IS_NULL = "Character characterId is null";
 
     private final Long characterId;
 
@@ -23,13 +23,13 @@ public final class PrimaryStatistics {
 
     public PrimaryStatistics(Long characterId, Float strength, Float dexterity,
         Float constitution, Float intelligence, Float wisdom, Float charisma) {
-        this.characterId = Objects.requireNonNull(characterId, CHARACTER_ID_IS_NULL);
-        this.strength = Objects.requireNonNull(strength, CAN_T_BE_NULL.formatted("Strength"));
-        this.dexterity = Objects.requireNonNull(dexterity, CAN_T_BE_NULL.formatted("Dexterity"));
-        this.constitution = Objects.requireNonNull(constitution, CAN_T_BE_NULL.formatted("Constitution"));
-        this.intelligence = Objects.requireNonNull(intelligence, CAN_T_BE_NULL.formatted("Intelligence"));
-        this.wisdom = Objects.requireNonNull(wisdom, CAN_T_BE_NULL.formatted("Wisdom"));
-        this.charisma = Objects.requireNonNull(charisma, CAN_T_BE_NULL.formatted("Charisma"));
+        this.characterId = Objects.requireNonNull(characterId, CHARACTER_ID_CAN_T_BE_NULL);
+        this.strength = Objects.requireNonNull(strength, STATISTIC_CAN_T_BE_NULL.formatted("Strength"));
+        this.dexterity = Objects.requireNonNull(dexterity, STATISTIC_CAN_T_BE_NULL.formatted("Dexterity"));
+        this.constitution = Objects.requireNonNull(constitution, STATISTIC_CAN_T_BE_NULL.formatted("Constitution"));
+        this.intelligence = Objects.requireNonNull(intelligence, STATISTIC_CAN_T_BE_NULL.formatted("Intelligence"));
+        this.wisdom = Objects.requireNonNull(wisdom, STATISTIC_CAN_T_BE_NULL.formatted("Wisdom"));
+        this.charisma = Objects.requireNonNull(charisma, STATISTIC_CAN_T_BE_NULL.formatted("Charisma"));
     }
 
     @Override

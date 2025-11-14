@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record SecondaryStatisticsData(
-    @JsonProperty("hitPoints") double hitPoints,
-    @JsonProperty("stamina") double stamina,
-    @JsonProperty("mana") double mana
+    @JsonProperty("hitPoints") float hitPoints,
+    @JsonProperty("stamina") float stamina,
+    @JsonProperty("mana") float mana
 ) {
 
 }

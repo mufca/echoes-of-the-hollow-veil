@@ -1,18 +1,19 @@
-package io.github.mufca.libgdx.datastructure.random;
+package io.github.mufca.libgdx.datastructure.lowlevel;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
-public class RandomGenerator {
+public class RandomUtils {
 
     private static final Random RANDOM = new Random();
 
-    public static <T> T pickFromList(List<T> list) {
+    public static <T> Optional<T> pickFromList(List<T> list) {
         if (list == null || list.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
         int index = RANDOM.nextInt(list.size());
-        return list.get(index);
+        return Optional.of(list.get(index));
     }
 
     public static int pickFromRange(int min, int max) {

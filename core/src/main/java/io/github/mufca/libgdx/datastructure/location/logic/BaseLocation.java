@@ -21,7 +21,7 @@ public class BaseLocation {
     private final String shortDescription;
     private final String longDescription;
     private final List<Exit> exits;
-    private final List<Character> characters;
+    private final List<String> npcDefinitions;
     private final List<Item> objects;
 
     private final List<LocationFeature> features = new ArrayList<>();
@@ -32,7 +32,7 @@ public class BaseLocation {
         this.shortDescription = data.shortDescription();
         this.longDescription = data.longDescription();
         this.exits = data.exits();
-        this.characters = data.characters();
+        this.npcDefinitions = data.npcDefinitions();
         this.objects = data.objects();
         for (FeatureData featureData : data.features()) {
             addFeature(FeatureFactory.createFeature(featureData, targetId, time, router));

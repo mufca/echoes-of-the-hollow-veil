@@ -12,7 +12,7 @@ public record LocationData(
     @JsonProperty("shortDescription") String shortDescription,
     @JsonProperty("longDescription") String longDescription,
     @JsonProperty("exits") List<Exit> exits,
-    @JsonProperty("characters") List<Character> characters,
+    @JsonProperty("npcDefinitions") List<String> npcDefinitions,
     @JsonProperty("objects") List<Item> objects,
     @JsonProperty("features") List<FeatureData> features) {
 

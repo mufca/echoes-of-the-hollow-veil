@@ -6,7 +6,7 @@
     { "name": "north-west", "targetId": "forest_glade_0006" },
     { "name": "south-east", "targetId": "forest_glade_0008" }
   ],
-  "characters": [],
+  "npcDefinitions": [],
   "objects": [],
   "features": [
     {

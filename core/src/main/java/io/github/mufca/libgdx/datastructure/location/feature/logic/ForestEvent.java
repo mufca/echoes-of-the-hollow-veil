@@ -1,8 +1,8 @@
 package io.github.mufca.libgdx.datastructure.location.feature.logic;
 
 import static io.github.mufca.libgdx.datastructure.location.feature.FeatureType.FOREST;
-import static io.github.mufca.libgdx.datastructure.random.RandomGenerator.pickFromList;
-import static io.github.mufca.libgdx.datastructure.random.RandomGenerator.pickFromRange;
+import static io.github.mufca.libgdx.datastructure.lowlevel.RandomUtils.pickFromList;
+import static io.github.mufca.libgdx.datastructure.lowlevel.RandomUtils.pickFromRange;
 import static io.github.mufca.libgdx.scheduler.event.DeliveryScope.CURRENT_LOCATION;
 
 import io.github.mufca.libgdx.datastructure.location.feature.LocationFeature;
@@ -14,6 +14,7 @@ import io.github.mufca.libgdx.scheduler.event.TextEvent;
 import io.github.mufca.libgdx.util.LogHelper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.Getter;
 
 public final class ForestEvent extends LocationFeature {
@@ -33,8 +34,13 @@ public final class ForestEvent extends LocationFeature {
     }
 
     private void sendRandomMessage() {
-        String message = pickFromList(messages);
-        router.publish(new TextEvent(CURRENT_LOCATION, locationId, message));
-        LogHelper.debug(this, "%s %d event published a message %s.".formatted(locationId, featureId, message));
+        Optional<String> message = pickFromList(messages);
+        if (message.isPresent()) {
+            router.publish(new TextEvent(CURRENT_LOCATION, locationId, message.get()));
+            LogHelper.debug(this,
+                "%s %d event published a message %s.".formatted(locationId, featureId, message.get()));
+        } else {
+            LogHelper.warn(this, "Empty %d event message in location: %s".formatted(featureId, locationId));
+        }
     }
 }

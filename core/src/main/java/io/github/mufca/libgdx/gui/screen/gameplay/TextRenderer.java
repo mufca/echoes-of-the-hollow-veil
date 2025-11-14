@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import io.github.mufca.libgdx.datastructure.character.logic.NPC;
 import io.github.mufca.libgdx.datastructure.location.Exit;
 import io.github.mufca.libgdx.datastructure.location.feature.LocationFeature;
 import io.github.mufca.libgdx.datastructure.location.feature.logic.ForestEvent;
@@ -15,6 +16,7 @@ import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 import io.github.mufca.libgdx.gui.core.widget.DockedViewportPanel;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TextRenderer extends DockedViewportPanel {
 
@@ -35,7 +37,7 @@ public class TextRenderer extends DockedViewportPanel {
         stage.addActor(root);
     }
 
-    public void moveToLocation(BaseLocation location) {
+    public void moveToLocation(BaseLocation location, List<NPC> npcList) {
         addText("Moved to location: " + location.shortDescription());
         addText(location.longDescription());
         List<LocationFeature> features = location.features();
@@ -49,7 +51,21 @@ public class TextRenderer extends DockedViewportPanel {
                 }
             }
         }
+        addNpcs(npcList);
         addText(getExits(location));
+    }
+
+    private void addNpcs(List<NPC> npcList) {
+        if (!npcList.isEmpty()) {
+            var npcListAsString = npcList.stream()
+                .map(npc -> "%s %s %s".formatted(
+                    npc.appearance().firstTrait(),
+                    npc.appearance().secondTrait(),
+                    npc.meta().enumName().toLowerCase()
+                ))
+                .collect(Collectors.joining(", "));
+            addText(npcListAsString);
+        }
     }
 
     public void addText(String text) {

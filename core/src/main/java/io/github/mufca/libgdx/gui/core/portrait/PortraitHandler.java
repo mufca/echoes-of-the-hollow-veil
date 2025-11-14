@@ -3,7 +3,6 @@ package io.github.mufca.libgdx.gui.core.portrait;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
-import io.github.mufca.libgdx.datastructure.GameContext;
 import io.github.mufca.libgdx.util.LogHelper;
 import java.util.EnumSet;
 
@@ -14,20 +13,20 @@ public final class PortraitHandler {
     private static final String DIRECTORY_PATTERN = "portraits/%s";
     private final Long characterId;
     private final FileHandle portraitDirectory;
-    private final GameContext context;
+    private final PortraitRepository portraitRepository;
 
-    public PortraitHandler(GameContext context, Long characterId, String portraitName) {
+    public PortraitHandler(Long characterId, String portraitName, PortraitRepository portraitRepository) {
         String path = DIRECTORY_PATTERN.formatted(portraitName);
         this.portraitDirectory = Gdx.files.internal(path);
         this.characterId = characterId;
-        this.context = context;
+        this.portraitRepository = portraitRepository;
     }
 
     public void loadAndRegister(EnumSet<PortraitFile> portraitFiles) {
         for (PortraitFile portraitFile : portraitFiles) {
             checkSize(portraitFile);
             FileHandle handle = portraitDirectory.child(portraitFile.filename());
-            context.portraitRepository().registerPortraitAsync(characterId, handle, portraitFile);
+            portraitRepository.registerPortraitAsync(characterId, handle, portraitFile);
         }
     }
 

@@ -7,8 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import io.github.mufca.libgdx.datastructure.GameContext;
-import io.github.mufca.libgdx.datastructure.character.PrimaryStatistics;
-import io.github.mufca.libgdx.datastructure.character.SecondaryStatistics;
+import io.github.mufca.libgdx.datastructure.character.logic.components.PrimaryStatistics;
+import io.github.mufca.libgdx.datastructure.character.logic.components.SecondaryStatistics;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 import io.github.mufca.libgdx.gui.core.widget.DockedViewportPanel;
 import io.github.mufca.libgdx.util.UIHelper;
@@ -26,14 +26,13 @@ public final class PlayerPanel extends DockedViewportPanel {
         this.root = new Table().top().left();
         root.setFillParent(true);
         stage.addActor(root);
-        context.createPlayer();
         buildLayout();
     }
 
     private void buildLayout() {
         var player = context.player();
 
-        portrait = new Image(player.getPortrait(SMALL));
+        portrait = new Image(player.portraits().get(SMALL));
         root.add(new Image(UIHelper.getFilledColor(BLACK))).size(300, 1).center().row();
         root.add(portrait).pad(10).center().row();
 
@@ -74,8 +73,8 @@ public final class PlayerPanel extends DockedViewportPanel {
     }
 
     public void act(float delta) {
-        context.player().updatePortraitsIfNeeded();
-        portrait.setDrawable(new TextureRegionDrawable(context.player().getPortrait(SMALL)));
+        context.player().portraits().updateIfNeeded();
+        portrait.setDrawable(new TextureRegionDrawable(context.player().portraits().get(SMALL)));
     }
 
 

@@ -4,6 +4,7 @@
   "type": "ANIMAL",
   "respawningTicks": 600,
   "aggressive": true,
+  "enumReferenceName": "WOLF",
   "appearance": {
     "firstTrait": [
       "black"
