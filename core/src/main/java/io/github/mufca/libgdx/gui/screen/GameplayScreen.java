@@ -68,8 +68,9 @@ public class GameplayScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         handleInput();
-        context.time().update(delta);
-        context.router().currentLocationId(context.currentLocation().targetId());
+        context.updateTime(delta);
+        context.processTextureUpload();
+        context.updateRouterLocation();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
         playerPanel.apply();

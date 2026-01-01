@@ -46,4 +46,18 @@ public final class GameContext {
             query.ifPresent(q -> LogHelper.info(this, q.toString()));
         });
     }
+
+    public void processTextureUpload() {
+        portraitRepository.processTextureUpload();
+    }
+
+    public void updateTime(float delta) {
+        time.update(delta);
+    }
+
+    public void updateRouterLocation() {
+        if (!router.currentLocationId().equals(currentLocation.targetId())) {
+            router.currentLocationId(currentLocation.targetId());
+        }
+    }
 }

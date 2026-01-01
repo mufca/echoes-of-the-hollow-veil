@@ -87,16 +87,16 @@ public class TextRenderer extends DockedViewportPanel {
         return "Exits: %s".formatted(exits);
     }
 
-    public void render(ScreenViewport minimapVieport) {
+    public void render(ScreenViewport minimapViewport) {
         camera.setToOrtho(false, viewport.getScreenWidth(), viewport.getScreenHeight());
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.DARK_GRAY);
         shapeRenderer.rect(
-            minimapVieport.getScreenX() - viewport.getScreenX() - MINIMAP_BORDER_OFFSET,
-            minimapVieport.getScreenY() - MINIMAP_BORDER_OFFSET,
-            minimapVieport.getScreenWidth() + 2 * MINIMAP_BORDER_OFFSET,
-            minimapVieport.getScreenHeight() + 2 * MINIMAP_BORDER_OFFSET
+            minimapViewport.getScreenX() - viewport.getScreenX() - MINIMAP_BORDER_OFFSET,
+            minimapViewport.getScreenY() - MINIMAP_BORDER_OFFSET,
+            minimapViewport.getScreenWidth() + 2 * MINIMAP_BORDER_OFFSET,
+            minimapViewport.getScreenHeight() + 2 * MINIMAP_BORDER_OFFSET
         );
         shapeRenderer.end();
     }

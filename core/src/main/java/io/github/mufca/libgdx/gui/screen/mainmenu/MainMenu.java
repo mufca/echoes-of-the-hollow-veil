@@ -5,7 +5,6 @@ import static com.badlogic.gdx.utils.Scaling.none;
 import static io.github.mufca.libgdx.constant.AssetConstants.BACKGROUND_MAIN_MENU;
 import static io.github.mufca.libgdx.constant.AssetConstants.LEAF;
 import static io.github.mufca.libgdx.util.UIHelper.BLACK_70A;
-import static io.github.mufca.libgdx.util.UIHelper.doNothing;
 import static io.github.mufca.libgdx.util.UIHelper.getFilledColor;
 import static io.github.mufca.libgdx.util.UIHelper.getTopLeftPaddings;
 
@@ -13,12 +12,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import io.github.mufca.libgdx.gui.core.widget.CoreScreen;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class MainMenu extends CoreScreen {
 
@@ -63,18 +63,24 @@ public class MainMenu extends CoreScreen {
         super.render(delta);
         elapsedTime += delta;
         wind.elapsed(delta);
+        spawnLeafs();
+        blowLeafs();
+    }
+
+    private void spawnLeafs() {
         if (leafLayer.getChildren().size < 25 & elapsedTime > nextSpawn) {
             spawnLeaf();
             elapsedTime = 0f;
             nextSpawn = getNextSpawn();
         }
+    }
+
+    private void blowLeafs() {
         if (wind.isTimeToStart()) {
-            for (Actor actor : leafLayer.getChildren()) {
-                switch (actor) {
-                    case LeafActor currentLeaf -> currentLeaf.blowWind(wind.duration());
-                    default -> doNothing();
-                }
-            }
+            Arrays.stream(leafLayer.getChildren().items).sequential()
+                .filter(Objects::nonNull)
+                .map(leaf -> (LeafActor) leaf)
+                .forEach(leafActor -> leafActor.blowWind(wind.duration()));
             wind = new WindManager();
         }
     }

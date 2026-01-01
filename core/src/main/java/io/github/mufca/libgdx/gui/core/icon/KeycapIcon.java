@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.github.tommyettinger.textra.Font;
 import com.github.tommyettinger.textra.Layout;
@@ -37,11 +36,12 @@ public class KeycapIcon extends Actor {
         if (keycapTexture == null) {
             generateKeycapTexture(floatToIntExact(getWidth()), floatToIntExact(getHeight()));
         }
+        batch.setShader(null);
 
-        Vector2 pos = localToStageCoordinates(new Vector2(0, 0));
         batch.setColor(Color.WHITE);
-        batch.draw(keycapTexture, pos.x, pos.y, getWidth(), getHeight());
+        batch.draw(keycapTexture, getX(), getY(), getWidth(), getHeight());
         layout.clear();
+        batch.setShader(font.shader);
         font.markup(sign, this.layout);
         font.drawGlyphs(batch, layout, centerX(), centerY());
     }
@@ -61,7 +61,7 @@ public class KeycapIcon extends Actor {
 
     private float centerX() {
         Layout measure = font.markup(sign, new Layout());
-        float measureWidth = font.measureWidth(measure.peekLine());
+        float measureWidth = measure.peekLine().width;
         return getX() + (getWidth() / 2f) - (measureWidth / 2f);
     }
 
@@ -70,7 +70,7 @@ public class KeycapIcon extends Actor {
     }
 
     private void generateKeycapTexture(int width, int height) {
-        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGB888);
+        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
         pixmap.setBlending(Pixmap.Blending.None);
 
         // Outer

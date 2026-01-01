@@ -4,15 +4,16 @@ import static com.badlogic.gdx.graphics.Color.PINK;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import io.github.mufca.libgdx.util.UIHelper;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 public final class PortraitContainer {
 
-    private final List<Entry> entries = new ArrayList<>();
+    private final Set<Entry> entries = new HashSet<>();
     private final Long characterId;
 
     private final PortraitRepository portraitRepository;
@@ -24,7 +25,7 @@ public final class PortraitContainer {
 
     public void add(PortraitFile file) {
         var region = portraitRepository.getPortrait(characterId, file);
-        entries.add(new Entry(file, region.isPresent(), region.orElse(null)));
+        entries.add(new Entry(characterId, file, region.isPresent(), region.orElse(null)));
     }
 
     public void updateIfNeeded() {
@@ -48,9 +49,11 @@ public final class PortraitContainer {
     }
 
     @Getter
+    @EqualsAndHashCode(of = {"characterId", "portraitFile"})
     private static class Entry {
 
         private final PortraitFile portraitFile;
+        private final Long characterId;
 
         @Setter
         private boolean isReady;
@@ -58,7 +61,8 @@ public final class PortraitContainer {
         @Setter
         private TextureRegion region;
 
-        Entry(PortraitFile portraitFile, boolean ready, TextureRegion region) {
+        Entry(Long characterId, PortraitFile portraitFile, boolean ready, TextureRegion region) {
+            this.characterId = characterId;
             this.portraitFile = portraitFile;
             this.isReady = ready;
             if (region != null) {

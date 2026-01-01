@@ -69,8 +69,8 @@ public class YetAnotherTestScreen extends CoreScreen {
         Table tHorizontal = WidgetBuilder.buildTable(horizontal);
         stage.addActor(tVertical);
         stage.addActor(tHorizontal);
-        tVertical.setPosition(300, 900);
-        tHorizontal.setPosition(300, 300);
+        tVertical.setPosition(stage.getWidth() / 18, stage.getHeight() / 1.3f);
+        tHorizontal.setPosition(stage.getWidth() / 18, stage.getHeight() / 12);
         tVertical.pack();
         tHorizontal.pack();
         stage.setKeyboardFocus(stage.getRoot());

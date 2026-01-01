@@ -1,5 +1,6 @@
 package io.github.mufca.libgdx.gui.core.portrait;
 
+import static io.github.mufca.libgdx.gui.core.portrait.PortraitFile.*;
 import static java.awt.Color.WHITE;
 import static org.assertj.core.api.Assertions.fail;
 import static org.awaitility.Awaitility.await;
@@ -22,6 +23,7 @@ import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -89,8 +91,7 @@ public class PortraitRepositoryE2ETest {
 
     @ParameterizedTest
     @MethodSource("portraitStressData")
-    public void shouldRegisterAndDisplayPortraitsUnderStress(Set<PortraitGenerationParameter> parameters)
-        throws InterruptedException {
+    public void shouldRegisterAndDisplayPortraitsUnderStress(Set<PortraitGenerationParameter> parameters) {
 
         // GIVEN
         PortraitRepository repository = new PortraitRepository(idProvider);
@@ -108,44 +109,57 @@ public class PortraitRepositoryE2ETest {
 
         // THEN
         CompletableFuture<Void> allTasks = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+
         await()
             .atMost(Duration.ofSeconds(30))
             .pollInterval(Duration.ofMillis(50))
-            .until(allTasks::isDone);
+            .until(() -> allTasks.isDone() && repository.getLoadingQueueSize() == 0);
         var end = System.nanoTime();
         var running = end - start;
-        double seconds = running / 1_000_000_000.0;
+        var seconds = running / 1_000_000_000.0;
         LogHelper.info(this, SUMMARY.formatted(end, seconds));
-        Thread.sleep(3000);
+    }
+
+
+    @Test
+    public void drawTimeline() {
+        PortraitRepository repository = new PortraitRepository(idProvider);
+        var generationParameter = new PortraitGenerationParameter(1L, "character_1", SMALL);
+        var generatedPortraits = setupFiles(Set.of(generationParameter));
+        generatedPortraits.forEach(portrait -> this.registerPortraitAsync(portrait, repository));
+        var container = new PortraitContainer(1L, repository);
+        extension.setRenderCallback((panel, batch, renderer, delta)
+            -> PortraitRepositoryE2ETestRenderer.renderTimeline(panel, batch, renderer, repository, container, delta));
+        await().atMost(Duration.ofSeconds(10)).until(() -> PortraitRepositoryE2ETestRenderer.deltaHolder() >= 5f);
     }
 
     private GeneratedPortrait generateRandomPortrait(PortraitGenerationParameter parameter) {
-        int width = parameter.type().width();
-        int height = parameter.type().height();
+        var width = parameter.type().width();
+        var height = parameter.type().height();
         var image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         var graphics = image.createGraphics();
-        var rand = new Random();
+        var random = new Random();
         var path = FILEPATH_PATTERN.formatted(parameter.directory(), parameter.type().filename());
 
         try {
             // Background
             var baseColor = new Color(
-                rand.nextInt(256),
-                rand.nextInt(256),
-                rand.nextInt(256));
+                random.nextInt(256),
+                random.nextInt(256),
+                random.nextInt(256));
             graphics.setColor(baseColor);
             graphics.fillRect(0, 0, width, height);
 
             // Random noise
             for (int i = 0; i < 1000; i++) {
                 graphics.setColor(new Color(
-                    rand.nextInt(256),
-                    rand.nextInt(256),
-                    rand.nextInt(256)));
-                int x = rand.nextInt(width);
-                int y = rand.nextInt(height);
-                int rectangleWidth = rand.nextInt(20) + 1;
-                int rectangleHeight = rand.nextInt(20) + 1;
+                    random.nextInt(256),
+                    random.nextInt(256),
+                    random.nextInt(256)));
+                var x = random.nextInt(width);
+                var y = random.nextInt(height);
+                var rectangleWidth = random.nextInt(20) + 1;
+                var rectangleHeight = random.nextInt(20) + 1;
                 graphics.fillRect(x, y, rectangleWidth, rectangleHeight);
             }
 

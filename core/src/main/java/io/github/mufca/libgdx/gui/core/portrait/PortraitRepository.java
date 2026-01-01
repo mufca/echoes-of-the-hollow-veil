@@ -12,11 +12,12 @@ import io.github.mufca.libgdx.datastructure.lowlevel.IdProvider;
 import io.github.mufca.libgdx.util.LogHelper;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
-import lombok.Synchronized;
 
 /**
  * Thread-safe, async-loading portrait repository with many-to-many characterId <-> portraitId mapping.
@@ -25,19 +26,21 @@ public final class PortraitRepository {
 
     private static final int MAX_CACHE_SIZE = 70;
     private static final String FAILED_TO_CREATE_TEXTURE = "Failed to create texture: %s";
+    private static final String START_LOADING_TEXTURE = "Starting loading texture: %d";
+    private static final String END_LOADING_TEXTURE = "Ended loading texture: %d";
 
+    private final Queue<Runnable> pendingUploads = new ConcurrentLinkedQueue<>();
     private final Map<String, Long> pathToPortraitId = new ConcurrentHashMap<>();
     private final Map<Long, Set<Long>> characterToPortraits = new ConcurrentHashMap<>();
-    private final Object portraitLock = new Object();
 
     private final Cache<Long, PortraitEntry> portraits = Caffeine.newBuilder()
         .maximumSize(MAX_CACHE_SIZE)
         .removalListener((Long portraitId, PortraitEntry entry, RemovalCause cause) -> {
-            synchronized (portraitLock) {
+            Gdx.app.postRunnable(() -> {
                 removePortraitFromCharacters(portraitId);
                 pathToPortraitId.remove(entry.path());
-                Gdx.app.postRunnable(entry::dispose);
-            }
+                entry.dispose();
+            });
         })
         .build();
 
@@ -47,7 +50,6 @@ public final class PortraitRepository {
         this.idProvider = idProvider;
     }
 
-    @Synchronized("portraitLock")
     public CompletableFuture<Void> registerPortraitAsync(Long characterId, FileHandle file, PortraitFile type) {
         Long existingId = pathToPortraitId.get(file.path());
         if (existingId != null) {
@@ -58,24 +60,31 @@ public final class PortraitRepository {
         long newId = idProvider.generateUniqueId();
 
         return CompletableFuture
-            .supplyAsync(() -> new Pixmap(file))
+            .supplyAsync(() -> {
+                var pixmap = new Pixmap(file);
+                LogHelper.debug(this, "Loaded pixmap at %d, thread: %s"
+                    .formatted(System.nanoTime(), Thread.currentThread().getName()));
+                return pixmap;
+            })
             .thenAcceptAsync(pixmap -> {
-                try {
-                    Texture texture = new Texture(pixmap);
-                    TextureRegion region = new TextureRegion(texture);
-                    PortraitEntry entry = new PortraitEntry(newId, type, file.path(), texture, region);
+                pendingUploads.add(() -> {
+                    try {
+                        Texture texture = new Texture(pixmap);
+                        TextureRegion region = new TextureRegion(texture);
+                        PortraitEntry entry = new PortraitEntry(newId, type, file.path(), texture, region);
 
-                    synchronized (portraitLock) {
                         portraits.put(newId, entry);
                         pathToPortraitId.put(file.path(), newId);
                         addRelation(characterId, newId);
+
+                        LogHelper.debug(this, "Created texture and added relation at %d".formatted(System.nanoTime()));
+                    } catch (RuntimeException e) {
+                        LogHelper.error(this, FAILED_TO_CREATE_TEXTURE.formatted(e.getMessage()));
+                    } finally {
+                        pixmap.dispose();
                     }
-                } catch (RuntimeException e) {
-                    LogHelper.error(this, FAILED_TO_CREATE_TEXTURE.formatted(e.getMessage()));
-                } finally {
-                    pixmap.dispose(); // always dispose, even if Texture throws
-                }
-            }, runnable -> Gdx.app.postRunnable(runnable));
+                });
+            });
     }
 
     public Optional<TextureRegion> getPortrait(Long characterId, PortraitFile type) {
@@ -105,6 +114,21 @@ public final class PortraitRepository {
         characterToPortraits
             .computeIfAbsent(characterId, id -> ConcurrentHashMap.newKeySet())
             .add(portraitId);
+    }
+
+    public void processTextureUpload() {
+        for (int i = 0; i < 5; i++) {
+            Runnable task = pendingUploads.poll();
+            if (task != null) {
+                LogHelper.debug(this, START_LOADING_TEXTURE.formatted(System.nanoTime()));
+                task.run();
+                LogHelper.debug(this, END_LOADING_TEXTURE.formatted(System.nanoTime()));
+            }
+        }
+    }
+
+    public int getLoadingQueueSize() {
+        return pendingUploads.size();
     }
 
     /**

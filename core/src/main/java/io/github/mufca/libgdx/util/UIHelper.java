@@ -1,11 +1,8 @@
 package io.github.mufca.libgdx.util;
 
-import static com.badlogic.gdx.graphics.Texture.TextureFilter.Nearest;
-import static io.github.mufca.libgdx.constant.AssetConstants.NOTO_FONT_HANDLE;
-import static io.github.mufca.libgdx.constant.FontConstants.getDefaultFontParameters;
+import static io.github.mufca.libgdx.constant.PathConstants.COMPUTER_SAYS_NO_MSDF;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.github.tommyettinger.textra.Font;
@@ -23,9 +20,9 @@ public class UIHelper {
 
     public static Font getDefaultFont() {
         if (defaultFont == null) {
-            FreeTypeFontGenerator generator = new FreeTypeFontGenerator(NOTO_FONT_HANDLE);
-            defaultFont = new Font(generator.generateFont(getDefaultFontParameters()));
-            defaultFont.setTextureFilter(Nearest, Nearest);
+            defaultFont = new Font(COMPUTER_SAYS_NO_MSDF, false);
+            defaultFont.scale(0.40f);
+            defaultFont.setCrispness(5f);
         }
         return defaultFont;
     }

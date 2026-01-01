@@ -7,7 +7,7 @@ import static com.badlogic.gdx.graphics.Texture.TextureWrap.ClampToEdge;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL32;
-import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -59,7 +59,7 @@ public abstract class CoreScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         captureToBufferWhenNeeded();
-        Gdx.gl.glClearColor(0, 0, 0, 1); // Black clear color
+        Gdx.gl.glClearColor(0, 0, 0, 0); // Black clear color
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
         if (stage != null) {
             stage.act(delta);
@@ -74,7 +74,7 @@ public abstract class CoreScreen extends ScreenAdapter {
     }
 
     private FrameBuffer getNewFrameBuffer() {
-        return new FrameBuffer(Pixmap.Format.RGB888,
+        return new FrameBuffer(Format.RGB888,
             Gdx.graphics.getBackBufferWidth(),
             Gdx.graphics.getBackBufferHeight(),
             false);
@@ -96,9 +96,12 @@ public abstract class CoreScreen extends ScreenAdapter {
     }
 
     private void postProcessing(List<ShaderHandler> shaders, float delta) {
+        screenBatch.disableBlending();
         for (ShaderHandler handler : shaders) {
             drawRegion = createFlippedRegion(frameBufferToDraw);
             frameBufferToRead.begin();
+            Gdx.gl.glClearColor(0, 0, 0, 0);
+            Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
             screenBatch.setShader(handler.shader());
             screenBatch.begin();
             handler.applyUniforms(delta);
@@ -135,7 +138,7 @@ public abstract class CoreScreen extends ScreenAdapter {
         Gdx.gl.glDisable(GL32.GL_SCISSOR_TEST);
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
-
+        screenBatch.disableBlending();
         screenBatch.begin();
         screenBatch.draw(
             drawRegion,
@@ -143,6 +146,7 @@ public abstract class CoreScreen extends ScreenAdapter {
             Gdx.graphics.getBackBufferWidth(),
             Gdx.graphics.getBackBufferHeight()
         );
+        screenBatch.setBlendFunction(GL32.GL_SRC_ALPHA, GL32.GL_ONE_MINUS_SRC_ALPHA);
         screenBatch.end();
     }
 

@@ -7,11 +7,13 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
 import lombok.Setter;
 
 public final class MessageRouter {
 
     private final EventBus bus;
+    @Getter
     @Setter
     private String currentLocationId;
     private final Map<String, Deque<String>> locationBuffers = new HashMap<>();

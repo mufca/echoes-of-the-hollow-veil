@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.Arguments;
 
 public class PortraitTestData {
 
+    private static final String DIRECTORY_PATTERN = "stress_character_%d";
     private final Set<PortraitGenerationParameter> stressTest = getStressTestSet();
 
     public PortraitTestData() {
@@ -48,12 +49,12 @@ public class PortraitTestData {
     }
 
     private Set<PortraitGenerationParameter> getStressTestSet() {
-        Set<PortraitGenerationParameter> set = new HashSet<>();
+        Set<PortraitGenerationParameter> portraitGenerationParameters = new HashSet<>();
         IntStream.range(0, 300).forEach(i -> {
             long characterId = i;
-            String dir = "stress_character_%d".formatted(i);
-            set.add(new PortraitGenerationParameter(characterId, dir, LARGE));
+            String directory = DIRECTORY_PATTERN.formatted(i);
+            portraitGenerationParameters.add(new PortraitGenerationParameter(characterId, directory, LARGE));
         });
-        return set;
+        return portraitGenerationParameters;
     }
 }

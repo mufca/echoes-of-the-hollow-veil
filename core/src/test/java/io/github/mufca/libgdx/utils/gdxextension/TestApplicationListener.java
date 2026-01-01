@@ -40,7 +40,8 @@ public final class TestApplicationListener extends ApplicationAdapter {
             renderCallback.render(panel, batch, renderer, delta);
         }
         font.setColor(Color.WHITE);
-        font.draw(batch, Long.toString(System.nanoTime()), 30, Gdx.graphics.getHeight() - 30);
+        font.draw(batch, "%d FPS, Nano time: %d".formatted(Gdx.graphics.getFramesPerSecond(), System.nanoTime()),
+            30, Gdx.graphics.getHeight() - 30);
         batch.end();
     }
 
