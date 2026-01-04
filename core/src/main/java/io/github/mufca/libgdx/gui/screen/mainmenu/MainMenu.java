@@ -4,7 +4,7 @@ import static com.badlogic.gdx.graphics.Texture.TextureFilter.Linear;
 import static com.badlogic.gdx.utils.Scaling.none;
 import static io.github.mufca.libgdx.constant.AssetConstants.BACKGROUND_MAIN_MENU;
 import static io.github.mufca.libgdx.constant.AssetConstants.LEAF;
-import static io.github.mufca.libgdx.util.UIHelper.BLACK_70A;
+import static io.github.mufca.libgdx.constant.ColorPalette.BLACK_70A;
 import static io.github.mufca.libgdx.util.UIHelper.getFilledColor;
 import static io.github.mufca.libgdx.util.UIHelper.getTopLeftPaddings;
 

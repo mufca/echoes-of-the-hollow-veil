@@ -1,6 +1,6 @@
 package io.github.mufca.libgdx.gui.screen.mainmenu;
 
-import static io.github.mufca.libgdx.util.UIHelper.BLACK_70A;
+import static io.github.mufca.libgdx.constant.ColorPalette.BLACK_70A;
 import static io.github.mufca.libgdx.util.UIHelper.getFilledColor;
 
 import com.badlogic.gdx.Input;

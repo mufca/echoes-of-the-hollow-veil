@@ -1,5 +1,6 @@
 package io.github.mufca.libgdx.util;
 
+import static io.github.mufca.libgdx.constant.ColorPalette.PINK_70A;
 import static io.github.mufca.libgdx.constant.PathConstants.COMPUTER_SAYS_NO_MSDF;
 
 import com.badlogic.gdx.graphics.Color;
@@ -14,8 +15,8 @@ import java.util.function.Predicate;
 
 public class UIHelper {
 
-    public final static Color BLACK_70A = new Color(0, 0, 0, 0.7f);
     private final static Set<FilledColor> colorTextures = new HashSet<>();
+    public final static TextureRegionDrawable DEBUG_TEXTURE = getFilledColor(PINK_70A);
     private static Font defaultFont;
 
     public static Font getDefaultFont() {
@@ -41,7 +42,7 @@ public class UIHelper {
         return colorTextures.stream().anyMatch(getFilledColorPredicate(color));
     }
 
-    private static Predicate<FilledColor> getFilledColorPredicate(Color color) {
+    private static Predicate<? super FilledColor> getFilledColorPredicate(Color color) {
         return filledColor -> filledColor.color().equals(color);
     }
 

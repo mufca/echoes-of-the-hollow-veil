@@ -7,9 +7,10 @@ import static io.github.mufca.libgdx.shaders.ShaderType.WIDGET_HIGHLIGHT;
 import static io.github.mufca.libgdx.shaders.ShaderType.WIDGET_STROKE;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Layout;
 import io.github.mufca.libgdx.datastructure.command.Command;
 import io.github.mufca.libgdx.datastructure.command.EmptyCommand;
 import io.github.mufca.libgdx.datastructure.keyprovider.KeyProvider;
@@ -47,11 +48,11 @@ public class YetAnotherTestScreen extends CoreScreen {
         super.show();
         List<ActorWithShortcut<CoreTypingLabel>> widgets = new ArrayList<>();
         for (String text : stringLiterals) {
-            widgets.add(
-                new ActorWithShortcut<>(
-                    new CoreTypingLabel(text),
-                    new KeycapIcon(provider.takeNextKey(), 28f),
-                    emptyCommand));
+            var withShortcutWidget = new ActorWithShortcut<>(
+                new CoreTypingLabel(text),
+                new KeycapIcon(provider.takeNextKey()),
+                emptyCommand);
+            widgets.add(withShortcutWidget);
         }
         vertical.add(widgets.getFirst());
         vertical.add(widgets.get(1));
@@ -65,14 +66,14 @@ public class YetAnotherTestScreen extends CoreScreen {
         horizontal.add(widgets.get(9));
         root.add(vertical);
         root.add(horizontal);
-        Table tVertical = WidgetBuilder.buildTable(vertical);
-        Table tHorizontal = WidgetBuilder.buildTable(horizontal);
+        Group tVertical = WidgetBuilder.buildLayout(vertical);
+        Group tHorizontal = WidgetBuilder.buildLayout(horizontal);
+        ((Layout) tVertical).pack();
+        ((Layout) tHorizontal).pack();
+        tVertical.setPosition(100, 1000);
+        tHorizontal.setPosition(100, 300);
         stage.addActor(tVertical);
         stage.addActor(tHorizontal);
-        tVertical.setPosition(stage.getWidth() / 18, stage.getHeight() / 1.3f);
-        tHorizontal.setPosition(stage.getWidth() / 18, stage.getHeight() / 12);
-        tVertical.pack();
-        tHorizontal.pack();
         stage.setKeyboardFocus(stage.getRoot());
         stage.addListener(new InputListener() {
             @Override

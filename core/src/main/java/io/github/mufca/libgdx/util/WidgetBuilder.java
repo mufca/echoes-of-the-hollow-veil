@@ -1,25 +1,21 @@
 package io.github.mufca.libgdx.util;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import io.github.mufca.libgdx.gui.core.interfaces.WithCommand;
-import io.github.mufca.libgdx.gui.core.traversal.Direction;
 import io.github.mufca.libgdx.gui.core.traversal.TraversalContainer;
+import io.github.mufca.libgdx.gui.core.widget.PixelLayout;
 
 public class WidgetBuilder {
 
     private static final int defaultPadding = 5;
 
-    public static Table buildTable(TraversalContainer container) {
-        Table toReturn = new Table();
+    public static PixelLayout buildLayout(TraversalContainer container) {
 
-        toReturn.pad(defaultPadding);
+        var layout = new PixelLayout(container.direction(), defaultPadding);
+
         for (WithCommand widget : container.content().stream().toList()) {
-            if (container.direction() == Direction.HORIZONTAL) {
-                toReturn.add(widget.asActor()).padRight(2 * defaultPadding);
-            } else if (container.direction() == Direction.VERTICAL) {
-                toReturn.add(widget.asActor()).left().row();
-            }
+            layout.addActor(widget.asActor());
         }
-        return toReturn;
+
+        return layout;
     }
 }

@@ -1,10 +1,12 @@
 package io.github.mufca.libgdx.gui.core.icon;
 
+import static io.github.mufca.libgdx.util.SafeCast.explicitCeiling;
 import static io.github.mufca.libgdx.util.SafeCast.floatToIntExact;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.github.tommyettinger.textra.Font;
@@ -23,11 +25,12 @@ public class KeycapIcon extends Actor {
     private final String sign;
     private Texture keycapTexture;
 
-    public KeycapIcon(KeyboardKey key, float size) {
+    public KeycapIcon(KeyboardKey key) {
         this.font = UIHelper.getDefaultFont();
         this.key = key;
         this.sign = String.valueOf(key.displayedCharacter());
-        setSize(size, size);
+        setSize(explicitCeiling(this.font.cellHeight * 0.6f)
+            , explicitCeiling(this.font.cellHeight * 0.6f));
         this.layout = new Layout(font);
     }
 
@@ -46,17 +49,17 @@ public class KeycapIcon extends Actor {
         font.drawGlyphs(batch, layout, centerX(), centerY());
     }
 
-    private void drawRoundedRect(Pixmap pixmap, int x, int y, int w, int h, int r) {
+    private void drawRoundedRect(Pixmap pixmap, int x, int y, int width, int height, int r) {
         // Icon squares
-        pixmap.fillRectangle(x + r, y, w - 2 * r, h); // middle
-        pixmap.fillRectangle(x, y + r, r, h - 2 * r); // left
-        pixmap.fillRectangle(x + w - r, y + r, r, h - 2 * r); // right
+        pixmap.fillRectangle(x + r, y, width - 2 * r, height); // middle
+        pixmap.fillRectangle(x, y + r, r, height - 2 * r); // left
+        pixmap.fillRectangle(x + width - r, y + r, r, height - 2 * r); // right
 
         // Icon edges
         pixmap.fillCircle(x + r, y + r, r); // left bottom
-        pixmap.fillCircle(x + w - r - 1, y + r, r); // right bottom
-        pixmap.fillCircle(x + r, y + h - r - 1, r); // left top
-        pixmap.fillCircle(x + w - r - 1, y + h - r - 1, r); // right top
+        pixmap.fillCircle(x + width - r - 1, y + r, r); // right bottom
+        pixmap.fillCircle(x + r, y + height - r - 1, r); // left top
+        pixmap.fillCircle(x + width - r - 1, y + height - r - 1, r); // right top
     }
 
     private float centerX() {
@@ -82,7 +85,7 @@ public class KeycapIcon extends Actor {
         drawRoundedRect(pixmap, 1, 1, width - 2, height - 2, floatToIntExact(KeycapIcon.radius - 1));
 
         keycapTexture = new Texture(pixmap);
-        keycapTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        keycapTexture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
         pixmap.dispose();
     }
 }

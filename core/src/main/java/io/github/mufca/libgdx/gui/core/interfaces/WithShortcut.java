@@ -7,7 +7,7 @@ import io.github.mufca.libgdx.gui.core.icon.KeycapIcon;
 
 public interface WithShortcut extends WithCommand {
 
-    Actor getActor();
+    Actor getTarget();
 
     KeycapIcon getIcon();                 // icon to display
 

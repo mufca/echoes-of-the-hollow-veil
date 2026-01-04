@@ -1,9 +1,8 @@
 package io.github.mufca.libgdx.gui.core.portrait;
 
-import static com.badlogic.gdx.graphics.Color.PINK;
+import static io.github.mufca.libgdx.util.UIHelper.DEBUG_TEXTURE;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import io.github.mufca.libgdx.util.UIHelper;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -68,7 +67,7 @@ public final class PortraitContainer {
             if (region != null) {
                 this.region = region;
             } else {
-                this.region = UIHelper.getFilledColor(PINK).getRegion();
+                this.region = DEBUG_TEXTURE.getRegion();
                 this.region.setRegionWidth(portraitFile().width());
                 this.region.setRegionHeight(portraitFile().height());
             }
