@@ -71,6 +71,7 @@ subprojects {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
+
         compileOnly "org.projectlombok:lombok:$lombokVersion"
         annotationProcessor "org.projectlombok:lombok:$lombokVersion"
         testCompileOnly "org.projectlombok:lombok:$lombokVersion"
@@ -82,6 +83,7 @@ subprojects {
         implementation "org.apache.commons:commons-lang3:$apacheCommonsLang3"
         implementation "com.fasterxml.jackson.core:jackson-databind:$jackson"
         implementation "com.fasterxml.jackson.core:jackson-core:$jackson"
+        implementation "com.bladecoder.ink:blade-ink:$bladeInkVersion"
     }
 }
 

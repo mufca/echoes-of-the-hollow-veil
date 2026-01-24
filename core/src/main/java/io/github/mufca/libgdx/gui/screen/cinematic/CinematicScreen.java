@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import io.github.mufca.libgdx.datastructure.lowlevel.CursorList;
 import io.github.mufca.libgdx.gui.core.widget.CoreScreen;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
-import io.github.mufca.libgdx.shaders.ShaderHandler;
+import io.github.mufca.libgdx.gui.shaders.ShaderHandler;
 import io.github.mufca.libgdx.util.LogHelper;
 import java.util.List;
 

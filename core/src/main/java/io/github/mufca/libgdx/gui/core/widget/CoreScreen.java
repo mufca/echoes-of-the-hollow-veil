@@ -15,7 +15,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import io.github.mufca.libgdx.shaders.ShaderHandler;
+import io.github.mufca.libgdx.gui.shaders.ShaderHandler;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Setter;

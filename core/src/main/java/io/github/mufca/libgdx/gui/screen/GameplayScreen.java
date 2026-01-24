@@ -5,7 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import io.github.mufca.libgdx.datastructure.GameContext;
+import io.github.mufca.libgdx.system.gamecontext.GameContext;
 import io.github.mufca.libgdx.datastructure.character.logic.NPC;
 import io.github.mufca.libgdx.datastructure.location.Exit;
 import io.github.mufca.libgdx.datastructure.location.logic.BaseLocation;
@@ -45,7 +45,7 @@ public class GameplayScreen extends ScreenAdapter {
 
     public GameplayScreen() throws IOException {
         context = new GameContext("forest_glade_0001");
-
+        context.initialize();
         context.eventBus().subscribe(TextEvent.class, this::handleTextEvent);
         minimap = new MapRenderer(context.loader());
         minimap.computePositions(context.loader().mapCache().get("forest_glade_0001"));

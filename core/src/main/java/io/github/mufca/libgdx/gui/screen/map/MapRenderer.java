@@ -1,6 +1,6 @@
 package io.github.mufca.libgdx.gui.screen.map;
 
-import static io.github.mufca.libgdx.shaders.ShaderType.MINIMAP_RING;
+import static io.github.mufca.libgdx.gui.shaders.ShaderType.MINIMAP_RING;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -14,8 +14,8 @@ import io.github.mufca.libgdx.datastructure.location.jsondata.MapLocation;
 import io.github.mufca.libgdx.datastructure.map.GridPosition;
 import io.github.mufca.libgdx.datastructure.map.MapLayout;
 import io.github.mufca.libgdx.gui.core.widget.DockedViewportPanel;
-import io.github.mufca.libgdx.shaders.ShaderFactory;
-import io.github.mufca.libgdx.shaders.ShaderHandler;
+import io.github.mufca.libgdx.gui.shaders.ShaderFactory;
+import io.github.mufca.libgdx.gui.shaders.ShaderHandler;
 import java.util.Map;
 import lombok.Getter;
 

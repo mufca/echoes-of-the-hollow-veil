@@ -1,0 +1,342 @@
+{
+  "inkVersion": 21,
+  "root": [
+    [
+      [
+        "done",
+        {
+          "#f": 5,
+          "#n": "g-0"
+        }
+      ],
+      null
+    ],
+    "done",
+    {
+      "sun_event": [
+        {
+          "temp=": "sunPosition"
+        },
+        "ev",
+        {
+          "VAR?": "sunPosition"
+        },
+        "/ev",
+        [
+          "du",
+          "ev",
+          0,
+          "==",
+          "/ev",
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "pop",
+              "\n",
+              [
+                "ev",
+                "visit",
+                3,
+                "seq",
+                "/ev",
+                "ev",
+                "du",
+                0,
+                "==",
+                "/ev",
+                {
+                  "->": ".^.s0",
+                  "c": true
+                },
+                "ev",
+                "du",
+                1,
+                "==",
+                "/ev",
+                {
+                  "->": ".^.s1",
+                  "c": true
+                },
+                "ev",
+                "du",
+                2,
+                "==",
+                "/ev",
+                {
+                  "->": ".^.s2",
+                  "c": true
+                },
+                "nop",
+                {
+                  "s0": [
+                    "pop",
+                    "\n",
+                    "ev",
+                    "str",
+                    "^The heavy shroud of night retreats as the sun’s golden eye slowly opens upon the world.",
+                    "/str",
+                    "/ev",
+                    "~ret",
+                    {
+                      "->": ".^.^.23"
+                    },
+                    null
+                  ],
+                  "s1": [
+                    "pop",
+                    "\n",
+                    "ev",
+                    "str",
+                    "^A golden hue spills across the horizon as the sun begins its ascent.",
+                    "/str",
+                    "/ev",
+                    "~ret",
+                    {
+                      "->": ".^.^.23"
+                    },
+                    null
+                  ],
+                  "s2": [
+                    "pop",
+                    "\n",
+                    "ev",
+                    "str",
+                    "^The lingering chill of night begins to lift as the sun’s rim peeks above the world’s edge.",
+                    "/str",
+                    "/ev",
+                    "~ret",
+                    {
+                      "->": ".^.^.23"
+                    },
+                    null
+                  ],
+                  "#f": 5
+                }
+              ],
+              "\n",
+              {
+                "->": ".^.^.^.8"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          "du",
+          "ev",
+          1,
+          "==",
+          "/ev",
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "pop",
+              "\n",
+              [
+                "ev",
+                "visit",
+                3,
+                "seq",
+                "/ev",
+                "ev",
+                "du",
+                0,
+                "==",
+                "/ev",
+                {
+                  "->": ".^.s0",
+                  "c": true
+                },
+                "ev",
+                "du",
+                1,
+                "==",
+                "/ev",
+                {
+                  "->": ".^.s1",
+                  "c": true
+                },
+                "ev",
+                "du",
+                2,
+                "==",
+                "/ev",
+                {
+                  "->": ".^.s2",
+                  "c": true
+                },
+                "nop",
+                {
+                  "s0": [
+                    "pop",
+                    "\n",
+                    "ev",
+                    "str",
+                    "^The sun hangs high in the sky, bathing everything in brilliant white light.",
+                    "/str",
+                    "/ev",
+                    "~ret",
+                    {
+                      "->": ".^.^.23"
+                    },
+                    null
+                  ],
+                  "s1": [
+                    "pop",
+                    "\n",
+                    "ev",
+                    "str",
+                    "^Light pours straight down from the vault of the sky; the day has reached its boiling point.",
+                    "/str",
+                    "/ev",
+                    "~ret",
+                    {
+                      "->": ".^.^.23"
+                    },
+                    null
+                  ],
+                  "s2": [
+                    "pop",
+                    "\n",
+                    "ev",
+                    "str",
+                    "^The sun claims its highest throne, marking the silent transition from morning to afternoon.",
+                    "/str",
+                    "/ev",
+                    "~ret",
+                    {
+                      "->": ".^.^.23"
+                    },
+                    null
+                  ],
+                  "#f": 5
+                }
+              ],
+              "\n",
+              {
+                "->": ".^.^.^.8"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          "du",
+          "ev",
+          2,
+          "==",
+          "/ev",
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "pop",
+              "\n",
+              [
+                "ev",
+                "visit",
+                3,
+                "seq",
+                "/ev",
+                "ev",
+                "du",
+                0,
+                "==",
+                "/ev",
+                {
+                  "->": ".^.s0",
+                  "c": true
+                },
+                "ev",
+                "du",
+                1,
+                "==",
+                "/ev",
+                {
+                  "->": ".^.s1",
+                  "c": true
+                },
+                "ev",
+                "du",
+                2,
+                "==",
+                "/ev",
+                {
+                  "->": ".^.s2",
+                  "c": true
+                },
+                "nop",
+                {
+                  "s0": [
+                    "pop",
+                    "\n",
+                    "ev",
+                    "str",
+                    "^The last sliver of the sun vanishes, leaving a cold, pale glow where the day once stood.",
+                    "/str",
+                    "/ev",
+                    "~ret",
+                    {
+                      "->": ".^.^.23"
+                    },
+                    null
+                  ],
+                  "s1": [
+                    "pop",
+                    "\n",
+                    "ev",
+                    "str",
+                    "^The horizon bruises with crimson and violet as the world prepares for the coming dark.",
+                    "/str",
+                    "/ev",
+                    "~ret",
+                    {
+                      "->": ".^.^.23"
+                    },
+                    null
+                  ],
+                  "s2": [
+                    "pop",
+                    "\n",
+                    "ev",
+                    "str",
+                    "^The sun dips low, bleeding a deep copper light across the land before the night claims the sky.",
+                    "/str",
+                    "/ev",
+                    "~ret",
+                    {
+                      "->": ".^.^.23"
+                    },
+                    null
+                  ],
+                  "#f": 5
+                }
+              ],
+              "\n",
+              {
+                "->": ".^.^.^.8"
+              },
+              null
+            ]
+          }
+        ],
+        "pop",
+        "nop",
+        "\n",
+        {
+          "#f": 1
+        }
+      ],
+      "#f": 1
+    }
+  ],
+  "listDefs": {}
+}

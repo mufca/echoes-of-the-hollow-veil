@@ -3,7 +3,7 @@ package io.github.mufca.libgdx.gui.screen.veryunready;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL32;
-import io.github.mufca.libgdx.datastructure.GameContext;
+import io.github.mufca.libgdx.system.gamecontext.GameContext;
 import io.github.mufca.libgdx.gui.screen.gameplay.PlayerPanel;
 
 public class PlayerPanelScreen implements Screen {

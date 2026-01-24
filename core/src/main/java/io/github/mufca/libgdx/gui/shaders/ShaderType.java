@@ -1,4 +1,4 @@
-package io.github.mufca.libgdx.shaders;
+package io.github.mufca.libgdx.gui.shaders;
 
 import static io.github.mufca.libgdx.constant.PathConstants.CINEMATIC_DEFAULT_VERT;
 import static io.github.mufca.libgdx.constant.PathConstants.CINEMATIC_RISING_STAR_FRAG;

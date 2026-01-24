@@ -6,7 +6,7 @@ import static io.github.mufca.libgdx.gui.core.portrait.PortraitFile.SMALL;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import io.github.mufca.libgdx.datastructure.GameContext;
+import io.github.mufca.libgdx.system.gamecontext.GameContext;
 import io.github.mufca.libgdx.datastructure.character.logic.components.PrimaryStatistics;
 import io.github.mufca.libgdx.datastructure.character.logic.components.SecondaryStatistics;
 import io.github.mufca.libgdx.datastructure.player.Player;

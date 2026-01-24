@@ -1,4 +1,4 @@
-package io.github.mufca.libgdx.shaders;
+package io.github.mufca.libgdx.gui.shaders;
 
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
