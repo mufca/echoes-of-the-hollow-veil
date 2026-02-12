@@ -3,14 +3,9 @@ package io.github.mufca.libgdx.datastructure.location;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import io.github.mufca.libgdx.datastructure.location.feature.jsondata.FeatureData;
-import io.github.mufca.libgdx.datastructure.location.feature.jsondata.FeatureDataDeserializer;
 import io.github.mufca.libgdx.datastructure.location.jsondata.LocationData;
 import io.github.mufca.libgdx.datastructure.location.jsondata.MapLocation;
 import io.github.mufca.libgdx.datastructure.location.logic.BaseLocation;
-import io.github.mufca.libgdx.scheduler.MessageRouter;
-import io.github.mufca.libgdx.scheduler.TimeSystem;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,20 +23,14 @@ public class LazyLocationLoader {
     private static final String NO_ENTRY = "No index entry for resource with characterId: %s";
     private static final String LOCATION_FILE_NOT_FOUND = "Location file not found: %s.json";
 
-    private final ObjectMapper mapper = new ObjectMapper()
-        .registerModule(new SimpleModule()
-            .addDeserializer(FeatureData.class, new FeatureDataDeserializer()));
+    private final ObjectMapper mapper = new ObjectMapper();
     @Getter
     private final Map<String, BaseLocation> cache = new HashMap<>();
     @Getter
     private final Map<String, MapLocation> mapCache = new HashMap<>();
     private final Set<String> resourcePaths;
-    private final TimeSystem time;
-    private final MessageRouter router;
 
-    public LazyLocationLoader(TimeSystem time, MessageRouter router) throws IOException {
-        this.time = time;
-        this.router = router;
+    public LazyLocationLoader() throws IOException {
         FileHandle index = Gdx.files.internal(BASE_DIR + "/index.txt");
         resourcePaths = index.readString().lines().map(String::trim).filter(Predicate.not(String::isEmpty)).collect(
             Collectors.toUnmodifiableSet());
@@ -58,7 +47,7 @@ public class LazyLocationLoader {
             throw new FileNotFoundException(LOCATION_FILE_NOT_FOUND.formatted(file.path()));
         }
         LocationData data = mapper.readValue(file.read(), LocationData.class);
-        BaseLocation baseLocation = new BaseLocation(data, time, router);
+        BaseLocation baseLocation = new BaseLocation(data);
         cache.put(locationId, baseLocation);
         return baseLocation;
     }

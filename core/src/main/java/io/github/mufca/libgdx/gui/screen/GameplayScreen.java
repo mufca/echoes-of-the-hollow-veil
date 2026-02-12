@@ -1,60 +1,45 @@
 package io.github.mufca.libgdx.gui.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import io.github.mufca.libgdx.system.gamecontext.GameContext;
-import io.github.mufca.libgdx.datastructure.character.logic.NPC;
-import io.github.mufca.libgdx.datastructure.location.Exit;
-import io.github.mufca.libgdx.datastructure.location.logic.BaseLocation;
+import io.github.mufca.libgdx.gui.core.GlobalInputProcessor;
+import io.github.mufca.libgdx.gui.core.widget.CoreScreen;
 import io.github.mufca.libgdx.gui.screen.gameplay.PlayerPanel;
 import io.github.mufca.libgdx.gui.screen.gameplay.TextRenderer;
 import io.github.mufca.libgdx.gui.screen.map.MapRenderer;
-import io.github.mufca.libgdx.scheduler.event.TextEvent;
-import io.github.mufca.libgdx.util.LogHelper;
+import io.github.mufca.libgdx.system.GameContext;
+import io.github.mufca.libgdx.system.GameEngine;
+import io.github.mufca.libgdx.system.ui.UITextEvent;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-public class GameplayScreen extends ScreenAdapter {
+public class GameplayScreen extends CoreScreen {
 
-    private static final Map<Integer, String> DIRECTION_MAP = new HashMap<>();
     private static final int MINIMAP_SIZE = 350;
     private static final int MINIMAP_OFFSET = 10;
 
     private final GameContext context;
-
-    static {
-        DIRECTION_MAP.put(Input.Keys.NUMPAD_7, "north-west");
-        DIRECTION_MAP.put(Input.Keys.NUMPAD_8, "north");
-        DIRECTION_MAP.put(Input.Keys.NUMPAD_9, "north-east");
-        DIRECTION_MAP.put(Input.Keys.NUMPAD_4, "west");
-        DIRECTION_MAP.put(Input.Keys.NUMPAD_6, "east");
-        DIRECTION_MAP.put(Input.Keys.NUMPAD_1, "south-west");
-        DIRECTION_MAP.put(Input.Keys.NUMPAD_2, "south");
-        DIRECTION_MAP.put(Input.Keys.NUMPAD_3, "south-east");
-    }
+    private final GameEngine engine;
 
     private final TextRenderer text = new TextRenderer();
     private final PlayerPanel playerPanel;
     private final MapRenderer minimap;
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
 
+
     public GameplayScreen() throws IOException {
         context = new GameContext("forest_glade_0001");
-        context.initialize();
-        context.eventBus().subscribe(TextEvent.class, this::handleTextEvent);
+        engine = new GameEngine(context);
+        engine.eventBus().subscribe(UITextEvent.class, this::handleTextEvent);
         minimap = new MapRenderer(context.loader());
         minimap.computePositions(context.loader().mapCache().get("forest_glade_0001"));
         playerPanel = new PlayerPanel(context);
         playerPanel.setBounds(0, 0, 300, Gdx.graphics.getHeight());
         shapeRenderer.setAutoShapeType(true);
+        Gdx.input.setInputProcessor(new GlobalInputProcessor(engine.eventBus()));
     }
 
-    private void handleTextEvent(TextEvent textEvent) {
+    private void handleTextEvent(UITextEvent textEvent) {
         text.addText(textEvent.textMessage());
     }
 
@@ -62,15 +47,13 @@ public class GameplayScreen extends ScreenAdapter {
     public void show() {
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         text.show();
-        text.moveToLocation(context.currentLocation(), List.of());
+        engine.initialize();
     }
 
     @Override
     public void render(float delta) {
-        handleInput();
-        context.updateTime(delta);
+        engine.updateTime(delta);
         context.processTextureUpload();
-        context.updateRouterLocation();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
         playerPanel.apply();
@@ -82,30 +65,6 @@ public class GameplayScreen extends ScreenAdapter {
 
         minimap.apply();
         minimap.render(context.loader().mapCache(), context.loader().getMapLocation(context.currentLocation()), delta);
-    }
-
-    private void handleInput() {
-        for (Map.Entry<Integer, String> entry : DIRECTION_MAP.entrySet()) {
-            if (Gdx.input.isKeyJustPressed(entry.getKey())) {
-                String direction = entry.getValue();
-                Exit targetExit = context.currentLocation().exits().stream()
-                    .filter(e -> e.name().equalsIgnoreCase(direction))
-                    .findFirst()
-                    .orElse(null);
-                if (targetExit != null) {
-                    try {
-                        BaseLocation newLocation = context.loader().getLocation(targetExit.targetId());
-                        context.currentLocation(newLocation);
-                        List<NPC> npcList = context.npcSystem().shouldSpawnIfMissing(newLocation.npcDefinitions());
-                        text.moveToLocation(context.currentLocation(), npcList);
-                    } catch (IOException e) {
-                        LogHelper.error(this, "Failed to load location: " + targetExit.targetId());
-                    }
-                } else {
-                    LogHelper.info(this, "No exit in direction: " + direction);
-                }
-            }
-        }
     }
 
     @Override

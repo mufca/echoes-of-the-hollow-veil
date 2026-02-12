@@ -10,12 +10,5 @@
   "npcDefinitions": [
     "wolf"
   ],
-  "objects": [],
-  "features": [
-    {
-      "type": "FOREST",
-      "events": [],
-      "merge": true
-    }
-  ]
+  "objects": []
 }

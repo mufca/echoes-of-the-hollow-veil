@@ -10,10 +10,10 @@ public class InkBridge {
 
     public InkBridge() throws IOException {
         try {
-            String inkJson = Gdx.files.internal("ink/test.json").readString();
+            String inkJson = Gdx.files.internal("ink/compiled/test.ink.json").readString();
             this.story = new Story(inkJson);
         } catch (Exception e) {
-            throw new IOException("Failed to load or parse Ink story: ink/test.json", e);
+            throw new IOException("Failed to load or parse Ink story: ink/compiled/test.ink.json", e);
         }
     }
 

@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import io.github.mufca.libgdx.constant.AssetConstants;
-import io.github.mufca.libgdx.system.gamecontext.GameContext;
+import io.github.mufca.libgdx.system.GameContext;
 import io.github.mufca.libgdx.gui.core.widget.CoreScreen;
 import io.github.mufca.libgdx.gui.screen.cinematic.CinematicScreen;
 import io.github.mufca.libgdx.gui.screen.cinematic.CinematicStep;

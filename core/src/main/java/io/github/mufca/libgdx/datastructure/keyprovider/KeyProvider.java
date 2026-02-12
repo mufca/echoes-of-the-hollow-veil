@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 public class KeyProvider {
 
-    public static final String NO_KEY_AVAILABLE = "No key available";
+    public static final String NO_KEY_AVAILABLE = "No pressedKey available";
     private final Set<KeyboardKey> usedKeys = new HashSet<>();
     private final KeyboardLayout layout;
 

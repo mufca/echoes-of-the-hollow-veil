@@ -6,17 +6,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import io.github.mufca.libgdx.datastructure.character.logic.NPC;
-import io.github.mufca.libgdx.datastructure.location.Exit;
-import io.github.mufca.libgdx.datastructure.location.feature.LocationFeature;
-import io.github.mufca.libgdx.datastructure.location.feature.logic.ForestEvent;
-import io.github.mufca.libgdx.datastructure.location.feature.logic.HerbFeature;
-import io.github.mufca.libgdx.datastructure.location.logic.BaseLocation;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 import io.github.mufca.libgdx.gui.core.widget.DockedViewportPanel;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class TextRenderer extends DockedViewportPanel {
 
@@ -37,37 +29,6 @@ public class TextRenderer extends DockedViewportPanel {
         stage.addActor(root);
     }
 
-    public void moveToLocation(BaseLocation location, List<NPC> npcList) {
-        addText("Moved to location: " + location.shortDescription());
-        addText(location.longDescription());
-        List<LocationFeature> features = location.features();
-        if (!features.isEmpty()) {
-            for (LocationFeature feature : features) {
-                switch (feature.type()) {
-                    case HERB -> addText("You see herbs: " + String.join(", ", ((HerbFeature) feature).herbs()));
-                    case CAMPFIRE -> addText("You could set a campfire here.");
-                    case FOREST -> addText("Forest events should be ticking every %d seconds..."
-                        .formatted(((ForestEvent) feature).heartbeatTicks() / 5));
-                }
-            }
-        }
-        addNpcs(npcList);
-        addText(getExits(location));
-    }
-
-    private void addNpcs(List<NPC> npcList) {
-        if (!npcList.isEmpty()) {
-            var npcListAsString = npcList.stream()
-                .map(npc -> "%s %s %s".formatted(
-                    npc.appearance().firstTrait(),
-                    npc.appearance().secondTrait(),
-                    npc.meta().enumName().toLowerCase()
-                ))
-                .collect(Collectors.joining(", "));
-            addText(npcListAsString);
-        }
-    }
-
     public void addText(String text) {
         CoreTypingLabel label = new CoreTypingLabel(text);
         label.setWrap(true);
@@ -80,11 +41,6 @@ public class TextRenderer extends DockedViewportPanel {
             CoreTypingLabel oldest = content.removeFirst();
             oldest.remove();
         }
-    }
-
-    private String getExits(BaseLocation location) {
-        String exits = String.join(", ", location.exits().stream().map(Exit::name).toList());
-        return "Exits: %s".formatted(exits);
     }
 
     public void render(ScreenViewport minimapViewport) {

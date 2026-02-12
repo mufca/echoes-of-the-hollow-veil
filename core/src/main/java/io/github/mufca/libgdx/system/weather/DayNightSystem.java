@@ -1,26 +1,24 @@
-package io.github.mufca.libgdx.system.sun;
+package io.github.mufca.libgdx.system.weather;
 
-import static io.github.mufca.libgdx.scheduler.event.DeliveryScope.GLOBAL;
-
-import io.github.mufca.libgdx.scheduler.MessageRouter;
-import io.github.mufca.libgdx.scheduler.TimeSystem;
-import io.github.mufca.libgdx.scheduler.event.TextEvent;
+import io.github.mufca.libgdx.scheduler.eventbus.EventBus;
 import io.github.mufca.libgdx.system.ink.InkBridge;
+import io.github.mufca.libgdx.system.time.TimeSystem;
+import io.github.mufca.libgdx.system.ui.UITextEvent;
 
-public class SunSystem {
+public class DayNightSystem {
 
     private static final int DAY_CYCLE_LENGTH = 200;
     private static final int SUNRISE = 0;
     private static final int NOON = 50;
     private static final int SUNSET = 100;
     private final InkBridge inkBridge;
-    private final MessageRouter router;
     private final TimeSystem time;
+    private final EventBus eventBus;
 
-    public SunSystem(InkBridge inkBridge, MessageRouter router, TimeSystem time) {
+    public DayNightSystem(InkBridge inkBridge, TimeSystem time, EventBus eventBus) {
         this.inkBridge = inkBridge;
-        this.router = router;
         this.time = time;
+        this.eventBus = eventBus;
     }
 
     public void initialize() {
@@ -46,7 +44,7 @@ public class SunSystem {
             String flavorText = inkBridge.format("sun_event", sunPos);
 
             // 2. We publish a narrative event (what the player will see)
-            router.publish(new TextEvent(GLOBAL, "ignore", flavorText));
+            eventBus.publish(new UITextEvent(flavorText));
         }
     }
 }

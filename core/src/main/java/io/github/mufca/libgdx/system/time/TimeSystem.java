@@ -1,5 +1,6 @@
-package io.github.mufca.libgdx.scheduler;
+package io.github.mufca.libgdx.system.time;
 
+import io.github.mufca.libgdx.scheduler.Scheduler;
 import lombok.Getter;
 
 public final class TimeSystem {
@@ -29,9 +30,4 @@ public final class TimeSystem {
         return worldTick;
     }
 
-    public void fastForward(long ticks) {
-        for (long counter = 0; counter < ticks; counter++) {
-            tickOnce();
-        }
-    }
 }

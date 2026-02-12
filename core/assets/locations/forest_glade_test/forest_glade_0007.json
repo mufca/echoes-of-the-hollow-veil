@@ -7,15 +7,5 @@
     { "name": "south-east", "targetId": "forest_glade_0008" }
   ],
   "npcDefinitions": [],
-  "objects": [],
-  "features": [
-    {
-      "type": "HERB",
-      "herbs": [
-        "basil",
-        "mint",
-        "sage"
-      ]
-    }
-  ]
+  "objects": []
 }

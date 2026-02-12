@@ -57,7 +57,7 @@ public class KeyProviderTest {
 
         // THEN
         assertThat(firstKey).isSameAs(fourthKey); // firstKey reused on fourthKey
-        assertThat(secondKey).isNotSameAs(fifthKey);  // second key avoided when reusing on fifthKey
+        assertThat(secondKey).isNotSameAs(fifthKey);  // second pressedKey avoided when reusing on fifthKey
         assertThat(thirdKey).isSameAs(fifthKey); // thirdKey reused on fifthKey
     }
 }
