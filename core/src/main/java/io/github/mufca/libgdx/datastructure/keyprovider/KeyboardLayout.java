@@ -7,7 +7,7 @@ import java.util.Map;
 
 public enum KeyboardLayout {
     QWERTY_ENGLISH(
-        // PREFERED_NUMERICS
+        // PREFERRED_NUMERICS
         List.of(
             new KeyboardKey(Input.Keys.NUM_1, '1'),
             new KeyboardKey(Input.Keys.NUM_2, '2'),
@@ -16,7 +16,7 @@ public enum KeyboardLayout {
             new KeyboardKey(Input.Keys.NUM_5, '5'),
             new KeyboardKey(Input.Keys.NUM_6, '6')
         ),
-        // PREFERED_LETTERS
+        // PREFERRED_LETTERS
         List.of(
             new KeyboardKey(Input.Keys.Q, 'Q'),
             new KeyboardKey(Input.Keys.W, 'W'),
@@ -57,9 +57,9 @@ public enum KeyboardLayout {
         )
     ),
     QWERTZ_GERMAN(
-        // PREFERED_NUMERICS
+        // PREFERRED_NUMERICS
         copyWithOverrides(QWERTY_ENGLISH.preferredNumerics()),
-        // PREFERED_LETTERS (Z ↔ Y)
+        // PREFERRED_LETTERS (Z ↔ Y)
         copyWithOverrides(
             QWERTY_ENGLISH.preferredLetters(),
             new KeyboardKey(Input.Keys.Z, 'Y')
@@ -71,7 +71,7 @@ public enum KeyboardLayout {
         )
     ),
     AZERTY_FRENCH(
-        // PREFERED_NUMERICS
+        // PREFERRED_NUMERICS
         copyWithOverrides(QWERTY_ENGLISH.preferredNumerics(),
             new KeyboardKey(Input.Keys.NUM_1, '&'),
             new KeyboardKey(Input.Keys.NUM_2, 'é'),
@@ -80,7 +80,7 @@ public enum KeyboardLayout {
             new KeyboardKey(Input.Keys.NUM_5, '('),
             new KeyboardKey(Input.Keys.NUM_6, '-')
         ),
-        // PREFERED_LETTERS (A ↔ Q, Z ↔ W)
+        // PREFERRED_LETTERS (A ↔ Q, Z ↔ W)
         copyWithOverrides(
             QWERTY_ENGLISH.preferredLetters(),
             new KeyboardKey(Input.Keys.Q, 'A'),

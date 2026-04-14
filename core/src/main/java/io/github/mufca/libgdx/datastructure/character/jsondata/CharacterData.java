@@ -13,8 +13,8 @@ public record CharacterData(
     @JsonProperty("aggressive") boolean aggressive,
     @JsonProperty("statsRandomAdjustment") int statsRandomAdjustment,
     @JsonProperty("appearance") AppearanceData appearance,
-    @JsonProperty("primaryStatistics") PrimaryStatisticsData primaryStatistics,
-    @JsonProperty("secondaryStatistics") SecondaryStatisticsData secondaryStatistics
+    @JsonProperty("primaryStatistics") PrimaryStatsData primaryStatistics,
+    @JsonProperty("secondaryStatistics") SecondaryStatsData secondaryStatistics
 ) {
 
 }

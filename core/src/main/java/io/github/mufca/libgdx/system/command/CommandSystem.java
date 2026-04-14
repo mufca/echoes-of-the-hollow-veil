@@ -11,11 +11,11 @@ public class CommandSystem {
     private final Map<Integer, Command> commandMap = new HashMap<>();
 
     public CommandSystem(EventBus eventBus) {
-        eventBus.subscribe(KeyPressedEvent.class, this::handleKeyPressed);
+//        eventBus.subscribe(KeyPressedEvent.class, this::handleKeyPressed);
         CommandHelper.registerGlobalCommands(commandMap, eventBus);
     }
 
-    private void handleKeyPressed(KeyPressedEvent keyPressedEvent) {
+    public void handleKeyPressed(KeyPressedEvent keyPressedEvent) {
         LogHelper.debug(this, "Key pressed: " + keyPressedEvent.pressedKey());
         Command command = commandMap.get(keyPressedEvent.pressedKey());
         if (command != null) {

@@ -20,6 +20,6 @@ public class CommandHelper {
 
     private static void registerMovement(Map<Integer, Command> commandMap, EventBus eventBus, int key,
         String direction) {
-        commandMap.put(key, () -> eventBus.publish(new MovementRequestEvent(direction)));
+        commandMap.put(key, () -> eventBus.post(new MovementRequestEvent(direction)));
     }
 }

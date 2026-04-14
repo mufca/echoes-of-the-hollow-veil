@@ -1,30 +1,30 @@
-package io.github.mufca.libgdx.datastructure.character.storage;
+package io.github.mufca.libgdx.context.npc;
 
 import static io.github.mufca.libgdx.datastructure.lowlevel.RandomUtils.pickFromRange;
 import static io.github.mufca.libgdx.gui.core.portrait.PortraitFile.SMALL;
 
 import io.github.mufca.libgdx.datastructure.character.jsondata.CharacterData;
-import io.github.mufca.libgdx.datastructure.character.logic.presets.AppearancePreset;
+import io.github.mufca.libgdx.datastructure.character.logic.NPC;
 import io.github.mufca.libgdx.datastructure.character.logic.components.AppearanceTraits;
 import io.github.mufca.libgdx.datastructure.character.logic.components.BaseCharacter;
+import io.github.mufca.libgdx.datastructure.character.logic.components.CharacterStats;
 import io.github.mufca.libgdx.datastructure.character.logic.components.CharacterType;
-import io.github.mufca.libgdx.datastructure.character.logic.NPC;
 import io.github.mufca.libgdx.datastructure.character.logic.components.NPCMetadata;
-import io.github.mufca.libgdx.datastructure.character.logic.components.PrimaryStatistics;
-import io.github.mufca.libgdx.datastructure.character.logic.components.SecondaryStatistics;
+import io.github.mufca.libgdx.datastructure.character.logic.presets.AppearancePreset;
 import io.github.mufca.libgdx.datastructure.lowlevel.Pair;
 import io.github.mufca.libgdx.datastructure.lowlevel.RandomUtils;
 import io.github.mufca.libgdx.gui.core.portrait.PortraitContainer;
 import io.github.mufca.libgdx.gui.core.portrait.PortraitHandler;
 import io.github.mufca.libgdx.gui.core.portrait.PortraitRepository;
+import io.github.mufca.libgdx.scheduler.eventbus.EventBus;
 import java.util.EnumSet;
 
 public final class NPCFactory {
 
     public static final String MISSING_APPEARANCE = "No %s available for appearance";
 
-    public static NPC giveBirth(Long characterId, String currentLocationId, CharacterData characterData,
-        PortraitRepository portraitRepository) {
+    public static NPC giveBirth(Long characterId, EventBus eventBus, String currentLocationId,
+        CharacterData characterData, PortraitRepository portraitRepository) {
         var characterType = CharacterType.valueOf(characterData.type());
 
         var base = new BaseCharacter(characterId, characterType, characterData.name());
@@ -37,7 +37,7 @@ public final class NPCFactory {
             characterData.appearance().race());
 
         var primaryStatsData = characterData.primaryStatistics();
-        var primaryStats = new PrimaryStatistics(characterId,
+        var primaryStats = new CharacterStats(characterId, eventBus,
             adjustStatistic(primaryStatsData.strength(), characterData),
             adjustStatistic(primaryStatsData.dexterity(), characterData),
             adjustStatistic(primaryStatsData.constitution(), characterData),
@@ -46,12 +46,6 @@ public final class NPCFactory {
             adjustStatistic(primaryStatsData.charisma(), characterData)
         );
 
-        var secondaryStatsData = characterData.secondaryStatistics();
-        var secondaryStats = new SecondaryStatistics(characterId,
-            secondaryStatsData.hitPoints(),
-            secondaryStatsData.stamina(),
-            secondaryStatsData.mana());
-
         var portraitFiles = EnumSet.of(SMALL);
         var portraitHandler = new PortraitHandler(characterId, characterData.enumReferenceName().toLowerCase()
             , portraitRepository);
@@ -59,8 +53,8 @@ public final class NPCFactory {
         var portraitContainer = new PortraitContainer(characterId, portraitRepository);
         portraitContainer.add(SMALL);
         var meta = new NPCMetadata(characterId, characterData.id(), characterData.respawningTicks(),
-            characterData.enumReferenceName(), currentLocationId, portraitContainer);
-        return new NPC(base, appearance, primaryStats, secondaryStats, meta);
+            characterData.enumReferenceName(), portraitContainer);
+        return new NPC(base, appearance, primaryStats, meta);
     }
 
     private static Pair<String> getAppearances(CharacterData data) {

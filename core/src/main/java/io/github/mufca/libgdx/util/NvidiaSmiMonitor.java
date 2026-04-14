@@ -9,7 +9,7 @@ import regexodus.Pattern;
 
 public final class NvidiaSmiMonitor {
 
-    private static final Pattern SPLIT_PATTERN = Pattern.compile("\\s*,\\s*"); // lub nawet ","
+    private static final Pattern SPLIT_PATTERN = Pattern.compile("\\s*,\\s*");
 
     public static Optional<GpuStatus> query() {
         try {

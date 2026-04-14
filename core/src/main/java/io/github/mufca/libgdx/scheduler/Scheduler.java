@@ -1,65 +1,70 @@
 package io.github.mufca.libgdx.scheduler;
 
-import java.util.Objects;
+import io.github.mufca.libgdx.datastructure.lowlevel.IdProvider;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 public final class Scheduler {
 
-    public static final class Task implements Comparable<Task> {
-
-        final long id;
-        final String locationId;
-        final long featureId;
-        final long interval;
-        long nextTick;
-        final Runnable action;
-
-        Task(long id, String locationId, long featureId, long firstTick, long interval, Runnable action) {
-            this.id = id;
-            this.locationId = locationId;
-            this.featureId = featureId;
-            this.nextTick = firstTick;
-            this.interval = interval;
-            this.action = action;
-        }
+    public record Task(long id, Object tag, long interval, long nextTick, Runnable action) implements Comparable<Task> {
 
         @Override
         public int compareTo(Task o) {
             return Long.compare(this.nextTick, o.nextTick);
         }
+
+        Task next() {
+            return new Task(id, tag, interval, nextTick + interval, action);
+        }
     }
 
-    private final PriorityQueue<Task> priorityQueue = new PriorityQueue<>();
-    private long seq = 0;
+    private final PriorityQueue<Task> queue = new PriorityQueue<>();
+    private final Map<Object, Long> activeTaskIds = new HashMap<>(); // Tag -> Task ID
+    private final IdProvider idProvider;
 
-    public long schedule(String targetId, long featureId, long tick, Runnable action) {
-        Task t = new Task(++seq, targetId, featureId, tick, 0, action);
-        priorityQueue.add(t);
-        return t.id;
+    public Scheduler(IdProvider idProvider) {
+        this.idProvider = idProvider;
     }
 
-    public long scheduleRepeating(String loc, long featureId, long now, long period, Runnable action) {
-        Task t = new Task(++seq, loc, featureId, now + period, period, action);
-        priorityQueue.add(t);
-        return t.id;
+    public long add(Object tag, long nextTick, long interval, Runnable action) {
+        if (activeTaskIds.containsKey(tag)) {
+            return activeTaskIds.get(tag);
+        }
+
+        long id = idProvider.generateUniqueId();
+        Task t = new Task(id, tag, interval, nextTick, action);
+
+        queue.add(t);
+        activeTaskIds.put(tag, id);
+        return id;
     }
 
-    public void cancelByFeature(String loc, long featureId) {
-        priorityQueue.removeIf(t -> Objects.equals(t.locationId, loc) && Objects.equals(t.featureId, featureId));
-    }
+    public void update(long currentTick) {
+        while (!queue.isEmpty() && queue.peek().nextTick <= currentTick) {
+            Task task = queue.poll();
 
-    public void cancelByFeature(long featureId) {
-        priorityQueue.removeIf(t -> Objects.equals(t.featureId, featureId));
-    }
+            Long currentActiveId = activeTaskIds.get(task.tag());
+            if (currentActiveId == null || currentActiveId != task.id()) {
+                continue;
+            }
 
-    public void executeDue(long nowTick) {
-        while (!priorityQueue.isEmpty() && priorityQueue.peek().nextTick <= nowTick) {
-            Task task = priorityQueue.poll();
-            task.action.run();
-            if (task.interval > 0) {
-                task.nextTick += task.interval;
-                priorityQueue.add(task);
+            task.action().run();
+
+            if (task.interval() > 0) {
+                Task next = task.next();
+                queue.add(next);
+            } else {
+                activeTaskIds.remove(task.tag());
             }
         }
+    }
+
+    public void cancel(Object tag) {
+        activeTaskIds.remove(tag);
+    }
+
+    public boolean isActive(Object tag) {
+        return activeTaskIds.containsKey(tag);
     }
 }

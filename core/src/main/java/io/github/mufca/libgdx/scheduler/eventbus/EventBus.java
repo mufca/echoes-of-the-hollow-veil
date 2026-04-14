@@ -1,32 +1,27 @@
 package io.github.mufca.libgdx.scheduler.eventbus;
 
 import io.github.mufca.libgdx.util.LogHelper;
-import java.util.Map;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 public final class EventBus {
+    private final Map<Class<? extends GameEvent>, GameEvent> activeEvents = new HashMap<>();
 
-    public static final String EVENT_LISTENER_THREW_AN_EXCEPTION = "Event listener threw an exception %s: %s";
-    private final Map<Class<? extends GameEvent>, List<EventListener<?>>> listeners = new HashMap<>();
-
-    public <E extends GameEvent> void subscribe(Class<E> type, EventListener<E> listener) {
-        listeners.computeIfAbsent(type, k -> new ArrayList<>()).add(listener);
+    public <E extends GameEvent> void post(E event) {
+        activeEvents.put(event.getClass(), event);
     }
 
     @SuppressWarnings("unchecked")
-    public <E extends GameEvent> void publish(E event) {
-        var list = listeners.get(event.getClass());
-        if (list != null) {
-            for (EventListener<?> listener : list) {
-                try {
-                    ((EventListener<E>) listener).on(event);
-                } catch (Exception e) {
-                    LogHelper.error(this, EVENT_LISTENER_THREW_AN_EXCEPTION
-                        .formatted(event.getClass().getSimpleName(), e.getMessage()));
-                }
-            }
-        }
+    public <E extends GameEvent> E getEvent(Class<E> type) {
+        return (E) activeEvents.get(type);
+    }
+
+    public boolean hasEvent(Class<? extends GameEvent> type) {
+        return activeEvents.containsKey(type);
+    }
+
+    public void flush() {
+        LogHelper.debug(this, "Flushing %d events...".formatted(activeEvents.size()));
+        activeEvents.clear();
     }
 }

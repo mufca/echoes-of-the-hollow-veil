@@ -19,10 +19,6 @@ public class CoreTypingLabel extends TypingLabel {
         this.setText("[_]" + displayedText + "[/_]", true);
     }
 
-    public void setPrefix(String prefix) {
-        this.setText(prefix + displayedText, true);
-    }
-
     public void regenerate() {
         this.setText(keyIndicator + displayedText, true);
     }

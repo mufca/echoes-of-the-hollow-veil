@@ -8,7 +8,7 @@
     { "name": "east", "targetId": "forest_glade_0004" }
   ],
   "npcDefinitions": [
-    "wolf"
+    "wolf", "wolf"
   ],
   "objects": []
 }

@@ -19,7 +19,7 @@ public class GlobalInputProcessor extends InputAdapter {
     public boolean keyDown(int keycode) {
         if (!pressedKeys.get(keycode)) {
             pressedKeys.set(keycode);
-            eventBus.publish(new KeyPressedEvent(keycode));
+            eventBus.post(new KeyPressedEvent(keycode));
         }
         return true;
     }

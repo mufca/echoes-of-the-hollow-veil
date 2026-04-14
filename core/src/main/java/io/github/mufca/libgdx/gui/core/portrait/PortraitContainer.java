@@ -3,16 +3,17 @@ package io.github.mufca.libgdx.gui.core.portrait;
 import static io.github.mufca.libgdx.util.UIHelper.DEBUG_TEXTURE;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import java.util.HashSet;
+import io.github.mufca.libgdx.util.LogHelper;
+import java.util.EnumMap;
 import java.util.Optional;
-import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 public final class PortraitContainer {
 
-    private final Set<Entry> entries = new HashSet<>();
+    private static final String EVICTED_FROM_CACHE = "Portrait evicted from cache for: %d";
+    private final EnumMap<PortraitFile, Entry> entries = new EnumMap<>(PortraitFile.class);
     private final Long characterId;
 
     private final PortraitRepository portraitRepository;
@@ -24,27 +25,36 @@ public final class PortraitContainer {
 
     public void add(PortraitFile file) {
         var region = portraitRepository.getPortrait(characterId, file);
-        entries.add(new Entry(characterId, file, region.isPresent(), region.orElse(null)));
+        entries.put(file, new Entry(characterId, file, region.isPresent(), region.orElse(null)));
     }
 
-    public void updateIfNeeded() {
-        for (Entry entry : entries) {
-            if (!entry.isReady) {
-                Optional<TextureRegion> region = portraitRepository.getPortrait(characterId, entry.portraitFile);
-                region.ifPresent(presentRegion -> {
-                    entry.region = presentRegion;
-                    entry.isReady = true;
-                });
+    public boolean updateIfNeeded() {
+        boolean anyChangedInThisTick = false;
+
+        for (Entry entry : entries.values()) {
+            Optional<TextureRegion> currentFromCache = portraitRepository.getPortrait(characterId, entry.portraitFile);
+
+            if (currentFromCache.isPresent()) {
+                TextureRegion newRegion = currentFromCache.get();
+                if (!entry.isReady || entry.region != newRegion) {
+                    entry.region(newRegion);
+                    entry.isReady(true);
+                    anyChangedInThisTick = true;
+                }
+            } else {
+                if (entry.isReady) {
+                    entry.region(DEBUG_TEXTURE.getRegion());
+                    entry.isReady(false);
+                    anyChangedInThisTick = true;
+                    LogHelper.debug(this, EVICTED_FROM_CACHE.formatted(characterId));
+                }
             }
         }
+        return anyChangedInThisTick;
     }
 
     public TextureRegion get(PortraitFile file) {
-        return entries.stream()
-            .filter(e -> e.portraitFile == file)
-            .map(e -> e.region)
-            .findFirst()
-            .orElseThrow();
+        return entries.get(file).region;
     }
 
     @Getter
@@ -68,8 +78,6 @@ public final class PortraitContainer {
                 this.region = region;
             } else {
                 this.region = DEBUG_TEXTURE.getRegion();
-                this.region.setRegionWidth(portraitFile().width());
-                this.region.setRegionHeight(portraitFile().height());
             }
         }
     }

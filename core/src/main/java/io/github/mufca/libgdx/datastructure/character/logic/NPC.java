@@ -2,26 +2,32 @@ package io.github.mufca.libgdx.datastructure.character.logic;
 
 import io.github.mufca.libgdx.datastructure.character.logic.components.AppearanceTraits;
 import io.github.mufca.libgdx.datastructure.character.logic.components.BaseCharacter;
+import io.github.mufca.libgdx.datastructure.character.logic.components.CharacterStats;
 import io.github.mufca.libgdx.datastructure.character.logic.components.NPCMetadata;
-import io.github.mufca.libgdx.datastructure.character.logic.components.PrimaryStatistics;
-import io.github.mufca.libgdx.datastructure.character.logic.components.SecondaryStatistics;
-import lombok.Getter;
+import io.github.mufca.libgdx.datastructure.character.logic.components.StatTag;
 
-@Getter
-public final class NPC {
+public record NPC(BaseCharacter base, AppearanceTraits appearance, CharacterStats characterStats, NPCMetadata meta) {
 
-    private final BaseCharacter base;
-    private final AppearanceTraits appearance;
-    private final PrimaryStatistics primaryStats;
-    private final SecondaryStatistics secondaryStats;
-    private final NPCMetadata meta;
+    public void resetIfNeeded() {
+    }
 
-    public NPC(BaseCharacter base, AppearanceTraits appearance, PrimaryStatistics primaryStats,
-        SecondaryStatistics secondaryStats, NPCMetadata meta) {
-        this.base = base;
-        this.appearance = appearance;
-        this.primaryStats = primaryStats;
-        this.secondaryStats = secondaryStats;
-        this.meta = meta;
+    @Override
+    public String toString() {
+        return appearance().firstTrait() + " " +
+            appearance().secondTrait() + " " +
+            appearance().race();
+    }
+
+    public boolean isAlive() {
+        return characterStats.byTag(StatTag.HIT_POINTS) > 0;
+    }
+
+    public boolean equals(Object o) {
+      return o instanceof NPC npc && npc.base().characterId() == this.base().characterId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(base().characterId());
     }
 }

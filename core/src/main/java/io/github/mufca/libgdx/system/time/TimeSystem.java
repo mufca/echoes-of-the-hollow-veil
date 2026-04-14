@@ -1,33 +1,48 @@
 package io.github.mufca.libgdx.system.time;
 
+import static io.github.mufca.libgdx.system.time.Ticks.SECOND;
+
+import io.github.mufca.libgdx.datastructure.lowlevel.IdProvider;
 import io.github.mufca.libgdx.scheduler.Scheduler;
-import lombok.Getter;
 
 public final class TimeSystem {
 
-    public static final int TICKS_PER_SECOND = 5;
-    private static final float STEP = 1f / TICKS_PER_SECOND;
-    @Getter
-    private final Scheduler scheduler = new Scheduler();
+    private final float STEP = 1f / SECOND.duration();
 
+    private final Scheduler scheduler;
     private double accumulator = 0;
     private long worldTick = 0;
+
+    public TimeSystem(IdProvider idProvider) {
+        this.scheduler = new Scheduler(idProvider);
+    }
+
+    public void schedule(Object tag, long delayInTicks, Runnable action) {
+        scheduler.add(tag, worldTick + delayInTicks, 0, action);
+    }
+
+    public void scheduleRepeating(Object tag, long periodInTicks, Runnable action) {
+        scheduler.add(tag, worldTick + periodInTicks, periodInTicks, action);
+    }
+
+    public void cancel(Object tag) {
+        scheduler.cancel(tag);
+    }
 
     public void update(float delta) {
         accumulator += delta;
         while (accumulator >= STEP) {
             accumulator -= STEP;
-            tickOnce();
+            worldTick++;
+            scheduler.update(worldTick);
         }
-    }
-
-    private void tickOnce() {
-        worldTick++;
-        scheduler.executeDue(worldTick);
     }
 
     public long now() {
         return worldTick;
     }
 
+    public boolean isActive(Object tag) {
+        return scheduler.isActive(tag);
+    }
 }

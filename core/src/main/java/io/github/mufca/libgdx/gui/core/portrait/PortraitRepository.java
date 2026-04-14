@@ -66,8 +66,7 @@ public final class PortraitRepository {
                     .formatted(System.nanoTime(), Thread.currentThread().getName()));
                 return pixmap;
             })
-            .thenAcceptAsync(pixmap -> {
-                pendingUploads.add(() -> {
+            .thenAccept(pixmap -> pendingUploads.add(() -> {
                     try {
                         Texture texture = new Texture(pixmap);
                         TextureRegion region = new TextureRegion(texture);
@@ -83,8 +82,8 @@ public final class PortraitRepository {
                     } finally {
                         pixmap.dispose();
                     }
-                });
-            });
+                })
+            );
     }
 
     public Optional<TextureRegion> getPortrait(Long characterId, PortraitFile type) {

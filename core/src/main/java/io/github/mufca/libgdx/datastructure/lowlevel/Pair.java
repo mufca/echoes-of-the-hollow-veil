@@ -9,7 +9,7 @@ public record Pair<T>(T first, T second) {
     private static final String FIRST = "First";
 
     public Pair {
-        first = Objects.requireNonNull(first, ELEMENT_CANNOT_BE_NULL.formatted(FIRST));
-        second = Objects.requireNonNull(second, ELEMENT_CANNOT_BE_NULL.formatted(SECOND));
+        Objects.requireNonNull(first, ELEMENT_CANNOT_BE_NULL.formatted(FIRST));
+        Objects.requireNonNull(second, ELEMENT_CANNOT_BE_NULL.formatted(SECOND));
     }
 }

@@ -96,6 +96,30 @@ task setupInklecate(dependsOn: downloadInklecate, type: Copy) {
     }
 }
 
+task generateInkIncludes {
+    group = "ink"
+    description = "Generates main<Dir>.ink files for each subdirectory in assets/ink"
+
+    doLast {
+        def inkAssetsDir = project.file("assets/ink")
+        def subDirs = inkAssetsDir.listFiles().findAll { it.isDirectory() && it.name != "compiled" }
+
+        subDirs.each { dir ->
+            def dirName = dir.name
+            def capitalizedName = dirName.substring(0, 1).toUpperCase() + dirName.substring(1)
+            def mainFile = new File(inkAssetsDir, "main${capitalizedName}.ink")
+            def inkFiles = project.fileTree(dir).include("**/*.ink")
+            def includeContent = inkFiles.collect { file ->
+                def relativePath = inkAssetsDir.toPath().relativize(file.toPath()).toString().replace('\\', '/')
+                return "INCLUDE ${relativePath}"
+            }.join("\n")
+
+            mainFile.text = "// Auto-generated include file\n" + includeContent
+            println "[*] Generated: ${mainFile.name}"
+        }
+    }
+}
+
 abstract class CompileInkTask extends DefaultTask {
     @Inject
     abstract ExecOperations getExecOperations()
@@ -116,7 +140,7 @@ abstract class CompileInkTask extends DefaultTask {
 
                 execOperations.exec {
                     commandLine inkBinary.absolutePath, "-o",
-                            "${outputDir.path}/${file.name}.json",
+                            "${outputDir.path}/${file.name.replace('.ink', '.json')}",
                             file.absolutePath
                 }
             }
@@ -124,9 +148,10 @@ abstract class CompileInkTask extends DefaultTask {
     }
 }
 
-task compileInk(type: CompileInkTask, dependsOn: setupInklecate) {
-    inputs.dir "assets/ink"
-    outputs.dir "assets/ink/compiled"
+task compileInk(type: CompileInkTask) {
+    group = "ink"
+    dependsOn generateInkIncludes
+    dependsOn setupInklecate
 }
 
 project(":core").tasks.processResources.dependsOn compileInk

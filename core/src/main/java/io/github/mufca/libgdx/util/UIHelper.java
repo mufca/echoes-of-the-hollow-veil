@@ -57,4 +57,16 @@ public class UIHelper {
     public static void doNothing() {
 
     }
+
+    public static String capitalize(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+
+        if (!Character.isLetter(str.charAt(0))) {
+            return str;
+        }
+
+        return Character.toUpperCase(str.charAt(0)) + str.substring(1).toLowerCase();
+    }
 }

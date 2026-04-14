@@ -7,6 +7,6 @@
     { "name": "south-west", "targetId": "forest_glade_0003" },
     { "name": "south", "targetId": "forest_glade_0004" }
   ],
-  "npcDefinitions": [],
+  "npcDefinitions": [ "wolf" ],
   "objects": []
 }

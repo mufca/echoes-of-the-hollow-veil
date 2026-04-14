@@ -1,67 +1,81 @@
 package io.github.mufca.libgdx.gui.screen.gameplay;
 
 import static com.badlogic.gdx.graphics.Color.BLACK;
+import static io.github.mufca.libgdx.datastructure.character.logic.components.StatTag.CHARISMA;
 import static io.github.mufca.libgdx.gui.core.portrait.PortraitFile.SMALL;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import io.github.mufca.libgdx.system.GameContext;
-import io.github.mufca.libgdx.datastructure.character.logic.components.PrimaryStatistics;
-import io.github.mufca.libgdx.datastructure.character.logic.components.SecondaryStatistics;
+import io.github.mufca.libgdx.datastructure.character.logic.components.StatTag;
 import io.github.mufca.libgdx.datastructure.player.Player;
 import io.github.mufca.libgdx.gui.core.widget.CoreTypingLabel;
 import io.github.mufca.libgdx.gui.core.widget.DockedViewportPanel;
+import io.github.mufca.libgdx.system.GameEngine;
+import io.github.mufca.libgdx.system.time.TimeSystem;
+import io.github.mufca.libgdx.util.LogHelper;
 import io.github.mufca.libgdx.util.UIHelper;
 
 public final class PlayerPanel extends DockedViewportPanel {
 
     private static final String RACE_PATTERN = "%s %s %s";
+    private static final String SETTING_STAT = "Setting %s to %s";
+    private final CoreTypingLabel[] statValueLabels = new CoreTypingLabel[StatTag.values().length];
+    private final CoreTypingLabel[] statNameLabels = new CoreTypingLabel[StatTag.values().length];
     private final Table root;
-    private Player player;
+    private final Player player;
+    private final TimeSystem timeSystem;
+    private final StatRegistry stats;
     private Image portrait;
+    private CoreTypingLabel name;
+    private CoreTypingLabel race;
 
-    public PlayerPanel(GameContext context) {
+    public PlayerPanel(Player player, GameEngine engine) {
         super();
-        this.player = context.player();
+        this.player = player;
+        this.timeSystem = engine.timeSystem();
+        this.stats = new StatRegistry(player.characterStats(), engine.inkFunctions());
         this.root = new Table().top().left();
-        root.setFillParent(true);
-        stage.addActor(root);
         buildLayout();
     }
 
     private void buildLayout() {
+        root.setFillParent(true);
+        stage.addActor(root);
+
         portrait = new Image(player.portraits().get(SMALL));
+        portrait.setSize(SMALL.width(), SMALL.height());
         root.add(new Image(UIHelper.getFilledColor(BLACK))).size(300, 1).center().row();
         root.add(portrait).pad(10).center().row();
 
-        CoreTypingLabel nameLabel = new CoreTypingLabel(player.baseCharacter().name());
+        name = new CoreTypingLabel(player.baseCharacter().name());
         String raceText = RACE_PATTERN.formatted(
             player.appearanceTraits().firstTrait(),
             player.appearanceTraits().secondTrait(),
             player.appearanceTraits().race()
         );
-        CoreTypingLabel raceLabel = new CoreTypingLabel(raceText);
-        root.add(nameLabel.skipToTheEnd()).padTop(5).center().row();
-        root.add(raceLabel.skipToTheEnd()).padBottom(10).center().row();
-
-        PrimaryStatistics p = player.primaryStatistics();
-        SecondaryStatistics s = player.secondaryStatistics();
+        race = new CoreTypingLabel(raceText);
+        root.add(name.skipToTheEnd()).padTop(5).center().row();
+        root.add(race.skipToTheEnd()).padBottom(10).center().row();
 
         Table statsTable = new Table();
         statsTable.defaults().pad(2).left();
-        statsTable.add(new CoreTypingLabel("Strength: " + p.strength()).skipToTheEnd()).row();
-        statsTable.add(new CoreTypingLabel("Dexterity: " + p.dexterity()).skipToTheEnd()).row();
-        statsTable.add(new CoreTypingLabel("Constitution: " + p.constitution()).skipToTheEnd()).row();
-        statsTable.add(new CoreTypingLabel("Intelligence: " + p.intelligence()).skipToTheEnd()).row();
-        statsTable.add(new CoreTypingLabel("Wisdom: " + p.wisdom()).skipToTheEnd()).row();
-        statsTable.add(new CoreTypingLabel("Charisma: " + p.charisma()).skipToTheEnd()).padBottom(20).row();
-
-        statsTable.add(new CoreTypingLabel("HP: " + s.hitPoints()).skipToTheEnd()).row();
-        statsTable.add(new CoreTypingLabel("Stamina: " + s.stamina()).skipToTheEnd()).row();
-        statsTable.add(new CoreTypingLabel("Mana: " + s.mana()).skipToTheEnd()).row();
+        statsTable.add(new CoreTypingLabel("=== STATISTICS ===").skipToTheEnd()).colspan(2).row();
+        for (StatTag tag : StatTag.values()) {
+            var tagIndex = tag.ordinal();
+            Table rowTable = new Table();
+            statNameLabels[tagIndex] = new CoreTypingLabel(tag.label() +": ");
+            statValueLabels[tagIndex] = new CoreTypingLabel("null");
+            rowTable.add(statNameLabels[tagIndex].skipToTheEnd()).left();
+            rowTable.add(statValueLabels[tagIndex].skipToTheEnd()).left();
+            statsTable.add(rowTable).left().row();
+            if (tag == CHARISMA) {
+                statsTable.add(new CoreTypingLabel("=== CONDITION ===").skipToTheEnd()).row();
+            }
+        }
 
         root.add(statsTable).padTop(10).padLeft(10).left();
+
     }
 
     public void render(float delta) {
@@ -72,12 +86,28 @@ public final class PlayerPanel extends DockedViewportPanel {
     }
 
     public void act(float delta) {
-        player.portraits().updateIfNeeded();
-        portrait.setDrawable(new TextureRegionDrawable(player.portraits().get(SMALL)));
+        stats.update();
+        if (stats.anyChanged()) {
+            updateStatLabels();
+        }
+        if (player.portraits().updateIfNeeded()) {
+            ((TextureRegionDrawable) portrait.getDrawable()).setRegion(player.portraits().get(SMALL));
+            portrait.invalidateHierarchy();
+        }
     }
 
+    private void updateStatLabels() {
+        for (StatTag tag : StatTag.values()) {
+            var tagIndex = tag.ordinal();
+            if (!statValueLabels[tagIndex].getIntermediateText().toString().equals(stats.coloredLevels()[tagIndex])) {
+                LogHelper.debug(this, SETTING_STAT.formatted(statValueLabels[tagIndex].getIntermediateText().toString(), stats.coloredLevels()[tagIndex], stats.coloredLevels()[tagIndex]));
+                statValueLabels[tagIndex].setText(stats.coloredLevels()[tagIndex]);
+            }
+        }
+    }
 
     public void dispose() {
+        timeSystem.cancel(this);
         stage.dispose();
     }
 }

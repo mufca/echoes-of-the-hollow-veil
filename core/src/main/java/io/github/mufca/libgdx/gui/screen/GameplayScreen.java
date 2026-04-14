@@ -5,12 +5,13 @@ import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import io.github.mufca.libgdx.gui.core.GlobalInputProcessor;
 import io.github.mufca.libgdx.gui.core.widget.CoreScreen;
+import io.github.mufca.libgdx.gui.screen.gameplay.NPCCarousel;
 import io.github.mufca.libgdx.gui.screen.gameplay.PlayerPanel;
 import io.github.mufca.libgdx.gui.screen.gameplay.TextRenderer;
 import io.github.mufca.libgdx.gui.screen.map.MapRenderer;
-import io.github.mufca.libgdx.system.GameContext;
+import io.github.mufca.libgdx.scheduler.eventbus.EventBus;
+import io.github.mufca.libgdx.context.GameContext;
 import io.github.mufca.libgdx.system.GameEngine;
-import io.github.mufca.libgdx.system.ui.UITextEvent;
 import java.io.IOException;
 
 public class GameplayScreen extends CoreScreen {
@@ -24,23 +25,27 @@ public class GameplayScreen extends CoreScreen {
     private final TextRenderer text = new TextRenderer();
     private final PlayerPanel playerPanel;
     private final MapRenderer minimap;
+    private final NPCCarousel npcCarousel;
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
 
 
     public GameplayScreen() throws IOException {
-        context = new GameContext("forest_glade_0001");
-        engine = new GameEngine(context);
-        engine.eventBus().subscribe(UITextEvent.class, this::handleTextEvent);
+        EventBus eventBus = new EventBus();
+        context = new GameContext("forest_glade_0001", eventBus);
+        engine = new GameEngine(context, eventBus);
         minimap = new MapRenderer(context.loader());
         minimap.computePositions(context.loader().mapCache().get("forest_glade_0001"));
-        playerPanel = new PlayerPanel(context);
-        playerPanel.setBounds(0, 0, 300, Gdx.graphics.getHeight());
+        playerPanel = new PlayerPanel(context.player(), engine);
+        npcCarousel = new NPCCarousel(engine.npcSystem(), context.portraitRepository());
         shapeRenderer.setAutoShapeType(true);
         Gdx.input.setInputProcessor(new GlobalInputProcessor(engine.eventBus()));
     }
 
-    private void handleTextEvent(UITextEvent textEvent) {
-        text.addText(textEvent.textMessage());
+    private void handleTextEvents() {
+        if (engine.messageBuffer().hasMessages()) {
+            engine.messageBuffer().drain().forEach(text::addText);
+            engine.messageBuffer().clear();
+        }
     }
 
     @Override
@@ -52,8 +57,9 @@ public class GameplayScreen extends CoreScreen {
 
     @Override
     public void render(float delta) {
-        engine.updateTime(delta);
+        engine.update(delta);
         context.processTextureUpload();
+        handleTextEvents();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
         playerPanel.apply();
@@ -65,6 +71,8 @@ public class GameplayScreen extends CoreScreen {
 
         minimap.apply();
         minimap.render(context.loader().mapCache(), context.loader().getMapLocation(context.currentLocation()), delta);
+        npcCarousel.apply();
+        npcCarousel.render(delta);
     }
 
     @Override
@@ -81,5 +89,9 @@ public class GameplayScreen extends CoreScreen {
             width - MINIMAP_SIZE - MINIMAP_OFFSET,
             height - MINIMAP_SIZE - MINIMAP_OFFSET,
             MINIMAP_SIZE, MINIMAP_SIZE);
+        npcCarousel.setBounds(width - MINIMAP_SIZE - MINIMAP_OFFSET,
+            (int) (height - 1.5f * MINIMAP_SIZE - 2 * MINIMAP_OFFSET),
+            MINIMAP_SIZE, (int) (0.5f * MINIMAP_SIZE)
+        );
     }
 }
