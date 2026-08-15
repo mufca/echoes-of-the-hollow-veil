@@ -1,5 +1,5 @@
-import org.apache.tools.ant.taskdefs.condition.Os
 import java.nio.file.Files
+import java.nio.file.Path
 
 plugins {
     id 'java'
@@ -41,28 +41,31 @@ test {
     forkEvery = 1
 }
 
-def assetDirectories = [
-        "$projectDir/../core/assets/locations",
-        "$projectDir/../core/src/test/resources/locations",
-        "$projectDir/../core/assets/characters"
+// --- Location's index generation
+
+List<File> assetDirectories = [
+        file("assets/locations"),
+        file("src/test/resources/locations"),
+        file("assets/characters")
 ]
 
-tasks.register('generateLocationIndexes') {
-
+def generateLocationIndexes = tasks.register('generateLocationIndexes') {
     doLast {
-        assetDirectories.each { directoryPath ->
-            def directory = file(directoryPath)
+        assetDirectories.each { File directory ->
             if (!directory.exists()) {
                 println "[!] Warning ${directory} doesnt exist, skipping generation of index.txt"
                 return
             }
 
-            def jsonFiles = []
-            Files.walk(directory.toPath())
+            List<String> jsonFiles = []
+            Path dirPath = directory.toPath()
+
+            Files.walk(dirPath)
                     .filter { Files.isRegularFile(it) && it.toString().toLowerCase().endsWith(".json") }
-                    .forEach { jsonFiles << directory.toPath().relativize(it).toString().replace("\\", "/") }
+                    .forEach { Path filePath -> jsonFiles << dirPath.relativize(filePath).toString().replace("\\", "/") }
+
             if (!jsonFiles.isEmpty()) {
-                def indexFile = new File(directory, "index.txt")
+                File indexFile = new File(directory, "index.txt")
                 indexFile.text = jsonFiles.join("\n")
                 println "[ok] Generated ${jsonFiles.size()} entries to ${indexFile}"
             }
@@ -70,47 +73,49 @@ tasks.register('generateLocationIndexes') {
     }
 }
 
+// --- Ink setup and script compilation
+
+boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win")
+boolean isMac = System.getProperty("os.name").toLowerCase().contains("mac")
+String osName = isWindows ? "windows" : (isMac ? "mac" : "linux")
+
 def inkDir = layout.buildDirectory.dir("ink-compiler")
-def inkBinary = Os.isFamily(Os.FAMILY_WINDOWS) ?
-        inkDir.get().file("inklecate.exe").asFile :
-        inkDir.get().file("inklecate").asFile
 
-task downloadInklecate(type: Download) {
-    def os = Os.isFamily(Os.FAMILY_WINDOWS) ? "windows" : (Os.isFamily(Os.FAMILY_MAC) ? "mac" : "linux")
-    def extension = "zip"
-    def url = "https://github.com/inkle/ink/releases/download/${inkVersion}/inklecate_${os}.${extension}"
-
-    src url
-    dest layout.buildDirectory.file("temp/inklecate.${extension}").get().asFile
+def downloadInklecate = tasks.register('downloadInklecate', Download) {
+    src "https://github.com/inkle/ink/releases/download/${inkVersion}/inklecate_${osName}.zip"
+    dest layout.buildDirectory.file("temp/inklecate.zip")
     overwrite false
 }
 
-task setupInklecate(dependsOn: downloadInklecate, type: Copy) {
-    from zipTree(downloadInklecate.dest)
+def setupInklecate = tasks.register('setupInklecate', Copy) {
+    dependsOn downloadInklecate
+    from { zipTree(downloadInklecate.get().dest) }
     into inkDir
 
     doLast {
-        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-            ant.chmod(file: inkBinary, perm: "+x")
+        if (!isWindows) {
+            File binary = inkDir.get().file("inklecate").asFile
+            binary.setExecutable(true)
         }
     }
 }
 
-task generateInkIncludes {
+def generateInkIncludes = tasks.register('generateInkIncludes') {
     group = "ink"
     description = "Generates main<Dir>.ink files for each subdirectory in assets/ink"
 
     doLast {
-        def inkAssetsDir = project.file("assets/ink")
-        def subDirs = inkAssetsDir.listFiles().findAll { it.isDirectory() && it.name != "compiled" }
+        File inkAssetsDir = project.file("assets/ink")
+        File[] subDirs = inkAssetsDir.listFiles()?.findAll { File f -> f.isDirectory() && f.name != "compiled" } ?: []
 
-        subDirs.each { dir ->
-            def dirName = dir.name
-            def capitalizedName = dirName.substring(0, 1).toUpperCase() + dirName.substring(1)
-            def mainFile = new File(inkAssetsDir, "main${capitalizedName}.ink")
+        subDirs.each { File dir ->
+            String dirName = dir.name
+            String capitalizedName = dirName.substring(0, 1).toUpperCase() + dirName.substring(1)
+            File mainFile = new File(inkAssetsDir, "main${capitalizedName}.ink")
             def inkFiles = project.fileTree(dir).include("**/*.ink")
-            def includeContent = inkFiles.collect { file ->
-                def relativePath = inkAssetsDir.toPath().relativize(file.toPath()).toString().replace('\\', '/')
+
+            String includeContent = inkFiles.collect { File file ->
+                String relativePath = inkAssetsDir.toPath().relativize(file.toPath()).toString().replace('\\', '/')
                 return "INCLUDE ${relativePath}"
             }.join("\n")
 
@@ -120,38 +125,38 @@ task generateInkIncludes {
     }
 }
 
-abstract class CompileInkTask extends DefaultTask {
-    @Inject
-    abstract ExecOperations getExecOperations()
+def compileInk = tasks.register('compileInk') {
+    group = "ink"
+    dependsOn(generateInkIncludes, setupInklecate)
 
-    @TaskAction
-    void compile() {
-        def inkSourceDir = project.file("assets/ink")
-        def outputDir = project.file("assets/ink/compiled")
-        def inkBinary = project.layout.buildDirectory.dir("ink-compiler").get().file(
-                Os.isFamily(Os.FAMILY_WINDOWS) ? "inklecate.exe" : "inklecate"
+    doLast {
+        File inkAssetsDir = project.file("assets/ink")
+        File outputDir = project.file("assets/ink/compiled")
+        boolean isWin = System.getProperty("os.name").toLowerCase().contains("win")
+        File inkBinary = project.layout.buildDirectory.dir("ink-compiler").get().file(
+                isWin ? "inklecate.exe" : "inklecate"
         ).asFile
 
-        if (!outputDir.exists()) outputDir.mkdirs()
+        if (!outputDir.exists()) {
+            outputDir.mkdirs()
+        }
 
-        inkSourceDir.listFiles().each { file ->
-            if (file.name.endsWith(".ink")) {
-                println "[*] Compiling: ${file.name}"
+        inkAssetsDir.listFiles()?.findAll { File f -> f.name.endsWith(".ink") }?.each { File file ->
+            println "[*] Compiling: ${file.name}"
 
-                execOperations.exec {
-                    commandLine inkBinary.absolutePath, "-o",
-                            "${outputDir.path}/${file.name.replace('.ink', '.json')}",
-                            file.absolutePath
-                }
-            }
+            providers.exec {
+                commandLine inkBinary.absolutePath, "-o",
+                        "${outputDir.path}/${file.name.replace('.ink', '.json')}",
+                        file.absolutePath
+            }.result.get()
         }
     }
 }
 
-task compileInk(type: CompileInkTask) {
-    group = "ink"
-    dependsOn generateInkIncludes
-    dependsOn setupInklecate
+tasks.named("processResources") {
+    dependsOn(generateLocationIndexes, compileInk)
 }
 
-project(":core").tasks.processResources.dependsOn compileInk
+tasks.named("processTestResources") {
+    dependsOn(generateLocationIndexes, compileInk)
+}
